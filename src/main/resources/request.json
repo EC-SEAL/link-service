@@ -1,0 +1,55 @@
+{
+  "id" : "",
+  "issuer" : "11111111A",
+  "aSubjectId" : "userId",
+  "aSubjectIssuer" : "UJI",
+  "bSubjectId" : "userId",
+  "bSubjectIssuer" : "AV",
+  "lloa" : "NORMAL",
+  "issued" : "2020-01-27T15:00:23Z",
+  "expiration" : "2020-01-28T15:00:23Z",
+  "aAttributes" :
+   [ {
+      "name":  "name",
+      "friendlyName" : "Common Name",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "Pepe" ]
+     },
+     {
+       "name":  "firstname",
+       "friendlyName" : "Family Name",
+       "encoding" : "UTF-8",
+       "language" : "ES_es",
+       "mandatory" : true,
+       "values": [ "Botella" ]
+     }
+   ],
+   "aProperties" : {
+     "name": "commonName"
+   },
+   "bAttributes" :
+   [ {
+     "name":  "name",
+     "friendlyName" : "Common Name",
+     "encoding" : "UTF-8",
+     "language" : "ES_es",
+     "mandatory" : true,
+     "values": [ "Pepe" ]
+    },
+    {
+      "name":  "firstname",
+      "friendlyName" : "Family Name",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "Botella" ]
+    }
+  ],
+  "bProperties" : {
+    "name": "commonName"
+  },
+  "evidence": [],
+  "conversation" : []
+}

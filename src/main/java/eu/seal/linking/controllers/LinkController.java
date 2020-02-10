@@ -1,0 +1,41 @@
+package eu.seal.linking.controllers;
+
+import eu.seal.linking.services.LinkService;
+import eu.seal.linking.services.UsersCMService;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("link")
+public class LinkController
+{
+    private final static Logger LOG = LoggerFactory.getLogger(LinkController.class);
+
+    @Autowired
+    private LinkService linkService;
+
+    @Autowired
+    private UsersCMService usersCMService;
+
+    @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
+    public Response startLinkRequest(@RequestParam(required = true) String msToken, HttpServletRequest request)
+    {
+        return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/status", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
+    public Response getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpServletRequest request)
+    {
+        return Response.ok().build();
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "id": "6c0f70a8-f32b-4535-b5f6-0d596c52813a",
+  "type": "eIDAS",
+  "categories": [],
+  "issuerId" : "issuerId",
+  "subjectId" : "PersonalIdentifier",
+  "loa" : "NORMAL",
+  "issued" : "2020-01-06T10:32:24Z",
+  "expiration" : "2020-02-06T10:32:24Z",
+  "attributes" :
+  [{
+    "name":  "PersonalIdentifier",
+    "friendlyName" : "PersonalIdentifier",
+    "encoding" : "UTF-8",
+    "language" : "ES_es",
+    "mandatory" : true,
+    "values": [ "1234" ]
+  }, {
+    "name":  "CurrentFamilyName",
+    "friendlyName" : "FamilyName",
+    "encoding" : "UTF-8",
+    "language" : "ES_es",
+    "mandatory" : true,
+    "values": [ "Rubble" ]
+  }, {
+    "name":  "CurrentFirstName",
+    "friendlyName" : "FirstName",
+    "encoding" : "UTF-8",
+    "language" : "ES_es",
+    "mandatory" : true,
+    "values": [ "Barney" ]
+  }, {
+    "name":  "DateOfBirth",
+    "friendlyName" : "DateOfBirth",
+    "encoding" : "UTF-8",
+    "language" : "ES_es",
+    "mandatory" : true,
+    "values": [ "1983-04-18" ]
+  }],
+  "properties" : {}
+}

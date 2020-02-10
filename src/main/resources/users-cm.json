@@ -1,0 +1,31 @@
+[
+  {
+    "hashID": "81dc9bdb52d04dc20036dbd8313ed055",
+    "nameAttr": "CurrentGivenName",
+    "surnameAttr": "CurrentFamilyName",
+    "entitlements": [
+      "UJI",
+      "UV"
+    ],
+    "photoID": "",
+    "email": "test1234@uji.es"
+  },
+  {
+    "hashID": "d93591bdf7860e1e4ee2fca799911215",
+    "nameAttr": "CurrentGivenName",
+    "surnameAttr": "CurrentFamilyName",
+    "entitlements": [
+      "UJI"
+    ],
+    "photoID": "",
+    "email": "test4321@uji.es"
+  },
+  {
+    "hashID": "b59c67bf196a4758191e42f76670ceba",
+    "nameAttr": "CurrentGivenName",
+    "surnameAttr": "CurrentFamilyName",
+    "entitlements": [],
+    "photoID": "",
+    "email": "fredflinstone@uji.es"
+  }
+]
