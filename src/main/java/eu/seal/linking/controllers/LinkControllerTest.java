@@ -4,6 +4,7 @@ import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.RequestNotFoundException;
 import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.LinkRequest;
+import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
 import eu.seal.linking.model.UserCM;
 import eu.seal.linking.services.LinkService;
@@ -41,7 +42,7 @@ public class LinkControllerTest
     @Autowired
     private SessionUsersService sessionUsersService;
 
-    @GetMapping
+    /*@GetMapping
     @RequestMapping(value = "/init", method = RequestMethod.GET, produces = "application/json")
     public Response initSessionParams(HttpSession session) throws LinkApplicationException, IOException
     {
@@ -52,36 +53,41 @@ public class LinkControllerTest
         }
 
         return Response.ok().build();
-    }
+    }*/
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.GET, produces = "application/json")
-    public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken, HttpServletRequest request)
+    public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken, HttpSession session)
             throws LinkApplicationException, IOException
     {
+        User user = getSessionUser(session);
+
         // Test with local file
         ClassPathResource resource = new ClassPathResource("request.json");
         String strRequest = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-        LinkRequest linkRequest = linkService.storeNewRequest(strRequest);
+        LinkRequest linkRequest = linkService.storeNewRequest(strRequest, user);
 
         return linkRequest;
     }
 
     @RequestMapping(value = "/{requestId}/status", method = RequestMethod.GET, produces = "application/json")
-    public Response getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpSession session)
-            throws RequestNotFoundException
+    public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpSession session)
+            throws LinkApplicationException
     {
-        //User user = (User) session.getAttribute("user");
+        User user = getSessionUser(session);
 
-        String requestStatus = linkService.getRequestStatus(requestId);
+        String requestStatus = linkService.getRequestStatus(requestId, user);
 
-        return Response.ok(requestStatus).build();
+        return StatusResponse.build(requestStatus);
     }
 
     @RequestMapping(value = "/{requestId}/cancel", method = RequestMethod.GET)
-    public Response cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpServletRequest request)
+    public Response cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpSession session)
+            throws LinkApplicationException
     {
-        linkService.cancelRequest(requestId);
+        User user = getSessionUser(session);
+
+        linkService.cancelRequest(requestId, user);
 
         return Response.ok().build();
     }
@@ -101,4 +107,16 @@ public class LinkControllerTest
 
         return Response.ok().build();
     }*/
+
+    private User getSessionUser(HttpSession session) throws LinkApplicationException
+    {
+        User user = (User) session.getAttribute("user");
+        if (user == null)
+        {
+            user = sessionUsersService.getTestUser();
+            session.setAttribute("user", user);
+        }
+
+        return user;
+    }
 }

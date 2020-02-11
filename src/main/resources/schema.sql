@@ -2,6 +2,7 @@ create table if not exists link_requests
 (
     id integer not null AUTO_INCREMENT,
     uid varchar(100),
+    requester_id varchar(100) not null,
     owner_id varchar(100) not null,
     agent_id varchar(100),
     entry_date timestamp not null,

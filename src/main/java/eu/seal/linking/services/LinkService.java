@@ -6,7 +6,9 @@ import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.RequestException;
 import eu.seal.linking.exceptions.RequestNotFoundException;
+import eu.seal.linking.exceptions.UserNotAuthorizedException;
 import eu.seal.linking.model.LinkRequest;
+import eu.seal.linking.model.User;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestDomain;
 import eu.seal.linking.model.enums.RequestStatus;
@@ -40,13 +42,13 @@ public class LinkService
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
 
-    public LinkRequest storeNewRequest(String strRequest) throws LinkApplicationException
+    public LinkRequest storeNewRequest(String strRequest, User user) throws LinkApplicationException
     {
         try
         {
             ObjectMapper objectMapper = new ObjectMapper();
             LinkRequest linkRequest = objectMapper.readValue(strRequest, LinkRequest.class);
-            Request request = initializeRequest(linkRequest, strRequest);
+            Request request = initializeRequest(linkRequest, strRequest, user.getId());
             request = requestRepository.save(request);
             linkRequest.setId(request.getUid());
             return linkRequest;
@@ -64,7 +66,7 @@ public class LinkService
         return requestRepository.findByDomainsIn(requestDomains);
     }
 
-    public String getRequestStatus(String uid) throws RequestNotFoundException
+    public String getRequestStatus(String uid, User user) throws LinkApplicationException
     {
         List<Request> requests = requestRepository.findByUid(uid);
 
@@ -73,21 +75,24 @@ public class LinkService
             throw new RequestNotFoundException("Request " + uid + " not found");
         }
 
+        checkRequesterFrom(requests.get(0), user.getId());
+
         return  requests.get(0).getStatus();
     }
 
-    public void cancelRequest(String uid)
+    public void cancelRequest(String uid, User user) throws LinkApplicationException
     {
         List<Request> requests = requestRepository.findByUid(uid);
 
         if (requests.size() > 0)
         {
+            checkRequesterFrom(requests.get(0), user.getId());
             requestRepository.delete(requests.get(0));
         }
     }
 
 
-    private static Request initializeRequest(LinkRequest linkRequest, String strRequest) throws LinkInternalException
+    private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId) throws LinkInternalException
     {
         Date currentDate = new Date();
 
@@ -95,6 +100,7 @@ public class LinkService
         request.setUid(UUID.randomUUID().toString());
         try
         {
+            request.setRequesterId(CryptoUtils.generateMd5(requesterId));
             request.setOwnerId(CryptoUtils.generateMd5(linkRequest.getIssuer()));
         }
         catch (NoSuchAlgorithmException e)
@@ -116,5 +122,21 @@ public class LinkService
         request.setDomains(domains);
 
         return request;
+    }
+
+    private void checkRequesterFrom(Request request, String requesterId) throws LinkApplicationException
+    {
+        try
+        {
+            if (!request.getRequesterId().equals(CryptoUtils.generateMd5(requesterId)))
+            {
+                throw new UserNotAuthorizedException();
+            }
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new LinkInternalException(e.getMessage());
+        }
     }
 }

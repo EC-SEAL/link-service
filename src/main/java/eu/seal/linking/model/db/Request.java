@@ -25,6 +25,9 @@ public class Request
     
     private String uid;
 
+    @Column(name = "REQUESTER_ID")
+    private String requesterId;
+
     @Column(name = "OWNER_ID")
     private String ownerId;
 
@@ -71,6 +74,16 @@ public class Request
     public void setUid(String uid)
     {
         this.uid = uid;
+    }
+
+    public String getRequesterId()
+    {
+        return requesterId;
+    }
+
+    public void setRequesterId(String requesterId)
+    {
+        this.requesterId = requesterId;
     }
 
     public String getOwnerId()

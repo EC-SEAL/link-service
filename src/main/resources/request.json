@@ -1,15 +1,22 @@
 {
   "id" : "",
   "issuer" : "11111111A",
-  "aSubjectId" : "userId",
+  "aSubjectId" : "PersonalIdentifier",
   "aSubjectIssuer" : "UJI",
-  "bSubjectId" : "userId",
+  "bSubjectId" : "PersonalIdentifier",
   "bSubjectIssuer" : "AV",
   "lloa" : "NORMAL",
   "issued" : "2020-01-27T15:00:23Z",
   "expiration" : "2020-01-28T15:00:23Z",
   "aAttributes" :
    [ {
+     "name":  "PersonalIdentifier",
+     "friendlyName" : "PersonalIdentifier",
+     "encoding" : "UTF-8",
+     "language" : "ES_es",
+     "mandatory" : true,
+     "values": [ "1111" ]
+     },{
       "name":  "name",
       "friendlyName" : "Common Name",
       "encoding" : "UTF-8",
@@ -31,6 +38,13 @@
    },
    "bAttributes" :
    [ {
+     "name":  "PersonalIdentifier",
+     "friendlyName" : "PersonalIdentifier",
+     "encoding" : "UTF-8",
+     "language" : "ES_es",
+     "mandatory" : true,
+     "values": [ "1111" ]
+     },{
      "name":  "name",
      "friendlyName" : "Common Name",
      "encoding" : "UTF-8",
