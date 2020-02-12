@@ -34,6 +34,8 @@ public class RequestFile
     @Column(name = "MIME_TYPE")
     private String mimeType;
 
+    private Long size;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UPLOAD_DATE")
     private Date uploadDate;
@@ -86,6 +88,16 @@ public class RequestFile
     public void setMimeType(String mimeType)
     {
         this.mimeType = mimeType;
+    }
+
+    public Long getSize()
+    {
+        return size;
+    }
+
+    public void setSize(Long size)
+    {
+        this.size = size;
     }
 
     public Date getUploadDate()

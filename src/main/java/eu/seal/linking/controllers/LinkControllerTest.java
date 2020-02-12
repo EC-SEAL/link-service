@@ -92,6 +92,24 @@ public class LinkControllerTest
         return Response.ok().build();
     }
 
+    @RequestMapping(value = "/{requestId}/files/upload", method = RequestMethod.GET)
+    // TODO: file param
+    public Response uploadFile(@PathVariable("requestId") String requestId, @RequestParam String msToken,
+                               @RequestParam(required = false) String update, HttpSession session)
+            throws LinkApplicationException, IOException
+    {
+        User user = getSessionUser(session);
+
+        // Test with local files
+        String file = (update == null) ? "file.json" : "file2.json";
+        ClassPathResource resource = new ClassPathResource(file);
+        String strFile = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+
+        linkService.storeFileRequest(requestId, strFile, user);
+
+        return Response.ok().build();
+    }
+
     // Admin services???
     /*@RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public List<Request> getRequestList(@RequestParam(required = true) String msToken, HttpSession session)

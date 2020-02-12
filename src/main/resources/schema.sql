@@ -29,6 +29,7 @@ create table if not exists link_req_files
     name varchar(200) not null,
     content blob not null,
     mime_type varchar(100) not null,
+    size long not null,
     upload_date timestamp not null,
     primary key (id),
     foreign key (request_id) references link_requests (id) on delete cascade on update cascade

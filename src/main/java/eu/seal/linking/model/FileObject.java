@@ -8,7 +8,7 @@ public class FileObject
 
     private String contentType;
 
-    private Integer fileSize;
+    private Long fileSize;
 
     private String content;
 
@@ -42,12 +42,12 @@ public class FileObject
         this.contentType = contentType;
     }
 
-    public Integer getFileSize()
+    public Long getFileSize()
     {
         return fileSize;
     }
 
-    public void setFileSize(Integer fileSize)
+    public void setFileSize(Long fileSize)
     {
         this.fileSize = fileSize;
     }
