@@ -2,6 +2,7 @@ package eu.seal.linking.services;
 
 import eu.seal.linking.dao.RequestDomainRepository;
 import eu.seal.linking.dao.RequestFileRepository;
+import eu.seal.linking.dao.RequestMessageRepository;
 import eu.seal.linking.dao.RequestRepository;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
@@ -11,10 +12,12 @@ import eu.seal.linking.exceptions.RequestNotFoundException;
 import eu.seal.linking.exceptions.UserNotAuthorizedException;
 import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
+import eu.seal.linking.model.Message;
 import eu.seal.linking.model.User;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestDomain;
 import eu.seal.linking.model.db.RequestFile;
+import eu.seal.linking.model.db.RequestMessage;
 import eu.seal.linking.model.enums.RequestStatus;
 import eu.seal.linking.utils.CryptoUtils;
 
@@ -47,9 +50,14 @@ public class LinkService
     @Autowired
     private RequestFileRepository requestFileRepository;
 
+    @Autowired
+    private RequestMessageRepository requestMessageRepository;
+
     //public HttpResponse startLinkRequest();
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
+
+    // TODO: Check reqyuester user if is not the same from the petition ¿?
 
     public LinkRequest storeNewRequest(String strRequest, User user) throws LinkApplicationException
     {
@@ -127,6 +135,28 @@ public class LinkService
         requestFileRepository.save(requestFile);
     }
 
+    public void storeMessage(String requestUid, String strMessage, User user) throws LinkApplicationException
+    {
+        Request request = getRequestFrom(requestUid);
+        checkRequesterFrom(request, user.getId());
+
+        Message message = null;
+        try
+        {
+            ObjectMapper objectMapper = new ObjectMapper();
+            message = objectMapper.readValue(strMessage, Message.class);
+        }
+        catch (IOException e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new RequestException("Message format is not valid.");
+        }
+
+        //TODO: validate user sender?
+
+        RequestMessage requestMessage = getRequestMessageFrom(message, request);
+        requestMessageRepository.save(requestMessage);
+    }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)
             throws LinkInternalException
@@ -213,5 +243,17 @@ public class LinkService
         requestFile.setSize(fileObject.getFileSize());
         requestFile.setContent(fileObject.getContent());
         requestFile.setUploadDate(new Date());
+    }
+
+    // TODO: Verify other fields from Message
+    private RequestMessage getRequestMessageFrom(Message message, Request request)
+    {
+        RequestMessage requestMessage = new RequestMessage();
+        requestMessage.setDate(new Date(message.getTimestamp()));
+        requestMessage.setSender(message.getSender());
+        requestMessage.setMessage(message.getMessage());
+        requestMessage.setRequest(request);
+
+        return requestMessage;
     }
 }

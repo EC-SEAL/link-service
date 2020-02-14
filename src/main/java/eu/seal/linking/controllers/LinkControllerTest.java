@@ -110,6 +110,23 @@ public class LinkControllerTest
         return Response.ok().build();
     }
 
+    // TODO: Verify if path param recipient is necessary
+    @RequestMapping(value = "/{requestId}/messages/send/{recipient}", method = RequestMethod.GET)
+    public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
+                                @RequestParam(required = true) String msToken, HttpSession session)
+            throws LinkApplicationException, IOException
+    {
+        User user = getSessionUser(session);
+
+        // Test with local files
+        ClassPathResource resource = new ClassPathResource("message-requester.json");
+        String strMessage = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+
+        linkService.storeMessage(requestId, strMessage, user);
+
+        return Response.ok().build();
+    }
+
     // Admin services???
     /*@RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public List<Request> getRequestList(@RequestParam(required = true) String msToken, HttpSession session)

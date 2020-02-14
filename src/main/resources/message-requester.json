@@ -1,0 +1,8 @@
+{
+  "timestamp": 1581679192,
+  "sender": "1111",
+  "senderType" : "requester",
+  "recipient" : "",
+  "recipientType" : "",
+  "message" : "This is just a test"
+}
