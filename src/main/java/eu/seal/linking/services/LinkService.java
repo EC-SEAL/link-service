@@ -26,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -56,8 +55,6 @@ public class LinkService
     //public HttpResponse startLinkRequest();
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
-
-    // TODO: Check reqyuester user if is not the same from the petition ¿?
 
     public LinkRequest storeNewRequest(String strRequest, User user) throws LinkApplicationException
     {
@@ -153,9 +150,25 @@ public class LinkService
         }
 
         //TODO: validate user sender?
+        message.validate();
 
         RequestMessage requestMessage = getRequestMessageFrom(message, request);
         requestMessageRepository.save(requestMessage);
+    }
+
+    public List<Message> getConversation(String requestUid, User user) throws LinkApplicationException
+    {
+        Request request = getRequestFrom(requestUid);
+        checkRequesterFrom(request, user.getId());
+
+        List<RequestMessage> requestMessages = request.getMessages();
+        List<Message> messages = new ArrayList<Message>();
+        for (RequestMessage requestMessage : requestMessages)
+        {
+            messages.add(getMessageFrom(requestMessage));
+        }
+
+        return messages;
     }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)
@@ -245,15 +258,26 @@ public class LinkService
         requestFile.setUploadDate(new Date());
     }
 
-    // TODO: Verify other fields from Message
     private RequestMessage getRequestMessageFrom(Message message, Request request)
     {
         RequestMessage requestMessage = new RequestMessage();
         requestMessage.setDate(new Date(message.getTimestamp()));
+        //requestMessage.setDate(new Date());
         requestMessage.setSender(message.getSender());
+        requestMessage.setSenderType(message.getSenderType());
         requestMessage.setMessage(message.getMessage());
         requestMessage.setRequest(request);
 
         return requestMessage;
+    }
+
+    private Message getMessageFrom(RequestMessage requestMessage)
+    {
+        Message message = new Message();
+        message.setTimestamp(requestMessage.getDate().getTime());
+        message.setSender(requestMessage.getSender());
+        message.setSenderType(requestMessage.getSenderType());
+        message.setMessage(requestMessage.getMessage());
+        return message;
     }
 }

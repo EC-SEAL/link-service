@@ -40,6 +40,7 @@ create table if not exists link_req_messages
     id integer not null auto_increment,
     request_id integer not null,
     sender varchar(50) not null,
+    sender_type varchar(50) not null,
     date timestamp not null,
     message varchar(2000) not null,
     primary key (id),

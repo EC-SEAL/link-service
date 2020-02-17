@@ -1,8 +1,8 @@
 {
-  "timestamp": 1581679192,
-  "sender": "1111",
+  "timestamp": 1581679192000,
+  "sender": "b59c67bf196a4758191e42f76670ceba",
   "senderType" : "requester",
   "recipient" : "",
-  "recipientType" : "",
+  "recipientType" : "officer",
   "message" : "This is just a test"
 }

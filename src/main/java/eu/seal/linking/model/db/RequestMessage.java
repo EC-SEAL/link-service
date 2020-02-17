@@ -2,6 +2,7 @@ package eu.seal.linking.model.db;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,9 @@ public class RequestMessage
     private Request request;
 
     private String sender;
+
+    @Column(name = "SENDER_TYPE")
+    private String senderType;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
@@ -59,6 +63,16 @@ public class RequestMessage
     public void setSender(String sender)
     {
         this.sender = sender;
+    }
+
+    public String getSenderType()
+    {
+        return senderType;
+    }
+
+    public void setSenderType(String senderType)
+    {
+        this.senderType = senderType;
     }
 
     public Date getDate()

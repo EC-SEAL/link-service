@@ -1,8 +1,11 @@
 package eu.seal.linking.model;
 
+import eu.seal.linking.exceptions.MessageNotValidException;
+import eu.seal.linking.model.enums.UserMessageType;
+
 public class Message
 {
-    private Integer timestamp;
+    private Long timestamp;
 
     private String sender;
 
@@ -14,12 +17,12 @@ public class Message
 
     private String message;
 
-    public Integer getTimestamp()
+    public Long getTimestamp()
     {
         return timestamp;
     }
 
-    public void setTimestamp(Integer timestamp)
+    public void setTimestamp(Long timestamp)
     {
         this.timestamp = timestamp;
     }
@@ -72,5 +75,18 @@ public class Message
     public void setMessage(String message)
     {
         this.message = message;
+    }
+
+    public void validate() throws MessageNotValidException
+    {
+        if (!senderType.isEmpty() && !UserMessageType.isValid(senderType))
+        {
+            throw new MessageNotValidException("Message sender type not valid");
+        }
+
+        if (!recipientType.isEmpty() && !UserMessageType.isValid(recipientType))
+        {
+            throw new MessageNotValidException("Message recipient type not valid");
+        }
     }
 }

@@ -1,20 +1,17 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
-import eu.seal.linking.exceptions.RequestNotFoundException;
-import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.LinkRequest;
+import eu.seal.linking.model.Message;
 import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
-import eu.seal.linking.model.UserCM;
 import eu.seal.linking.services.LinkService;
 import eu.seal.linking.services.SessionUsersService;
-import eu.seal.linking.services.UsersCMService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
@@ -23,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -110,10 +106,10 @@ public class LinkControllerTest
         return Response.ok().build();
     }
 
-    // TODO: Verify if path param recipient is necessary
+    // Param recipient will not be used
     @RequestMapping(value = "/{requestId}/messages/send/{recipient}", method = RequestMethod.GET)
     public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
-                                @RequestParam(required = true) String msToken, HttpSession session)
+                                @RequestParam(required = true) String sessionId, HttpSession session)
             throws LinkApplicationException, IOException
     {
         User user = getSessionUser(session);
@@ -125,6 +121,15 @@ public class LinkControllerTest
         linkService.storeMessage(requestId, strMessage, user);
 
         return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/messages/receive")
+    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = true) String sessionId,
+                                         HttpSession session) throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+
+        return linkService.getConversation(requestId, user);
     }
 
     // Admin services???

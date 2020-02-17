@@ -10,4 +10,17 @@ public enum UserMessageType
     {
         return name().toLowerCase();
     }
+
+    public static boolean isValid(String value)
+    {
+        for (UserMessageType type : UserMessageType.values())
+        {
+            if (type.toString().equals(value))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
