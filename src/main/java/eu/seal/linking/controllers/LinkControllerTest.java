@@ -38,19 +38,6 @@ public class LinkControllerTest
     @Autowired
     private SessionUsersService sessionUsersService;
 
-    /*@GetMapping
-    @RequestMapping(value = "/init", method = RequestMethod.GET, produces = "application/json")
-    public Response initSessionParams(HttpSession session) throws LinkApplicationException, IOException
-    {
-        if (session.getAttribute("user") == null)
-        {
-            User user = sessionUsersService.getTestUser();
-            session.setAttribute("user", user);
-        }
-
-        return Response.ok().build();
-    }*/
-
     @RequestMapping(value = "/request/submit", method = RequestMethod.GET, produces = "application/json")
     public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken, HttpSession session)
             throws LinkApplicationException, IOException
@@ -130,6 +117,15 @@ public class LinkControllerTest
         User user = getSessionUser(session);
 
         return linkService.getConversation(requestId, user);
+    }
+
+    @RequestMapping(value = "/{requestId}/result/get")
+    public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken,
+                                        HttpSession session)  throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+
+        return linkService.getRequestResult(requestId, user);
     }
 
     // Admin services???

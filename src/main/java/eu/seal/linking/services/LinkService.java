@@ -20,6 +20,7 @@ import eu.seal.linking.model.db.RequestFile;
 import eu.seal.linking.model.db.RequestMessage;
 import eu.seal.linking.model.enums.RequestStatus;
 import eu.seal.linking.utils.CryptoUtils;
+import eu.seal.linking.services.commons.RequestCommons;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -33,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
@@ -51,8 +51,6 @@ public class LinkService
 
     @Autowired
     private RequestMessageRepository requestMessageRepository;
-
-    //public HttpResponse startLinkRequest();
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
 
@@ -82,7 +80,7 @@ public class LinkService
 
     public String getRequestStatus(String uid, User user) throws LinkApplicationException
     {
-        Request request = getRequestFrom(uid);
+        Request request = RequestCommons.getRequestFrom(uid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
         return request.getStatus();
@@ -90,14 +88,14 @@ public class LinkService
 
     public void cancelRequest(String uid, User user) throws LinkApplicationException
     {
-        Request request = getRequestFrom(uid);
+        Request request = RequestCommons.getRequestFrom(uid, requestRepository);
         checkRequesterFrom(request, user.getId());
         requestRepository.delete(request);
     }
 
     public void storeFileRequest(String requestUid, String strFile, User user) throws LinkApplicationException
     {
-        Request request = getRequestFrom(requestUid);
+        Request request =RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
         FileObject fileObject = null;
@@ -115,7 +113,7 @@ public class LinkService
         RequestFile requestFile = null;
         if (Strings.isNullOrEmpty(fileObject.getFileID()))
         {
-            requestFile = getRequestFileFrom(fileObject, request);
+            requestFile = RequestCommons.getRequestFileFrom(fileObject, request);
         }
         else
         {
@@ -134,7 +132,7 @@ public class LinkService
 
     public void storeMessage(String requestUid, String strMessage, User user) throws LinkApplicationException
     {
-        Request request = getRequestFrom(requestUid);
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
         Message message = null;
@@ -152,23 +150,57 @@ public class LinkService
         //TODO: validate user sender?
         message.validate();
 
-        RequestMessage requestMessage = getRequestMessageFrom(message, request);
+        RequestMessage requestMessage = RequestCommons.getRequestMessageFrom(message, request);
         requestMessageRepository.save(requestMessage);
     }
 
     public List<Message> getConversation(String requestUid, User user) throws LinkApplicationException
     {
-        Request request = getRequestFrom(requestUid);
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
         List<RequestMessage> requestMessages = request.getMessages();
         List<Message> messages = new ArrayList<Message>();
         for (RequestMessage requestMessage : requestMessages)
         {
-            messages.add(getMessageFrom(requestMessage));
+            messages.add(RequestCommons.getMessageFrom(requestMessage));
         }
 
         return messages;
+    }
+
+    public LinkRequest getRequestResult(String requestUid, User user) throws LinkApplicationException
+    {
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);;
+        checkRequesterFrom(request, user.getId());
+
+        LinkRequest linkRequest = null;
+        try
+        {
+            ObjectMapper objectMapper = new ObjectMapper();
+            linkRequest = objectMapper.readValue(request.getStrRequest(), LinkRequest.class);
+        }
+        catch (IOException e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new RequestException("Link request format is not valid.");
+        }
+
+        List<FileObject> evidence = new ArrayList<FileObject>();
+        for (RequestFile requestFile : request.getFiles())
+        {
+            evidence.add(RequestCommons.getFileObjectFrom(requestFile));
+        }
+        linkRequest.setEvidence(evidence);
+
+        List<Message> conversation = new ArrayList<Message>();
+        for (RequestMessage requestMessage : request.getMessages())
+        {
+            conversation.add(RequestCommons.getMessageFrom(requestMessage));
+        }
+        linkRequest.setConversation(conversation);
+
+        return linkRequest;
     }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)
@@ -189,10 +221,7 @@ public class LinkService
             throw new LinkInternalException(e.getMessage());
         }
         request.setEntryDate(currentDate);
-
-        JsonStringEncoder encoder = JsonStringEncoder.getInstance();
-        request.setStrRequest(new String(encoder.quoteAsString(strRequest)));
-
+        request.setStrRequest(strRequest);
         request.setLastUpdate(currentDate);
         request.setStatus(RequestStatus.PENDING.toString());
 
@@ -202,18 +231,6 @@ public class LinkService
         request.setDomains(domains);
 
         return request;
-    }
-
-    private Request getRequestFrom(String uid) throws RequestNotFoundException
-    {
-        List<Request> requests = requestRepository.findByUid(uid);
-
-        if (requests.size() == 0)
-        {
-            throw new RequestNotFoundException("Request " + uid + " not found");
-        }
-
-        return requests.get(0);
     }
 
     private void checkRequesterFrom(Request request, String requesterId) throws LinkApplicationException
@@ -232,23 +249,6 @@ public class LinkService
         }
     }
 
-    private RequestFile getRequestFileFrom(FileObject fileObject, Request request)
-    {
-        RequestFile requestFile = new RequestFile();
-        if (!Strings.isNullOrEmpty(fileObject.getFileID()))
-        {
-            requestFile.setId(new Long(fileObject.getFileID()));
-        }
-        requestFile.setName(fileObject.getFilename());
-        requestFile.setMimeType(fileObject.getContentType());
-        requestFile.setSize(fileObject.getFileSize());
-        requestFile.setContent(fileObject.getContent());
-        requestFile.setUploadDate(new Date());
-        requestFile.setRequest(request);
-
-        return requestFile;
-    }
-
     private void updateRequestFileFrom(RequestFile requestFile, FileObject fileObject)
     {
         requestFile.setName(fileObject.getFilename());
@@ -258,26 +258,4 @@ public class LinkService
         requestFile.setUploadDate(new Date());
     }
 
-    private RequestMessage getRequestMessageFrom(Message message, Request request)
-    {
-        RequestMessage requestMessage = new RequestMessage();
-        requestMessage.setDate(new Date(message.getTimestamp()));
-        //requestMessage.setDate(new Date());
-        requestMessage.setSender(message.getSender());
-        requestMessage.setSenderType(message.getSenderType());
-        requestMessage.setMessage(message.getMessage());
-        requestMessage.setRequest(request);
-
-        return requestMessage;
-    }
-
-    private Message getMessageFrom(RequestMessage requestMessage)
-    {
-        Message message = new Message();
-        message.setTimestamp(requestMessage.getDate().getTime());
-        message.setSender(requestMessage.getSender());
-        message.setSenderType(requestMessage.getSenderType());
-        message.setMessage(requestMessage.getMessage());
-        return message;
-    }
 }
