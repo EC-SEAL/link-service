@@ -110,7 +110,7 @@ public class LinkControllerTest
         return Response.ok().build();
     }
 
-    @RequestMapping(value = "/{requestId}/messages/receive")
+    @RequestMapping(value = "/{requestId}/messages/receive", produces = "application/json")
     public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = true) String sessionId,
                                          HttpSession session) throws LinkApplicationException
     {
@@ -119,7 +119,7 @@ public class LinkControllerTest
         return linkService.getConversation(requestId, user);
     }
 
-    @RequestMapping(value = "/{requestId}/result/get")
+    @RequestMapping(value = "/{requestId}/result/get", produces = "application/json")
     public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken,
                                         HttpSession session)  throws LinkApplicationException
     {
@@ -128,28 +128,12 @@ public class LinkControllerTest
         return linkService.getRequestResult(requestId, user);
     }
 
-    // Admin services???
-    /*@RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public List<Request> getRequestList(@RequestParam(required = true) String msToken, HttpSession session)
-    {
-        User user = (User) session.getAttribute("user");
-
-        return linkService.getRequestsByDomain(user.getEntitlements());
-    }
-
-    @RequestMapping(value = "/{requestId}/lock", method = RequestMethod.GET)
-    public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpServletRequest request)
-    {
-
-        return Response.ok().build();
-    }*/
-
     private User getSessionUser(HttpSession session) throws LinkApplicationException
     {
         User user = (User) session.getAttribute("user");
         if (user == null)
         {
-            user = sessionUsersService.getTestUser();
+            user = sessionUsersService.getTestUser("USER");
             session.setAttribute("user", user);
         }
 

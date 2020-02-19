@@ -1,20 +1,30 @@
 package eu.seal.linking.services.commons;
 
 import eu.seal.linking.dao.RequestRepository;
+import eu.seal.linking.exceptions.RequestException;
 import eu.seal.linking.exceptions.RequestNotFoundException;
 import eu.seal.linking.model.FileObject;
+import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.Message;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestFile;
 import eu.seal.linking.model.db.RequestMessage;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
 public class RequestCommons
 {
+    private final static Logger LOG = LoggerFactory.getLogger(RequestCommons.class);
+
     public static Request getRequestFrom(String uid, RequestRepository requestRepository) throws RequestNotFoundException
     {
         List<Request> requests = requestRepository.findByUid(uid);
@@ -76,5 +86,36 @@ public class RequestCommons
         message.setSenderType(requestMessage.getSenderType());
         message.setMessage(requestMessage.getMessage());
         return message;
+    }
+
+    public static LinkRequest getLinkRequestFrom(Request request) throws RequestException
+    {
+        LinkRequest linkRequest = null;
+        try
+        {
+            ObjectMapper objectMapper = new ObjectMapper();
+            linkRequest = objectMapper.readValue(request.getStrRequest(), LinkRequest.class);
+        }
+        catch (IOException e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new RequestException("Link request format is not valid.");
+        }
+
+        List<FileObject> evidence = new ArrayList<FileObject>();
+        for (RequestFile requestFile : request.getFiles())
+        {
+            evidence.add(RequestCommons.getFileObjectFrom(requestFile));
+        }
+        linkRequest.setEvidence(evidence);
+
+        List<Message> conversation = new ArrayList<Message>();
+        for (RequestMessage requestMessage : request.getMessages())
+        {
+            conversation.add(RequestCommons.getMessageFrom(requestMessage));
+        }
+        linkRequest.setConversation(conversation);
+
+        return linkRequest;
     }
 }

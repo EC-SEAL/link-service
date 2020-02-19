@@ -25,11 +25,11 @@ public class SessionUsersService
     private UsersCMService usersCMService;
 
     // For tests purposes
-    public User getTestUser() throws LinkApplicationException
+    public User getTestUser(String userType) throws LinkApplicationException
     {
         try
         {
-            DataSet dataSet = getDataSetFromLocalFile("USER");
+            DataSet dataSet = getDataSetFromLocalFile(userType);
             if (dataSet == null)
             {
                 throw new UserNotAuthenticatedException();

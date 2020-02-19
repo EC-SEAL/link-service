@@ -44,9 +44,6 @@ public class LinkService
     private RequestRepository requestRepository;
 
     @Autowired
-    private RequestDomainRepository requestDomainRepository;
-
-    @Autowired
     private RequestFileRepository requestFileRepository;
 
     @Autowired
@@ -70,12 +67,6 @@ public class LinkService
             LOG.error(e.getMessage(), e);
             throw new RequestException("Link request format is not valid.");
         }
-    }
-
-    public List<Request> getRequestsByDomain(List<String> domains)
-    {
-        List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(domains);
-        return requestRepository.findByDomainsIn(requestDomains);
     }
 
     public String getRequestStatus(String uid, User user) throws LinkApplicationException
@@ -171,36 +162,10 @@ public class LinkService
 
     public LinkRequest getRequestResult(String requestUid, User user) throws LinkApplicationException
     {
-        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);;
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
-        LinkRequest linkRequest = null;
-        try
-        {
-            ObjectMapper objectMapper = new ObjectMapper();
-            linkRequest = objectMapper.readValue(request.getStrRequest(), LinkRequest.class);
-        }
-        catch (IOException e)
-        {
-            LOG.error(e.getMessage(), e);
-            throw new RequestException("Link request format is not valid.");
-        }
-
-        List<FileObject> evidence = new ArrayList<FileObject>();
-        for (RequestFile requestFile : request.getFiles())
-        {
-            evidence.add(RequestCommons.getFileObjectFrom(requestFile));
-        }
-        linkRequest.setEvidence(evidence);
-
-        List<Message> conversation = new ArrayList<Message>();
-        for (RequestMessage requestMessage : request.getMessages())
-        {
-            conversation.add(RequestCommons.getMessageFrom(requestMessage));
-        }
-        linkRequest.setConversation(conversation);
-
-        return linkRequest;
+        return RequestCommons.getLinkRequestFrom(request);
     }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)
