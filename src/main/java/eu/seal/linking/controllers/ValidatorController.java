@@ -35,7 +35,7 @@ public class ValidatorController
     private SessionUsersService sessionUsersService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public List<LinkRequest> getRequestList(@RequestParam(required = true) String sessionId, HttpSession session)
+    public List<LinkRequest> getRequestList(@RequestParam(required = true) String sessionToken, HttpSession session)
             throws LinkApplicationException
     {
         User user = getSessionUser(session);
@@ -44,10 +44,29 @@ public class ValidatorController
     }
 
     @RequestMapping(value = "/{requestId}/lock", method = RequestMethod.GET)
-    public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpSession session)
+    public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
     {
-
+        User user = getSessionUser(session);
+        validatorService.lockRequest(requestId, user);
         return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/unlock", method = RequestMethod.GET)
+    public Response unlockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        validatorService.unlockRequest(requestId, user);
+        return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/get", method = RequestMethod.GET)
+    public LinkRequest getRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        return validatorService.getRequest(requestId, user);
     }
 
     // Test function

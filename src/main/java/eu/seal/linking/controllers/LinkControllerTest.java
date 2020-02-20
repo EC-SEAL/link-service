@@ -54,7 +54,7 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/status", method = RequestMethod.GET, produces = "application/json")
-    public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, HttpSession session)
+    public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException
     {
         User user = getSessionUser(session);
@@ -77,7 +77,7 @@ public class LinkControllerTest
 
     @RequestMapping(value = "/{requestId}/files/upload", method = RequestMethod.GET)
     // TODO: file param
-    public Response uploadFile(@PathVariable("requestId") String requestId, @RequestParam String msToken,
+    public Response uploadFile(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
                                @RequestParam(required = false) String update, HttpSession session)
             throws LinkApplicationException, IOException
     {
@@ -96,7 +96,7 @@ public class LinkControllerTest
     // Param recipient will not be used
     @RequestMapping(value = "/{requestId}/messages/send/{recipient}", method = RequestMethod.GET)
     public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
-                                @RequestParam(required = true) String sessionId, HttpSession session)
+                                @RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException, IOException
     {
         User user = getSessionUser(session);
@@ -111,7 +111,7 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/messages/receive", produces = "application/json")
-    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = true) String sessionId,
+    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
                                          HttpSession session) throws LinkApplicationException
     {
         User user = getSessionUser(session);
