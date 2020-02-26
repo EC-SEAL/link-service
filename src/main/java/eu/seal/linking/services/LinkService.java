@@ -165,7 +165,7 @@ public class LinkService
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkRequesterFrom(request, user.getId());
 
-        return RequestCommons.getLinkRequestFrom(request);
+        return RequestCommons.getLinkRequestFrom(request, RequestCommons.REQ_ADD_ALL_FIELDS);
     }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)

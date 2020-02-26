@@ -35,7 +35,7 @@ public class ValidatorController
     private SessionUsersService sessionUsersService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public List<LinkRequest> getRequestList(@RequestParam(required = true) String sessionToken, HttpSession session)
+    public List<LinkRequest> getRequestList(@RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException
     {
         User user = getSessionUser(session);
@@ -67,6 +67,15 @@ public class ValidatorController
     {
         User user = getSessionUser(session);
         return validatorService.getRequest(requestId, user);
+    }
+
+    @RequestMapping(value = "/{requestId}/approve", method = RequestMethod.GET)
+    public Response approveRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        validatorService.approveRequest(requestId, user);
+        return Response.ok().build();
     }
 
     // Test function

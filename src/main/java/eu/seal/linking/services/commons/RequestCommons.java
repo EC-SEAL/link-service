@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,10 @@ import com.google.common.base.Strings;
 public class RequestCommons
 {
     private final static Logger LOG = LoggerFactory.getLogger(RequestCommons.class);
+
+    public final static boolean REQ_ADD_ALL_FIELDS = true;
+
+    public final static boolean REQ_NOT_ADD_ALL_FIELDS = false;
 
     public static Request getRequestFrom(String uid, RequestRepository requestRepository) throws RequestNotFoundException
     {
@@ -88,13 +93,14 @@ public class RequestCommons
         return message;
     }
 
-    public static LinkRequest getLinkRequestFrom(Request request) throws RequestException
+    public static LinkRequest getLinkRequestFrom(Request request, boolean addAllFields) throws RequestException
     {
         LinkRequest linkRequest = null;
         try
         {
             ObjectMapper objectMapper = new ObjectMapper();
             linkRequest = objectMapper.readValue(request.getStrRequest(), LinkRequest.class);
+            linkRequest.setId(request.getUid());
         }
         catch (IOException e)
         {
@@ -102,19 +108,22 @@ public class RequestCommons
             throw new RequestException("Link request format is not valid.");
         }
 
-        List<FileObject> evidence = new ArrayList<FileObject>();
-        for (RequestFile requestFile : request.getFiles())
+        if (addAllFields)
         {
-            evidence.add(RequestCommons.getFileObjectFrom(requestFile));
-        }
-        linkRequest.setEvidence(evidence);
+            List<FileObject> evidence = new ArrayList<FileObject>();
+            for (RequestFile requestFile : request.getFiles())
+            {
+                evidence.add(RequestCommons.getFileObjectFrom(requestFile));
+            }
+            linkRequest.setEvidence(evidence);
 
-        List<Message> conversation = new ArrayList<Message>();
-        for (RequestMessage requestMessage : request.getMessages())
-        {
-            conversation.add(RequestCommons.getMessageFrom(requestMessage));
+            List<Message> conversation = new ArrayList<Message>();
+            for (RequestMessage requestMessage : request.getMessages())
+            {
+                conversation.add(RequestCommons.getMessageFrom(requestMessage));
+            }
+            linkRequest.setConversation(conversation);
         }
-        linkRequest.setConversation(conversation);
 
         return linkRequest;
     }
