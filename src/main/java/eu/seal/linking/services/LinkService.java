@@ -121,45 +121,6 @@ public class LinkService
         requestFileRepository.save(requestFile);
     }
 
-    public void storeMessage(String requestUid, String strMessage, User user) throws LinkApplicationException
-    {
-        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-        checkRequesterFrom(request, user.getId());
-
-        Message message = null;
-        try
-        {
-            ObjectMapper objectMapper = new ObjectMapper();
-            message = objectMapper.readValue(strMessage, Message.class);
-        }
-        catch (IOException e)
-        {
-            LOG.error(e.getMessage(), e);
-            throw new RequestException("Message format is not valid.");
-        }
-
-        //TODO: validate user sender?
-        message.validate();
-
-        RequestMessage requestMessage = RequestCommons.getRequestMessageFrom(message, request);
-        requestMessageRepository.save(requestMessage);
-    }
-
-    public List<Message> getConversation(String requestUid, User user) throws LinkApplicationException
-    {
-        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-        checkRequesterFrom(request, user.getId());
-
-        List<RequestMessage> requestMessages = request.getMessages();
-        List<Message> messages = new ArrayList<Message>();
-        for (RequestMessage requestMessage : requestMessages)
-        {
-            messages.add(RequestCommons.getMessageFrom(requestMessage));
-        }
-
-        return messages;
-    }
-
     public LinkRequest getRequestResult(String requestUid, User user) throws LinkApplicationException
     {
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);

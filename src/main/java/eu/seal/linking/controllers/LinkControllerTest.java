@@ -2,7 +2,6 @@ package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.model.LinkRequest;
-import eu.seal.linking.model.Message;
 import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
 import eu.seal.linking.services.LinkService;
@@ -10,7 +9,6 @@ import eu.seal.linking.services.SessionUsersService;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
@@ -91,32 +89,6 @@ public class LinkControllerTest
         linkService.storeFileRequest(requestId, strFile, user);
 
         return Response.ok().build();
-    }
-
-    // Param recipient will not be used
-    @RequestMapping(value = "/{requestId}/messages/send/{recipient}", method = RequestMethod.GET)
-    public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
-                                @RequestParam(required = false) String sessionToken, HttpSession session)
-            throws LinkApplicationException, IOException
-    {
-        User user = getSessionUser(session);
-
-        // Test with local files
-        ClassPathResource resource = new ClassPathResource("message-requester.json");
-        String strMessage = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-
-        linkService.storeMessage(requestId, strMessage, user);
-
-        return Response.ok().build();
-    }
-
-    @RequestMapping(value = "/{requestId}/messages/receive", produces = "application/json")
-    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
-                                         HttpSession session) throws LinkApplicationException
-    {
-        User user = getSessionUser(session);
-
-        return linkService.getConversation(requestId, user);
     }
 
     @RequestMapping(value = "/{requestId}/result/get", produces = "application/json")

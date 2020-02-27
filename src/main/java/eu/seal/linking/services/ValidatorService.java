@@ -5,12 +5,15 @@ import eu.seal.linking.dao.RequestRepository;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.RequestException;
+import eu.seal.linking.exceptions.RequestFileNotFoundException;
 import eu.seal.linking.exceptions.RequestStatusException;
 import eu.seal.linking.exceptions.UserNotAuthorizedException;
+import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestDomain;
+import eu.seal.linking.model.db.RequestFile;
 import eu.seal.linking.model.enums.RequestStatus;
 import eu.seal.linking.services.commons.RequestCommons;
 
@@ -141,6 +144,82 @@ public class ValidatorService
         requestRepository.save(request);
     }
 
+    @Transactional
+    public void rejectRequest(String requestUid, User user) throws LinkApplicationException
+    {
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
+
+        if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
+        {
+            throw new UserNotAuthorizedException();
+        }
+
+        if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))
+        {
+            throw new RequestStatusException("Request have to be locked before reject it");
+        }
+
+        request.setStatus(RequestStatus.REJECTED.toString());
+        request.setLastUpdate(new Date());
+    }
+
+    public List<FileObject> getFilesFromRequest(String requestUid, User user)
+            throws LinkApplicationException
+    {
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
+
+        if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
+        {
+            throw new UserNotAuthorizedException();
+        }
+
+        if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))
+        {
+            throw new RequestStatusException("Request have to be locked to download its files");
+        }
+
+        List<FileObject> files = new ArrayList<FileObject>();
+        for (RequestFile requestFile : request.getFiles())
+        {
+            files.add(RequestCommons.getFileObjectFrom(requestFile));
+        }
+
+        return files;
+    }
+
+    public FileObject getFileFromRequest(String requestUid, Long fileId, User user)
+            throws LinkApplicationException
+    {
+        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
+
+        if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
+        {
+            throw new UserNotAuthorizedException();
+        }
+
+        if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))
+        {
+            throw new RequestStatusException("Request have to be locked to download its files");
+        }
+
+        FileObject fileObject = null;
+        for (RequestFile requestFile : request.getFiles())
+        {
+            if (requestFile.getId().equals(fileId))
+            {
+                fileObject = RequestCommons.getFileObjectFrom(requestFile);
+                break;
+            }
+        }
+
+        if (fileObject == null)
+        {
+            throw new RequestFileNotFoundException();
+        }
+
+        return fileObject;
+    }
+
     private void checkUserPermissionDomains(List<RequestDomain> requestDomains, List<String> userEntitlements)
             throws UserNotAuthorizedException
     {
@@ -159,6 +238,5 @@ public class ValidatorService
             throw new UserNotAuthorizedException("Not access to request domains");
         }
     }
-
 
 }

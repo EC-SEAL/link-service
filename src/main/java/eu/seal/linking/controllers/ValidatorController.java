@@ -2,12 +2,14 @@ package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.RequestException;
+import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
 import eu.seal.linking.services.LinkService;
 import eu.seal.linking.services.SessionUsersService;
 import eu.seal.linking.services.ValidatorService;
 
+import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -76,6 +78,32 @@ public class ValidatorController
         User user = getSessionUser(session);
         validatorService.approveRequest(requestId, user);
         return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/reject", method = RequestMethod.GET)
+    public Response rejectRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        validatorService.rejectRequest(requestId, user);
+        return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/files/download/list", method = RequestMethod.GET)
+    public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
+                                                HttpSession session) throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        return validatorService.getFilesFromRequest(requestId, user);
+    }
+
+    @RequestMapping(value = "/{requestId}/files/download/{fileId}", method = RequestMethod.GET)
+    public FileObject getFileFromRequest(@PathVariable("requestId") String requestId, @PathVariable("fileId") Long fileId,
+                                         @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException
+    {
+        User user = getSessionUser(session);
+        return validatorService.getFileFromRequest(requestId, fileId, user);
     }
 
     // Test function
