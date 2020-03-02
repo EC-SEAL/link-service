@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("link")
-public class MessageController
+public class MessagesController
 {
     @Autowired
     private SessionUsersService sessionUsersService;

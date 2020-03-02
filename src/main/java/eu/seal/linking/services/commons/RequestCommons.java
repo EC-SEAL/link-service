@@ -1,16 +1,21 @@
 package eu.seal.linking.services.commons;
 
 import eu.seal.linking.dao.RequestRepository;
+import eu.seal.linking.exceptions.LinkApplicationException;
+import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.RequestException;
 import eu.seal.linking.exceptions.RequestNotFoundException;
+import eu.seal.linking.exceptions.UserNotAuthorizedException;
 import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.Message;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestFile;
 import eu.seal.linking.model.db.RequestMessage;
+import eu.seal.linking.utils.CryptoUtils;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -126,5 +131,21 @@ public class RequestCommons
         }
 
         return linkRequest;
+    }
+
+    public static void checkRequesterFrom(Request request, String requesterId) throws LinkApplicationException
+    {
+        try
+        {
+            if (!request.getRequesterId().equals(CryptoUtils.generateMd5(requesterId)))
+            {
+                throw new UserNotAuthorizedException();
+            }
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new LinkInternalException(e.getMessage());
+        }
     }
 }

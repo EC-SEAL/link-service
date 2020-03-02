@@ -89,23 +89,6 @@ public class ValidatorController
         return Response.ok().build();
     }
 
-    @RequestMapping(value = "/{requestId}/files/download/list", method = RequestMethod.GET)
-    public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
-                                                HttpSession session) throws LinkApplicationException
-    {
-        User user = getSessionUser(session);
-        return validatorService.getFilesFromRequest(requestId, user);
-    }
-
-    @RequestMapping(value = "/{requestId}/files/download/{fileId}", method = RequestMethod.GET)
-    public FileObject getFileFromRequest(@PathVariable("requestId") String requestId, @PathVariable("fileId") Long fileId,
-                                         @RequestParam(required = false) String sessionToken, HttpSession session)
-            throws LinkApplicationException
-    {
-        User user = getSessionUser(session);
-        return validatorService.getFileFromRequest(requestId, fileId, user);
-    }
-
     // Test function
     private User getSessionUser(HttpSession session) throws LinkApplicationException
     {

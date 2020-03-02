@@ -163,63 +163,6 @@ public class ValidatorService
         request.setLastUpdate(new Date());
     }
 
-    public List<FileObject> getFilesFromRequest(String requestUid, User user)
-            throws LinkApplicationException
-    {
-        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-
-        if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
-        {
-            throw new UserNotAuthorizedException();
-        }
-
-        if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))
-        {
-            throw new RequestStatusException("Request have to be locked to download its files");
-        }
-
-        List<FileObject> files = new ArrayList<FileObject>();
-        for (RequestFile requestFile : request.getFiles())
-        {
-            files.add(RequestCommons.getFileObjectFrom(requestFile));
-        }
-
-        return files;
-    }
-
-    public FileObject getFileFromRequest(String requestUid, Long fileId, User user)
-            throws LinkApplicationException
-    {
-        Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-
-        if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
-        {
-            throw new UserNotAuthorizedException();
-        }
-
-        if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))
-        {
-            throw new RequestStatusException("Request have to be locked to download its files");
-        }
-
-        FileObject fileObject = null;
-        for (RequestFile requestFile : request.getFiles())
-        {
-            if (requestFile.getId().equals(fileId))
-            {
-                fileObject = RequestCommons.getFileObjectFrom(requestFile);
-                break;
-            }
-        }
-
-        if (fileObject == null)
-        {
-            throw new RequestFileNotFoundException();
-        }
-
-        return fileObject;
-    }
-
     private void checkUserPermissionDomains(List<RequestDomain> requestDomains, List<String> userEntitlements)
             throws UserNotAuthorizedException
     {
