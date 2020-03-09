@@ -1,0 +1,114 @@
+body {
+    margin : 0px;
+    margin-left : auto;
+    margin-right : auto;
+    width: 1000px;
+    font: 14px arial, sans-serif;
+}
+
+.header {
+    overflow: hidden;
+    padding: 10px 10px 0px 20px;
+    background-color: #283A8C;
+}
+
+.header img.logo {
+    float: left;
+    max-width: 200px;
+}
+
+.header .user-data {
+    float: right;
+}
+
+.header .user-data div {
+    float: left;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 10px;
+}
+
+#user-data-access {
+    color: #E9B724;
+}
+
+#user-data-name {
+    color: #FFFFFF;
+}
+
+#user-img {
+    height: 80px;
+    width: 80px;
+    float: right;
+}
+
+.content {
+    clear: both;
+    padding-top: 50px;
+}
+
+#table-requests {
+    width:80%;
+    margin-left:10%;
+    border-collapse: collapse;
+}
+
+#table-requests th {
+    text-align: left;
+    padding: 7px;
+}
+
+#table-requests td {
+    background-color: #F5F5F5;
+    border-top: 1px solid #A9A9A9;
+    border-bottom: 1px solid #A9A9A9;
+    padding: 7px;
+}
+
+#table-requests td.button {
+    background-color: #FFFFFF;
+    border: 0;
+    padding: 0 6px 0 6px;
+}
+
+#table-requests td.first {
+    border-left: 1px solid #A9A9A9;
+}
+
+#table-requests td.last {
+    border-right: 1px solid #A9A9A9;
+}
+
+#table-requests td.button input {
+    background: #283A8C;
+    border-color: #283A8C;
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 3px 2px 3px 2px;
+}
+
+.footer {
+    overflow: hidden;
+    background-color: #F5F5F5;
+    margin-top: 50px;
+    padding: 10px;
+}
+
+.footer .info {
+    float: left;
+}
+
+.footer .info a, .footer .info a:active, .footer .info .a:visited {
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+}
+
+.footer .ue-logo {
+    float: right;
+    background-color: #FFFFFF;
+    width: 75%;
+    height: 50px;
+    margin-top: 10px;
+}
+
