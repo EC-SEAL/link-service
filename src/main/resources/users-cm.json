@@ -1,7 +1,7 @@
 [
   {
     "hashID": "81dc9bdb52d04dc20036dbd8313ed055",
-    "nameAttr": "CurrentGivenName",
+    "nameAttr": "CurrentFirstName",
     "surnameAttr": "CurrentFamilyName",
     "entitlements": [
       "UJI",
@@ -12,7 +12,7 @@
   },
   {
     "hashID": "d93591bdf7860e1e4ee2fca799911215",
-    "nameAttr": "CurrentGivenName",
+    "nameAttr": "CurrentFirstName",
     "surnameAttr": "CurrentFamilyName",
     "entitlements": [
       "UJI"
@@ -22,7 +22,7 @@
   },
   {
     "hashID": "b59c67bf196a4758191e42f76670ceba",
-    "nameAttr": "CurrentGivenName",
+    "nameAttr": "CurrentFirstName",
     "surnameAttr": "CurrentFamilyName",
     "entitlements": [],
     "photoID": "",

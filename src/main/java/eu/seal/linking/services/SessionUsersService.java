@@ -4,8 +4,10 @@ import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.UserNotAuthenticatedException;
 import eu.seal.linking.model.AttributeType;
+import eu.seal.linking.model.AuthSource;
 import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.User;
+import eu.seal.linking.model.UserAuthData;
 import eu.seal.linking.model.UserCM;
 
 import java.io.IOException;
@@ -104,5 +106,24 @@ public class SessionUsersService
         user.setEmail(userCM.getEmail());
 
         return user;
+    }
+
+    public AuthSource getTestAuthSource() throws LinkInternalException
+    {
+        ClassPathResource resource = new ClassPathResource("authsource.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        AuthSource authSource = null;
+        try
+        {
+            authSource = objectMapper.readValue(resource.getInputStream(),
+                    objectMapper.getTypeFactory().constructType(AuthSource.class));
+        }
+        catch (IOException e)
+        {
+            throw new LinkInternalException();
+        }
+
+        return  authSource;
     }
 }
