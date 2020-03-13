@@ -9,7 +9,7 @@ function getUserData()
         type: "GET",
         url: "/link/user/data",
         async: true
-    }).success(function (data, textStatus, jqXHR) {
+    }).done(function (data, textStatus, jqXHR) {
         console.log(data);
     });
 }
