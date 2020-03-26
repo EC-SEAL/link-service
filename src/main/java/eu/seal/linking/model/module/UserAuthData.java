@@ -1,4 +1,7 @@
-package eu.seal.linking.model;
+package eu.seal.linking.model.module;
+
+import eu.seal.linking.model.AuthSource;
+import eu.seal.linking.model.User;
 
 public class UserAuthData
 {

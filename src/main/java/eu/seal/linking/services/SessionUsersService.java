@@ -7,12 +7,10 @@ import eu.seal.linking.model.AttributeType;
 import eu.seal.linking.model.AuthSource;
 import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.User;
-import eu.seal.linking.model.UserAuthData;
 import eu.seal.linking.model.UserCM;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
