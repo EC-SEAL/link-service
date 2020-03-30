@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/seal_linking?autoReconnect=true
+    url: jdbc:mysql://localhost:3306/seal_linking?autoReconnect=true&serverTimezone=UTC&useLegacyDatetimeCode=false
     username: seal_linking
     password: 123clauer
     platform: mysql
