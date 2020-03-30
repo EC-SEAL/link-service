@@ -45,12 +45,14 @@ body {
 .content {
     clear: both;
     padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 #table-requests {
     width:80%;
     margin-left:10%;
     border-collapse: collapse;
+    clear: both;
 }
 
 #table-requests th {
@@ -90,7 +92,6 @@ body {
 .footer {
     overflow: hidden;
     background-color: #F5F5F5;
-    margin-top: 50px;
     padding: 10px;
 }
 
@@ -110,5 +111,15 @@ body {
     width: 75%;
     height: 50px;
     margin-top: 10px;
+}
+
+#refresh-list img {
+    width: 30px;
+    float: right;
+    margin-right: 130px;
+}
+
+.disabled {
+    opacity: 0.5;
 }
 

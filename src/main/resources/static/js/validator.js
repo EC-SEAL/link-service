@@ -2,6 +2,7 @@ $(document).ready(function()
 {
     getUserData();
     getRequestList();
+    initMainLogic();
 });
 
 function getUserData()
@@ -27,7 +28,10 @@ function getRequestList()
     $.ajax({
         type: "GET",
         url: "/link/module/requests",
-        async: true
+        async: true,
+        beforeSend: function () {
+            $('.content').addClass('disabled');
+        }
     }).done(function (data, textStatus, jqXHR) {
         console.log(data);
         for (i=0; i < data.length; i++)
@@ -40,5 +44,22 @@ function getRequestList()
                 '</tbody>'
             $('#table-requests').append(requestInfo);
         }
+        $('.content').removeClass('disabled');
     });
+}
+
+function refreshRequestList()
+{
+    $('#table-requests tbody').remove();
+    getRequestList();
+}
+
+function initMainLogic()
+{
+    $('#refresh-list').click(function (e) {
+       e.preventDefault();
+       refreshRequestList();
+    });
+
+    setInterval(refreshRequestList, 60000);
 }
