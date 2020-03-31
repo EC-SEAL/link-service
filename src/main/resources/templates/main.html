@@ -8,38 +8,48 @@
 </head>
 <body>
 
-<div class="header">
-    <img th:src="@{/images/SEAL_logo.jpg}" class="logo" />
-    <div class="user-data">
-        <div>
-            <p id="user-data-access">eIDAS Access</p>
-            <p id="user-data-name">Unnamed official</p>
+<div class="container">
+
+    <div id="request-div" th:insert="request"></div>
+    <div id="hide-div"></div>
+
+    <div id="main">
+        <div class="header">
+            <img th:src="@{/images/SEAL_logo.jpg}" class="logo"/>
+            <div class="user-data">
+                <div>
+                    <p id="user-data-access">eIDAS Access</p>
+                    <p id="user-data-name">Unnamed official</p>
+                </div>
+                <img th:src="@{/images/user.png}" id="user-img"/>
+            </div>
         </div>
-        <img th:src="@{/images/user.png}" id="user-img" />
-    </div>
-</div>
 
-<div class="content">
+        <div class="content">
 
-    <a href="#" id="refresh-list"><img th:src="@{/images/refresh.png}" /></a>
+            <a href="#" id="refresh-list"><img th:src="@{/images/refresh.png}"/></a>
 
-    <table id="table-requests">
-        <thead>
-            <th>Request ID</th>
-            <th>Date</th>
-            <th>Status</th>
-        </thead>
-    </table>
+            <table id="table-requests">
+                <thead>
+                <th>Request ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                </thead>
+            </table>
 
-</div>
+        </div>
 
-<div class="footer">
+        <div class="footer">
 
-    <div class="info">
-        <p><a href="#">About SEAL</a></p>
-        <p><a href="#">Data Protection Notice</a></p>
-    </div>
-    <div class="ue-logo">
+            <div class="info">
+                <p><a href="#">About SEAL</a></p>
+                <p><a href="#">Data Protection Notice</a></p>
+            </div>
+            <div class="ue-logo">
+            </div>
+
+        </div>
+
     </div>
 
 </div>

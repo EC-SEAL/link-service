@@ -123,3 +123,47 @@ body {
     opacity: 0.5;
 }
 
+.container {
+    position: relative;
+}
+
+#request-div {
+    position: absolute;
+    z-index: 100;
+    border: 2px solid #303030;
+    background-color: white;
+    margin: 10px;
+    padding: 10px;
+    width: 95%;
+    color: #696969;
+}
+
+#hide-div {
+    position: absolute;
+    z-index: 50;
+    background-color: #A9A9A9;
+    opacity: 0.5;
+    width: 100%;
+    height: 100%;
+    /*visibility: hidden;*/
+}
+
+#hide-request {
+    float: right;
+    font-weight: bold;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+#hide-request:visited, #hide-request:active {
+    color: #696969;
+}
+
+#request-attr-1 {
+    float: left;
+}
+
+#request-attr-2 {
+    float: right;
+}
+
