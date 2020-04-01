@@ -161,9 +161,57 @@ body {
 
 #request-attr-1 {
     float: left;
+    width: 49%;
 }
 
 #request-attr-2 {
     float: right;
+    width: 49%;
+}
+
+.attr-content .status {
+    float: left;
+    font-weight: bold;
+    color: #CC0000;
+}
+
+.attr-content .level {
+    float: right;
+    font-weight: bold;
+}
+
+.attr-content table {
+    clear: both;
+    color: black;
+}
+
+td.attr-value {
+    word-break: break-word;
+}
+
+td.attr-name {
+    vertical-align: top;
+    padding-right: 10px;
+}
+
+.attr-content {
+    border: 2px solid #A9A9A9;
+    border-radius: 10px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.attr-name {
+    font-weight: bold;
+}
+
+ul.docs {
+    padding-left: 0;
+}
+
+ul.docs li {
+    list-style: none;
+    border: 1px solid silver;
+    padding: 2px;
 }
 
