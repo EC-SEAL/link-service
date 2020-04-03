@@ -3,6 +3,7 @@ $(document).ready(function()
     getUserData();
     getRequestList();
     initMainLogic();
+    initRequestDivLogic();
 });
 
 function getUserData()
@@ -33,7 +34,6 @@ function getRequestList()
             $('.content').addClass('disabled');
         }
     }).done(function (data, textStatus, jqXHR) {
-        console.log(data);
         for (i=0; i < data.length; i++)
         {
             requestInfo = '<tbody>\n' +
@@ -44,6 +44,7 @@ function getRequestList()
                 '</tbody>'
             $('#table-requests').append(requestInfo);
         }
+        showRequestInfoLogic();
         $('.content').removeClass('disabled');
     });
 }
@@ -62,4 +63,43 @@ function initMainLogic()
     });
 
     setInterval(refreshRequestList, 60000);
+}
+
+function initRequestDivLogic()
+{
+    $('#hide-request').click(function (e) {
+        e.preventDefault();
+        $("#request-div").hide();
+        $('#hide-div').hide();
+    })
+}
+
+function showRequestInfoLogic()
+{
+    $('#table-requests input[type=button]').click(function()
+    {
+       requestId = $(this).attr('request-id');
+       $('#hide-div').show();
+
+        requestId = $(this).attr('request-id');
+        getRequestInfo(requestId);
+        $("#request-div").show();
+
+    });
+}
+
+function getRequestInfo(requestId)
+{
+    $.ajax({
+        type: 'GET',
+        url: '/test/link/' + requestId + '/result/get?msToken=1', //To change
+        async: true,
+        beforeSend: function () {
+
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        console.log(data);
+        $('#current-request-id').text(requestId);
+        $('#request-date').text(data.issued.substring(0, 10));
+    });
 }
