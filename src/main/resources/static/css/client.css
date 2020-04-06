@@ -190,9 +190,22 @@ td.attr-value {
     word-break: break-word;
 }
 
+td.prop-value {
+    word-break: break-word;
+}
+
 td.attr-name {
     vertical-align: top;
     padding-right: 10px;
+    font-weight: bold;
+}
+
+tr.property {
+    color: #696969;
+}
+
+td.attr-id {
+    font-weight: bold;
 }
 
 .attr-content {
@@ -205,26 +218,32 @@ td.attr-name {
     position: relative;
 }
 
-.attr-name {
-    font-weight: bold;
-}
-
-ul.docs {
+#request-docs {
+    float: left;
     padding-left: 0;
-    position: absolute;
-    bottom: 0px;
     margin-block-end: 6px;
+    margin-block-start: 8px;
+    max-width: 39%;
 }
 
-ul.docs li {
+#request-docs li {
     list-style: none;
     border: 1px solid silver;
     padding: 2px;
+    word-break: break-word;
+}
+
+#request-docs li a {
+    text-decoration: none;
+}
+
+#request-docs li a:visited, #request-docs li a:active {
+    color: #696969;
 }
 
 #request-buttons {
-    clear: both;
     padding-top: 10px;
+    float: right;
 }
 
 #request-buttons input[type=button] {
@@ -236,27 +255,11 @@ ul.docs li {
     font-weight: bold;
 }
 
-#request-main-buttons {
-    float: left;
-}
-
-#upload-file {
-    float: right;
-}
-
-#upload-file::-webkit-file-upload-button, #send-message {
-    background: #283A8C;
-    border-color: #283A8C;
-    color: #FFFFFF;
-    border-radius: 5px;
-    padding: 3px 2px 3px 2px;
-}
-
 #request-messages {
-    clear: both;
+    clear: right;
     float: right;
     width: 60%;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 #messages-space {
@@ -266,6 +269,10 @@ ul.docs li {
     overflow: auto;
     padding: 10px;
     color: black;
+}
+
+#messages-space div  {
+    margin-bottom: 2px;
 }
 
 .officer-message {
@@ -293,6 +300,6 @@ ul.docs li {
 }
 
 #text-message {
-    width: 91%;
+    width: 90%;
 }
 

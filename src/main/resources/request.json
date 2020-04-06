@@ -34,7 +34,8 @@
      }
    ],
    "aProperties" : {
-     "name": "commonName"
+     "name": "commonName",
+     "test": "Test 1"
    },
    "bAttributes" :
    [ {

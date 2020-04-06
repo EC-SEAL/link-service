@@ -65,12 +65,21 @@ function initMainLogic()
     setInterval(refreshRequestList, 60000);
 }
 
+function clearRequestData()
+{
+    $('#request-attr-1 div.attr-content table').text('');
+    $('#request-attr-2 div.attr-content table').text('');
+    $('#request-docs').text('');
+    $('#messages-space').text('');
+}
+
 function initRequestDivLogic()
 {
     $('#hide-request').click(function (e) {
         e.preventDefault();
         $("#request-div").hide();
         $('#hide-div').hide();
+        clearRequestData();
     })
 }
 
@@ -88,11 +97,34 @@ function showRequestInfoLogic()
     });
 }
 
+function fillRequestAttributes(attributtes, properties, attributeId, table)
+{
+    for (i=0; i < attributtes.length; i++)
+    {
+        var attr = '<tr><td class="attr-name">' + attributtes[i].friendlyName + '</td>'
+            + '<td class="attr-value';
+
+        if (attributtes[i].name == attributeId)
+        {
+            attr = attr + ' attr-id';
+        }
+
+        attr = attr + '">' + attributtes[i].values.toString() + '</td>';
+        $(table).append(attr);
+    }
+
+    $.each(properties, function(key, value) {
+        var prop = '<tr class="property"><td class="attr-name">' + key + '</td>' +
+            '<td class="attr-value">' + value + '</td></tr>';
+        $(table).append(prop);
+    });
+}
+
 function getRequestInfo(requestId)
 {
     $.ajax({
         type: 'GET',
-        url: '/test/link/' + requestId + '/result/get?msToken=1', //To change
+        url: '/link/' + requestId + '/get',
         async: true,
         beforeSend: function () {
 
@@ -101,5 +133,37 @@ function getRequestInfo(requestId)
         console.log(data);
         $('#current-request-id').text(requestId);
         $('#request-date').text(data.issued.substring(0, 10));
+
+        // Attributes section A
+        $('#request-attr-1 h3').text(data.aSubjectIssuer);
+        fillRequestAttributes(data.aAttributes, data.aProperties, data.aSubjectId, $('#request-attr-1 div.attr-content table'));
+
+        // Attributes section B
+        $('#request-attr-2 h3').text(data.bSubjectIssuer);
+        fillRequestAttributes(data.bAttributes, data.bProperties, data.bSubjectId, $('#request-attr-2 div.attr-content table'));
+
+        //Files list
+        for (var i=0; i < data.evidence.length; i++)
+        {
+            var file = '<li><a href="#" file-id="' + data.evidence[i].fileID + '">' + data.evidence[i].filename + '</a></li>';
+            $('#request-docs').append(file);
+        }
+
+        //Messages list
+        for (var i=0; i < data.conversation.length; i++)
+        {
+            var sender = '';
+            if (data.conversation[i].senderType == "requester")
+            {
+                sender = 'user-message';
+            }
+            else {
+                sender = 'officer-message';
+            }
+
+            var message = '<div class="' +  sender + '">' + data.conversation[i].message + '</div>';
+            $('#messages-space').append(message);
+        }
+        $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
     });
 }

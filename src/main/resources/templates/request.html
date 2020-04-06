@@ -2,7 +2,7 @@
 
 <h2>Request #<span id="current-request-id"></span></h2>
 
-<h3><span id="request-date"></span> <span is="request-user">John D.Seal</span></h3>
+<h3 id="request-date"></h3>
 
 <div id="request-attributes">
 
@@ -17,28 +17,7 @@
             </div>
 
             <table>
-                <tr>
-                    <td class="attr-name">personIdentifier</td>
-                    <td class="attr-value">ES/GR/123456789A</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">givenName</td>
-                    <td class="attr-value">John D.</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">surname</td>
-                    <td class="attr-value">Seal</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">dateOfBirth</td>
-                    <td class="attr-value">2019-04-01</td>
-                </tr>
             </table>
-
-            <ul class="docs">
-                <li><a href="#">PhotoID.pdf</a></li>
-                <li><a href="#">Receipt-123456.pdf</a></li>
-            </ul>
         </div>
     </div>
 
@@ -53,58 +32,21 @@
             </div>
 
             <table>
-                <tr>
-                    <td class="attr-name">eduPersonTargetedID</td>
-                    <td class="attr-value">gfhgurgfdiugf54ghd56h4g5h456gfh414gf5h4gf5h</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">displayName</td>
-                    <td class="attr-value">John Delilah Seal</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">eduPersonPrincipalName</td>
-                    <td class="attr-value">seal@uji.es</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">surname</td>
-                    <td class="attr-value">Seal</td>
-                </tr>
-                <tr>
-                    <td class="attr-name">eduPersonAffiliation</td>
-                    <td class="attr-value">Student</td>
-                </tr>
             </table>
-
-            <ul class="docs">
-                <li><a href="#">PhotoID.pdf</a></li>
-            </ul>
         </div>
     </div>
 </div>
 
+<ul id="request-docs">
+</ul>
+
 <div id="request-buttons">
-    <div id="request-main-buttons">
         <input type="button" id="validate-request" value="Validate" />
         <input type="button" id="reject-request" value="Reject" />
-    </div>
-
-    <input type="file" id="upload-file" />
 </div>
 
 <div id="request-messages">
     <div id="messages-space">
-        <div class="officer-message">
-            Hi, please, provide a copy of a photo ID. Further validation is required.
-        </div>
-        <div class="user-message">
-            Hi, done
-        </div>
-        <div class="officer-message">
-            Hi, please, provide a copy of a photo ID. Further validation is required.
-        </div>
-        <div class="user-message">
-            Hi, done
-        </div>
     </div>
     <div id="send-message-div">
         <input type="text" id="text-message" />
