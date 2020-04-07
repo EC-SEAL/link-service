@@ -109,8 +109,8 @@ public class LinkService
         request.setStatus(RequestStatus.PENDING.toString());
 
         List<RequestDomain> domains = new ArrayList<RequestDomain>();
-        domains.add(new RequestDomain(linkRequest.getaSubjectIssuer(), request));
-        domains.add(new RequestDomain(linkRequest.getbSubjectIssuer(), request));
+        domains.add(new RequestDomain(linkRequest.getDatasetA().getIssuerId(), request));
+        domains.add(new RequestDomain(linkRequest.getDatasetB().getIssuerId(), request));
         request.setDomains(domains);
 
         return request;

@@ -9,27 +9,17 @@ public class LinkRequest
 
     private String issuer;
 
-    private String aSubjectId;
-
-    private String aSubjectIssuer;
-
-    private String bSubjectId;
-
-    private String bSubjectIssuer;
-
     private String lloa;
 
     private String issued;
 
+    private String type;
+
     private String expiration;
 
-    private List<AttributeType> aAttributes;
+    private Dataset datasetA;
 
-    private HashMap<String,String> aProperties;
-
-    private List<AttributeType> bAttributes;
-
-    private HashMap<String,String> bProperties;
+    private Dataset datasetB;
 
     private List<FileObject> evidence;
 
@@ -55,46 +45,6 @@ public class LinkRequest
         this.issuer = issuer;
     }
 
-    public String getaSubjectId()
-    {
-        return aSubjectId;
-    }
-
-    public void setaSubjectId(String aSubjectId)
-    {
-        this.aSubjectId = aSubjectId;
-    }
-
-    public String getaSubjectIssuer()
-    {
-        return aSubjectIssuer;
-    }
-
-    public void setaSubjectIssuer(String aSubjectIssuer)
-    {
-        this.aSubjectIssuer = aSubjectIssuer;
-    }
-
-    public String getbSubjectId()
-    {
-        return bSubjectId;
-    }
-
-    public void setbSubjectId(String bSubjectId)
-    {
-        this.bSubjectId = bSubjectId;
-    }
-
-    public String getbSubjectIssuer()
-    {
-        return bSubjectIssuer;
-    }
-
-    public void setbSubjectIssuer(String bSubjectIssuer)
-    {
-        this.bSubjectIssuer = bSubjectIssuer;
-    }
-
     public String getLloa()
     {
         return lloa;
@@ -115,6 +65,16 @@ public class LinkRequest
         this.issued = issued;
     }
 
+    public String getType()
+    {
+        return type;
+    }
+
+    public void setType(String type)
+    {
+        this.type = type;
+    }
+
     public String getExpiration()
     {
         return expiration;
@@ -125,44 +85,24 @@ public class LinkRequest
         this.expiration = expiration;
     }
 
-    public List<AttributeType> getaAttributes()
+    public Dataset getDatasetA()
     {
-        return aAttributes;
+        return datasetA;
     }
 
-    public void setaAttributes(List<AttributeType> aAttributes)
+    public void setDatasetA(Dataset datasetA)
     {
-        this.aAttributes = aAttributes;
+        this.datasetA = datasetA;
     }
 
-    public HashMap<String, String> getaProperties()
+    public Dataset getDatasetB()
     {
-        return aProperties;
+        return datasetB;
     }
 
-    public void setaProperties(HashMap<String, String> aProperties)
+    public void setDatasetB(Dataset datasetB)
     {
-        this.aProperties = aProperties;
-    }
-
-    public List<AttributeType> getbAttributes()
-    {
-        return bAttributes;
-    }
-
-    public void setbAttributes(List<AttributeType> bAttributes)
-    {
-        this.bAttributes = bAttributes;
-    }
-
-    public HashMap<String,String> getbProperties()
-    {
-        return bProperties;
-    }
-
-    public void setbProperties(HashMap<String,String> bProperties)
-    {
-        this.bProperties = bProperties;
+        this.datasetB = datasetB;
     }
 
     public List<FileObject> getEvidence()

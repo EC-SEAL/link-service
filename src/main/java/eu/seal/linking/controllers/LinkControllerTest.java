@@ -43,7 +43,7 @@ public class LinkControllerTest
         User user = getSessionUser(session);
 
         // Test with local file
-        ClassPathResource resource = new ClassPathResource("request.json");
+        ClassPathResource resource = new ClassPathResource("request2.json");
         String strRequest = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
         LinkRequest linkRequest = linkService.storeNewRequest(strRequest, user);

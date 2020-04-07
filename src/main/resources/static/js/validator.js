@@ -120,6 +120,21 @@ function fillRequestAttributes(attributtes, properties, attributeId, table)
     });
 }
 
+function getRequestCurrentStatus(requestId)
+{
+    var status = '';
+
+    $.ajax( {
+        type: 'GET',
+        url: '/link/module/request/' + requestId + '/info',
+        async: false
+    }).done(function (data, textStatus, jqXHR) {
+       status = data.status;
+    });
+
+    return status;
+}
+
 function getRequestInfo(requestId)
 {
     $.ajax({
@@ -135,12 +150,16 @@ function getRequestInfo(requestId)
         $('#request-date').text(data.issued.substring(0, 10));
 
         // Attributes section A
-        $('#request-attr-1 h3').text(data.aSubjectIssuer);
-        fillRequestAttributes(data.aAttributes, data.aProperties, data.aSubjectId, $('#request-attr-1 div.attr-content table'));
+        $('#request-attr-1 h3').text(data.datasetA.issuerId);
+        $('#request-attr-1 .level').text(data.datasetA.loa);
+        $('#request-attr-1 .level').addClass(data.datasetA.loa.toLowerCase())
+        fillRequestAttributes(data.datasetA.attributes, data.datasetA.properties, data.datasetA.subjectId, $('#request-attr-1 div.attr-content table'));
 
         // Attributes section B
-        $('#request-attr-2 h3').text(data.bSubjectIssuer);
-        fillRequestAttributes(data.bAttributes, data.bProperties, data.bSubjectId, $('#request-attr-2 div.attr-content table'));
+        $('#request-attr-2 h3').text(data.datasetB.issuerId);
+        $('#request-attr-2 .level').text(data.datasetB.loa);
+        $('#request-attr-2 .level').addClass(data.datasetB.loa.toLowerCase())
+        fillRequestAttributes(data.datasetB.attributes, data.datasetB.properties, data.datasetB.subjectId, $('#request-attr-2 div.attr-content table'));
 
         //Files list
         for (var i=0; i < data.evidence.length; i++)
@@ -165,5 +184,24 @@ function getRequestInfo(requestId)
             $('#messages-space').append(message);
         }
         $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
+
+        var status = getRequestCurrentStatus(requestId);
+        var infoStatus;
+
+        switch (status) {
+            case "PENDING":
+                infoStatus = 'Validation pending by official';
+                break;
+            case "LOCKED":
+                infoStatus = 'Request locked, waiting validation';
+                break;
+            case "ACCEPTED":
+                infoStatus = "Request accepted";
+                break;
+            default:
+                infoStatus = "Request rejected";
+        }
+        $('#request-status').text(infoStatus);
+        $('#request-status').addClass(status.toLowerCase());
     });
 }

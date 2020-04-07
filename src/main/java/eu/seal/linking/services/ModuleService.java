@@ -3,6 +3,7 @@ package eu.seal.linking.services;
 import eu.seal.linking.dao.RequestDomainRepository;
 import eu.seal.linking.dao.RequestRepository;
 import eu.seal.linking.exceptions.RequestException;
+import eu.seal.linking.exceptions.RequestNotFoundException;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
 import eu.seal.linking.model.db.Request;
@@ -48,6 +49,24 @@ public class ModuleService
         }
 
         return requestInfoList;
+    }
+
+    public RequestInfo getRequestInfo(String requestId, User user) throws RequestNotFoundException
+    {
+        List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(user.getEntitlements());
+
+        Request request = null;
+        try
+        {
+            request = requestRepository.findByUidAndDomains(requestId, requestDomains).get(0);
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new RequestNotFoundException();
+        }
+
+        return getRequestInfoFrom(request);
     }
 
     private RequestInfo getRequestInfoFrom(Request request)

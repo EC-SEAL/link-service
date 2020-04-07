@@ -181,6 +181,14 @@ body {
     font-weight: bold;
 }
 
+.attr-content .high {
+    color: #00e6a2;
+}
+
+.attr-content .low {
+    color: #bf920d;
+}
+
 .attr-content table {
     clear: both;
     color: black;
@@ -301,5 +309,25 @@ td.attr-id {
 
 #text-message {
     width: 90%;
+}
+
+#request-status {
+    margin-block-end: 0;
+}
+
+#request-status.pending {
+    color: #CC0000;
+}
+
+#request-status.locked {
+    color: #3e76e6;
+}
+
+#request-status.accepted {
+    color: green;
+}
+
+#request-status.rejected {
+    color: darkred;
 }
 
