@@ -76,7 +76,6 @@ public class ModuleController
         return moduleService.getAgentRequests(user);
     }
 
-    //TODO: Revise why is not working with more than one request
     @RequestMapping("request/{requestId}/info")
     public RequestInfo getRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException
