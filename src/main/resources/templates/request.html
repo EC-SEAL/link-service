@@ -2,9 +2,18 @@
 
 <h2>Request #<span id="current-request-id"></span></h2>
 
-<h3 id="request-date"></h3>
+<div>
+    <div id="request-main-info">
+        <h3 id="request-date"></h3>
 
-<h3 id="request-status"></h3>
+        <h3 id="request-status"></h3>
+    </div>
+
+    <div id="lock-buttons">
+        <input type="button" id="lock-request" value="Lock"/>
+        <input type="button" id="unlock-request" value="Unlock"/>
+    </div>
+</div>
 
 <div id="request-attributes">
 
@@ -37,15 +46,15 @@
 </ul>
 
 <div id="request-buttons">
-        <input type="button" id="validate-request" value="Validate" />
-        <input type="button" id="reject-request" value="Reject" />
+    <input type="button" id="validate-request" value="Validate"/>
+    <input type="button" id="reject-request" value="Reject"/>
 </div>
 
 <div id="request-messages">
     <div id="messages-space">
     </div>
     <div id="send-message-div">
-        <input type="text" id="text-message" />
-        <input type="button" id="send-message" value="Send" />
+        <input type="text" id="text-message"/>
+        <input type="button" id="send-message" value="Send"/>
     </div>
 </div>

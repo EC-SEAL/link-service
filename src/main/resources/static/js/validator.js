@@ -1,3 +1,7 @@
+var statusClass;
+var level1Class;
+var level2Class;
+
 $(document).ready(function()
 {
     getUserData();
@@ -71,6 +75,17 @@ function clearRequestData()
     $('#request-attr-2 div.attr-content table').text('');
     $('#request-docs').text('');
     $('#messages-space').text('');
+    $('#request-status').removeClass(statusClass);
+    $('#request-attr-1 .level').removeClass(level1Class);
+    $('#request-attr-2 .level').removeClass(level2Class);
+
+    $('#lock-request').show();
+    $('#unlock-request').show();
+    $('#validate-request').attr('disabled', false);
+    $('#validate-request').removeClass("button-disabled");
+    $('#reject-request').attr('disabled', false);
+    $('#reject-request').removeClass("button-disabled");
+    $('#send-message').attr('disabled', false);
 }
 
 function initRequestDivLogic()
@@ -135,6 +150,28 @@ function getRequestCurrentStatus(requestId)
     return status;
 }
 
+function showStatusOptions(status)
+{
+    if (status == "PENDING") {
+        $('#unlock-request').hide();
+    }
+    else if (status == "LOCKED") {
+        $('#lock-request').hide();
+    }
+    else {
+        $('#unlock-request').hide();
+        $('#lock-request').hide();
+    }
+
+    if (status != 'LOCKED') {
+        $('#validate-request').attr('disabled', true);
+        $('#validate-request').addClass("button-disabled");
+        $('#reject-request').attr('disabled', true);
+        $('#reject-request').addClass("button-disabled");
+        $('#send-message').attr('disabled', true);
+    }
+}
+
 function getRequestInfo(requestId)
 {
     $.ajax({
@@ -152,13 +189,15 @@ function getRequestInfo(requestId)
         // Attributes section A
         $('#request-attr-1 h3').text(data.datasetA.issuerId);
         $('#request-attr-1 .level').text(data.datasetA.loa);
-        $('#request-attr-1 .level').addClass(data.datasetA.loa.toLowerCase())
+        level1Class = data.datasetA.loa.toLowerCase();
+        $('#request-attr-1 .level').addClass(level1Class);
         fillRequestAttributes(data.datasetA.attributes, data.datasetA.properties, data.datasetA.subjectId, $('#request-attr-1 div.attr-content table'));
 
         // Attributes section B
         $('#request-attr-2 h3').text(data.datasetB.issuerId);
         $('#request-attr-2 .level').text(data.datasetB.loa);
-        $('#request-attr-2 .level').addClass(data.datasetB.loa.toLowerCase())
+        level2Class = data.datasetB.loa.toLowerCase();
+        $('#request-attr-2 .level').addClass(level2Class)
         fillRequestAttributes(data.datasetB.attributes, data.datasetB.properties, data.datasetB.subjectId, $('#request-attr-2 div.attr-content table'));
 
         //Files list
@@ -180,7 +219,10 @@ function getRequestInfo(requestId)
                 sender = 'officer-message';
             }
 
-            var message = '<div class="' +  sender + '">' + data.conversation[i].message + '</div>';
+            var date = new Date(data.conversation[i].timestamp);
+
+            var message = '<div class="' +  sender + '"><div>' + data.conversation[i].message + '</div>' +
+                '<div class="time-message">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</div></div>';
             $('#messages-space').append(message);
         }
         $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
@@ -202,6 +244,9 @@ function getRequestInfo(requestId)
                 infoStatus = "Request rejected";
         }
         $('#request-status').text(infoStatus);
-        $('#request-status').addClass(status.toLowerCase());
+        statusClass = status.toLowerCase();
+        $('#request-status').addClass(statusClass);
+
+        showStatusOptions(status);
     });
 }

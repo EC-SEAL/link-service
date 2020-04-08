@@ -58,7 +58,7 @@ public class ModuleService
         Request request = null;
         try
         {
-            request = requestRepository.findByUidAndDomains(requestId, requestDomains).get(0);
+            request = requestRepository.findByUidAndDomainsIn(requestId, requestDomains).get(0);
 
         } catch (Exception e)
         {

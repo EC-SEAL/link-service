@@ -13,5 +13,5 @@ public interface RequestRepository extends CrudRepository<Request, Long>
 
     public List<Request> findByDomainsIn(List<RequestDomain> requestDomains);
 
-    public List<Request> findByUidAndDomains(String uid, List<RequestDomain> requestDomains);
+    public List<Request> findByUidAndDomainsIn(String uid, List<RequestDomain> requestDomains);
 }
