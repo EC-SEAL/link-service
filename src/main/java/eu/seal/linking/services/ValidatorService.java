@@ -84,7 +84,7 @@ public class ValidatorService
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
         {
-            throw new UserNotAuthorizedException();
+            throw new UserNotAuthorizedException("You cannot unlock this request");
         }
 
         if (!request.getStatus().equals(RequestStatus.LOCKED.toString()))

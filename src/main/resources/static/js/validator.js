@@ -2,16 +2,14 @@ var statusClass;
 var level1Class;
 var level2Class;
 
-$(document).ready(function()
-{
+$(document).ready(function () {
     getUserData();
     getRequestList();
     initMainLogic();
     initRequestDivLogic();
 });
 
-function getUserData()
-{
+function getUserData() {
     $.ajax({
         type: "GET",
         url: "/link/module/user/data",
@@ -21,15 +19,13 @@ function getUserData()
         $('#user-data-access').text(data.authName);
         $('#user-data-name').text(data.userName);
 
-        if (data.userPhoto != '')
-        {
+        if (data.userPhoto != '') {
             $('#user-img').attr('src', data.userPhoto);
         }
     });
 }
 
-function getRequestList()
-{
+function getRequestList() {
     $.ajax({
         type: "GET",
         url: "/link/module/requests",
@@ -38,8 +34,7 @@ function getRequestList()
             $('.content').addClass('disabled');
         }
     }).done(function (data, textStatus, jqXHR) {
-        for (i=0; i < data.length; i++)
-        {
+        for (i = 0; i < data.length; i++) {
             requestInfo = '<tbody>\n' +
                 '  <td class="first">' + data[i].id + '</td>\n' +
                 '  <td>' + data[i].date + '</td>\n' +
@@ -53,24 +48,21 @@ function getRequestList()
     });
 }
 
-function refreshRequestList()
-{
+function refreshRequestList() {
     $('#table-requests tbody').remove();
     getRequestList();
 }
 
-function initMainLogic()
-{
+function initMainLogic() {
     $('#refresh-list').click(function (e) {
-       e.preventDefault();
-       refreshRequestList();
+        e.preventDefault();
+        refreshRequestList();
     });
 
     setInterval(refreshRequestList, 60000);
 }
 
-function clearRequestData()
-{
+function clearRequestData() {
     $('#request-attr-1 div.attr-content table').text('');
     $('#request-attr-2 div.attr-content table').text('');
     $('#request-docs').text('');
@@ -88,22 +80,36 @@ function clearRequestData()
     $('#send-message').attr('disabled', false);
 }
 
-function initRequestDivLogic()
-{
+function initRequestDivLogic() {
     $('#hide-request').click(function (e) {
         e.preventDefault();
         $("#request-div").hide();
         $('#hide-div').hide();
         clearRequestData();
-    })
+        refreshRequestList();
+    });
+
+    $('#lock-request').click(function () {
+        lockRequest($('#request-id').val());
+    });
+
+    $('#unlock-request').click(function () {
+        unlockRequest($('#request-id').val());
+    });
+
+    $('#validate-request').click(function () {
+        approveRequest($('#request-id').val());
+    });
+
+    $('#reject-request').click(function () {
+        rejectRequest($('#request-id').val());
+    });
 }
 
-function showRequestInfoLogic()
-{
-    $('#table-requests input[type=button]').click(function()
-    {
-       requestId = $(this).attr('request-id');
-       $('#hide-div').show();
+function showRequestInfoLogic() {
+    $('#table-requests input[type=button]').click(function () {
+        requestId = $(this).attr('request-id');
+        $('#hide-div').show();
 
         requestId = $(this).attr('request-id');
         getRequestInfo(requestId);
@@ -112,15 +118,12 @@ function showRequestInfoLogic()
     });
 }
 
-function fillRequestAttributes(attributtes, properties, attributeId, table)
-{
-    for (i=0; i < attributtes.length; i++)
-    {
+function fillRequestAttributes(attributtes, properties, attributeId, table) {
+    for (i = 0; i < attributtes.length; i++) {
         var attr = '<tr><td class="attr-name">' + attributtes[i].friendlyName + '</td>'
             + '<td class="attr-value';
 
-        if (attributtes[i].name == attributeId)
-        {
+        if (attributtes[i].name == attributeId) {
             attr = attr + ' attr-id';
         }
 
@@ -128,37 +131,33 @@ function fillRequestAttributes(attributtes, properties, attributeId, table)
         $(table).append(attr);
     }
 
-    $.each(properties, function(key, value) {
+    $.each(properties, function (key, value) {
         var prop = '<tr class="property"><td class="attr-name">' + key + '</td>' +
             '<td class="attr-value">' + value + '</td></tr>';
         $(table).append(prop);
     });
 }
 
-function getRequestCurrentStatus(requestId)
-{
+function getRequestCurrentStatus(requestId) {
     var status = '';
 
-    $.ajax( {
+    $.ajax({
         type: 'GET',
         url: '/link/module/request/' + requestId + '/info',
         async: false
     }).done(function (data, textStatus, jqXHR) {
-       status = data.status;
+        status = data.status;
     });
 
     return status;
 }
 
-function showStatusOptions(status)
-{
+function showStatusOptions(status) {
     if (status == "PENDING") {
         $('#unlock-request').hide();
-    }
-    else if (status == "LOCKED") {
+    } else if (status == "LOCKED") {
         $('#lock-request').hide();
-    }
-    else {
+    } else {
         $('#unlock-request').hide();
         $('#lock-request').hide();
     }
@@ -172,8 +171,31 @@ function showStatusOptions(status)
     }
 }
 
-function getRequestInfo(requestId)
-{
+function setInfoStatus(status) {
+
+    var infoStatus;
+
+    switch (status) {
+        case "PENDING":
+            infoStatus = 'Validation pending by official';
+            break;
+        case "LOCKED":
+            infoStatus = 'Request locked, waiting validation';
+            break;
+        case "ACCEPTED":
+            infoStatus = "Request accepted";
+            break;
+        default:
+            infoStatus = "Request rejected";
+    }
+
+    $('#request-status').text(infoStatus);
+    statusClass = status.toLowerCase();
+    $('#request-status').removeClass("pending locked accepted rejected");
+    $('#request-status').addClass(statusClass);
+}
+
+function getRequestInfo(requestId) {
     $.ajax({
         type: 'GET',
         url: '/link/' + requestId + '/get',
@@ -182,7 +204,8 @@ function getRequestInfo(requestId)
 
         }
     }).done(function (data, textStatus, jqXHR) {
-        console.log(data);
+        //console.log(data);
+        $('#request-id').val(requestId);
         $('#current-request-id').text(requestId);
         $('#request-date').text(data.issued.substring(0, 10));
 
@@ -201,52 +224,138 @@ function getRequestInfo(requestId)
         fillRequestAttributes(data.datasetB.attributes, data.datasetB.properties, data.datasetB.subjectId, $('#request-attr-2 div.attr-content table'));
 
         //Files list
-        for (var i=0; i < data.evidence.length; i++)
-        {
+        for (var i = 0; i < data.evidence.length; i++) {
             var file = '<li><a href="#" file-id="' + data.evidence[i].fileID + '">' + data.evidence[i].filename + '</a></li>';
             $('#request-docs').append(file);
         }
 
         //Messages list
-        for (var i=0; i < data.conversation.length; i++)
-        {
+        for (var i = 0; i < data.conversation.length; i++) {
             var sender = '';
-            if (data.conversation[i].senderType == "requester")
-            {
+            if (data.conversation[i].senderType == "requester") {
                 sender = 'user-message';
-            }
-            else {
+            } else {
                 sender = 'officer-message';
             }
 
             var date = new Date(data.conversation[i].timestamp);
 
-            var message = '<div class="' +  sender + '"><div>' + data.conversation[i].message + '</div>' +
+            var message = '<div class="' + sender + '"><div>' + data.conversation[i].message + '</div>' +
                 '<div class="time-message">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</div></div>';
             $('#messages-space').append(message);
         }
         $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
 
         var status = getRequestCurrentStatus(requestId);
-        var infoStatus;
+        setInfoStatus(status);
 
-        switch (status) {
-            case "PENDING":
-                infoStatus = 'Validation pending by official';
-                break;
-            case "LOCKED":
-                infoStatus = 'Request locked, waiting validation';
-                break;
-            case "ACCEPTED":
-                infoStatus = "Request accepted";
-                break;
-            default:
-                infoStatus = "Request rejected";
-        }
-        $('#request-status').text(infoStatus);
-        statusClass = status.toLowerCase();
-        $('#request-status').addClass(statusClass);
-
-        showStatusOptions(status);
+        showStatusOptions(status, requestId);
     });
+}
+
+function lockRequest(requestId) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/link/' + requestId + '/lock',
+        async: true,
+        beforeSend: function () {
+
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        $('#unlock-request').show();
+        $('#lock-request').hide();
+
+        $('#validate-request').attr('disabled', false);
+        $('#validate-request').removeClass("button-disabled");
+        $('#reject-request').attr('disabled', false);
+        $('#reject-request').removeClass("button-disabled");
+        $('#send-message').attr('disabled', false);
+
+        setInfoStatus("LOCKED");
+
+    }).fail(function (data, textStatus, jqXHR) {
+        alert(data.responseJSON.message);
+    });
+}
+
+function unlockRequest(requestId) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/link/' + requestId + '/unlock',
+        async: true,
+        beforeSend: function () {
+
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        $('#unlock-request').hide();
+        $('#lock-request').show();
+
+        $('#validate-request').attr('disabled', true);
+        $('#validate-request').addClass("button-disabled");
+        $('#reject-request').attr('disabled', true);
+        $('#reject-request').addClass("button-disabled");
+        $('#send-message').attr('disabled', true);
+
+        setInfoStatus("PENDING");
+
+    }).fail(function (data, textStatus, jqXHR) {
+        alert(data.responseJSON.message);
+    });
+
+}
+
+function approveRequest(requestId) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/link/' + requestId + '/approve',
+        async: true,
+        beforeSend: function () {
+
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        $('#unlock-request').hide();
+        $('#lock-request').hide();
+
+        $('#validate-request').attr('disabled', true);
+        $('#validate-request').addClass("button-disabled");
+        $('#reject-request').attr('disabled', true);
+        $('#reject-request').addClass("button-disabled");
+        $('#send-message').attr('disabled', true);
+
+        setInfoStatus("ACCEPTED");
+
+    }).fail(function (data, textStatus, jqXHR) {
+        alert(data.responseJSON.message);
+    });
+
+}
+
+function rejectRequest(requestId) {
+
+    $.ajax({
+        type: 'GET',
+        url: '/link/' + requestId + '/reject',
+        async: true,
+        beforeSend: function () {
+
+        }
+    }).done(function (data, textStatus, jqXHR) {
+        $('#unlock-request').hide();
+        $('#lock-request').hide();
+
+        $('#validate-request').attr('disabled', true);
+        $('#validate-request').addClass("button-disabled");
+        $('#reject-request').attr('disabled', true);
+        $('#reject-request').addClass("button-disabled");
+        $('#send-message').attr('disabled', true);
+
+        setInfoStatus("REJECTED");
+
+    }).fail(function (data, textStatus, jqXHR) {
+        alert(data.responseJSON.message);
+    });
+
 }
