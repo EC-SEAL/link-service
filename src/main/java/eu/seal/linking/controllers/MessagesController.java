@@ -34,8 +34,8 @@ public class MessagesController
     private MessagesService messagesService;
 
     // TODO: It will be a post
-    @RequestMapping(value = "/{requestId}/messages/send/{recipient:requester|officer}", method = RequestMethod.GET)
-    public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
+    @RequestMapping(value = "/{requestId}/messages/send2/{recipient:requester|officer}", method = RequestMethod.GET)
+    public Response sendMessage2(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
                                 @RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException, IOException
     {
@@ -60,6 +60,27 @@ public class MessagesController
         }
 
         messagesService.storeMessage(requestId, strMessage, user, recipient);
+
+        return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/messages/send/{recipient:requester|officer}", method = RequestMethod.POST)
+    public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
+                                @RequestParam String message, @RequestParam(required = false) String sessionToken, HttpSession session)
+            throws LinkApplicationException, IOException
+    {
+        User user = null;
+
+        if (recipient.equals(UserMessageType.OFFICER.toString()))
+        {
+            user = getSessionUser(session, "USER");
+        }
+        else if (recipient.equals(UserMessageType.REQUESTER.toString()))
+        {
+            user = getSessionUser(session, "ADMIN");
+        }
+
+        messagesService.storeMessage(requestId, message, user, recipient);
 
         return Response.ok().build();
     }

@@ -1,3 +1,5 @@
+var userId;
+
 var statusClass;
 var level1Class;
 var level2Class;
@@ -24,6 +26,8 @@ function getUserData() {
         if (data.userPhoto != '') {
             $('#user-img').attr('src', data.userPhoto);
         }
+
+        userId = data.userId;
     });
 }
 
@@ -61,7 +65,7 @@ function initMainLogic() {
         refreshRequestList();
     });
 
-    setInterval(refreshRequestList, 60000);
+    //setInterval(refreshRequestList, 60000);
 }
 
 function clearRequestData() {
@@ -80,6 +84,7 @@ function clearRequestData() {
     $('#reject-request').attr('disabled', false);
     $('#reject-request').removeClass("button-disabled");
     $('#send-message').attr('disabled', false);
+    $('#text-message').val('');
 
     messages = [];
 }
@@ -109,6 +114,11 @@ function initRequestDivLogic() {
         rejectRequest($('#request-id').val());
     });
 
+    $('#send-message').click(function () {
+       sendMessage($('#request-id').val(), $('#text-message').val());
+    });
+
+    // TODO: just when div is shown, after showing messagess???
     setInterval(getNewMessages, 10000);
 }
 
@@ -398,4 +408,34 @@ function showMessage(messageData)
     var message = '<div class="' + sender + '"><div>' + messageData.message + '</div>' +
         '<div class="time-message">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</div></div>';
     $('#messages-space').append(message);
+}
+
+function sendMessage(requestId, message)
+{
+    message = message.trim();
+
+    if (message != '')
+    {
+        messageObject = {
+            timestamp: Date.now(),
+            sender: userId,
+            senderType: "officer",
+            recipient: "",
+            recipientType: "requester",
+            message: message
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: '/link/' + requestId + '/messages/send/requester',
+            data: 'message=' + JSON.stringify(messageObject),
+            dataType: 'json'
+        }).done(function (data, textStatus, jqXHR) {
+           $('#text-message').val('');
+           getNewMessages();
+        }).fail(function (data, textStatus, jqXHR) {
+            alert(data.responseJSON.message);
+        });
+    }
+
 }
