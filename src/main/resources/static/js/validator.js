@@ -2,6 +2,8 @@ var statusClass;
 var level1Class;
 var level2Class;
 
+var messages = [];
+
 $(document).ready(function () {
     getUserData();
     getRequestList();
@@ -78,6 +80,8 @@ function clearRequestData() {
     $('#reject-request').attr('disabled', false);
     $('#reject-request').removeClass("button-disabled");
     $('#send-message').attr('disabled', false);
+
+    messages = [];
 }
 
 function initRequestDivLogic() {
@@ -104,6 +108,8 @@ function initRequestDivLogic() {
     $('#reject-request').click(function () {
         rejectRequest($('#request-id').val());
     });
+
+    setInterval(getNewMessages, 10000);
 }
 
 function showRequestInfoLogic() {
@@ -225,24 +231,16 @@ function getRequestInfo(requestId) {
 
         //Files list
         for (var i = 0; i < data.evidence.length; i++) {
-            var file = '<li><a href="#" file-id="' + data.evidence[i].fileID + '">' + data.evidence[i].filename + '</a></li>';
+            var content = "data:" + data.evidence[i].contentType + ";base64," + data.evidence[i].content;
+            var filename = data.evidence[i].filename;
+            var file = '<li><a href="' + content + '" file-id="' + data.evidence[i].fileID + '" download="' + filename + '">' + filename + '</a></li>';
             $('#request-docs').append(file);
         }
 
         //Messages list
         for (var i = 0; i < data.conversation.length; i++) {
-            var sender = '';
-            if (data.conversation[i].senderType == "requester") {
-                sender = 'user-message';
-            } else {
-                sender = 'officer-message';
-            }
-
-            var date = new Date(data.conversation[i].timestamp);
-
-            var message = '<div class="' + sender + '"><div>' + data.conversation[i].message + '</div>' +
-                '<div class="time-message">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</div></div>';
-            $('#messages-space').append(message);
+            showMessage(data.conversation[i]);
+            messages.push(data.conversation[i].timestamp + data.conversation[i].sender);
         }
         $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
 
@@ -358,4 +356,46 @@ function rejectRequest(requestId) {
         alert(data.responseJSON.message);
     });
 
+}
+
+function getNewMessages()
+{
+    var requestId = $('#request-id').val()
+
+    if (requestId != '')
+    {
+        $.ajax( {
+            type: 'GET',
+            url: '/link/' + requestId + '/messages/receive',
+            async: true
+        }).done(function (data, textStatus, jqXHR) {
+
+            for (var i=0; i < data.length; i++)
+            {
+                var checkValue = data[i].timestamp + data[i].sender;
+                if ($.inArray(checkValue, messages) == -1) {
+                    showMessage(data[i]);
+                    messages.push(checkValue);
+                }
+            }
+
+            $('#messages-space').scrollTop($('#messages-space')[0].scrollHeight);
+        });
+    }
+}
+
+function showMessage(messageData)
+{
+    var sender = '';
+    if (messageData.senderType == "requester") {
+        sender = 'user-message';
+    } else {
+        sender = 'officer-message';
+    }
+
+    var date = new Date(messageData.timestamp);
+
+    var message = '<div class="' + sender + '"><div>' + messageData.message + '</div>' +
+        '<div class="time-message">' + date.toLocaleDateString() + ' ' + date.toLocaleTimeString() + '</div></div>';
+    $('#messages-space').append(message);
 }

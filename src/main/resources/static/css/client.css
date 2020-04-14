@@ -244,6 +244,7 @@ td.attr-id {
 
 #request-docs li a {
     text-decoration: none;
+    color: #696969;
 }
 
 #request-docs li a:visited, #request-docs li a:active {
