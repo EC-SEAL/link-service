@@ -356,3 +356,20 @@ td.attr-id {
     opacity: 0.5;
 }
 
+.hidden {
+    display: none;
+}
+
+#loading-content {
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+img.loading {
+    width: 10%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -11,7 +11,11 @@
 <div class="container">
 
     <div id="request-div" th:insert="request"></div>
-    <div id="hide-div"></div>
+    <div id="hide-div">
+        <div id="loading-content">
+            <img class="loading" th:src="@{/images/loading.gif}" />
+        </div>
+    </div>
 
     <div id="main">
         <div class="header">

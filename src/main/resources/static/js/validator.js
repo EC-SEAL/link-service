@@ -128,10 +128,12 @@ function showRequestInfoLogic() {
 
         requestId = $(this).attr('request-id');
         getRequestInfo(requestId);
-        $("#request-div").show();
-
-        updateMessagesInterval = setInterval(getNewMessages, 10000);
     });
+}
+
+function showRequestWindow() {
+    $("#request-div").show();
+    updateMessagesInterval = setInterval(getNewMessages, 10000);
 }
 
 function fillRequestAttributes(attributtes, properties, attributeId, table) {
@@ -258,6 +260,11 @@ function getRequestInfo(requestId) {
         setInfoStatus(status);
 
         showStatusOptions(status, requestId);
+
+        showRequestWindow();
+    }).fail(function (data, textStatus, jqXHR) {
+        alert(data.responseJSON.message);
+        $('#hide-div').hide();
     });
 }
 
