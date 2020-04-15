@@ -5,6 +5,7 @@ var level1Class;
 var level2Class;
 
 var messages = [];
+var updateMessagesInterval;
 
 $(document).ready(function () {
     getUserData();
@@ -65,7 +66,7 @@ function initMainLogic() {
         refreshRequestList();
     });
 
-    //setInterval(refreshRequestList, 60000);
+    setInterval(refreshRequestList, 60000);
 }
 
 function clearRequestData() {
@@ -87,6 +88,7 @@ function clearRequestData() {
     $('#text-message').val('');
 
     messages = [];
+    clearInterval(updateMessagesInterval);
 }
 
 function initRequestDivLogic() {
@@ -117,9 +119,6 @@ function initRequestDivLogic() {
     $('#send-message').click(function () {
        sendMessage($('#request-id').val(), $('#text-message').val());
     });
-
-    // TODO: just when div is shown, after showing messagess???
-    setInterval(getNewMessages, 10000);
 }
 
 function showRequestInfoLogic() {
@@ -131,6 +130,7 @@ function showRequestInfoLogic() {
         getRequestInfo(requestId);
         $("#request-div").show();
 
+        updateMessagesInterval = setInterval(getNewMessages, 10000);
     });
 }
 
