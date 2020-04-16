@@ -41,6 +41,8 @@ public class FilesService
 
     public void storeFileRequest(String requestUid, String strFile, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         RequestCommons.checkRequesterFrom(request, user.getId());
 
@@ -74,11 +76,15 @@ public class FilesService
         }
 
         requestFileRepository.save(requestFile);
+
+        RequestCommons.updateRequestLastUpdate(request, requestRepository);
     }
 
     public List<FileObject> getFilesFromRequest(String requestUid, User user)
             throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
@@ -103,6 +109,8 @@ public class FilesService
     public FileObject getFileFromRequest(String requestUid, Long fileId, User user)
             throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))

@@ -41,6 +41,8 @@ public class MessagesService
 
     public void storeMessage(String requestUid, String strMessage, User user, String recipient) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         Message message = null;
@@ -72,10 +74,14 @@ public class MessagesService
 
         RequestMessage requestMessage = RequestCommons.getRequestMessageFrom(message, request);
         requestMessageRepository.save(requestMessage);
+
+        RequestCommons.updateRequestLastUpdate(request, requestRepository);
     }
 
     public List<Message> getConversation(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         try

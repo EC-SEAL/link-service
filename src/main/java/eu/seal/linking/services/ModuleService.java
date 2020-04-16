@@ -34,6 +34,8 @@ public class ModuleService
 
     public List<RequestInfo> getAgentRequests(User user)
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(user.getEntitlements());
 
         List<Request> requests = requestRepository.findByDomainsIn(requestDomains);
@@ -53,6 +55,8 @@ public class ModuleService
 
     public RequestInfo getRequestInfo(String requestId, User user) throws RequestNotFoundException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(user.getEntitlements());
 
         Request request = null;

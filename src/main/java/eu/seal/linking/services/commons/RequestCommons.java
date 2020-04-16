@@ -17,6 +17,7 @@ import eu.seal.linking.utils.CryptoUtils;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,8 @@ public class RequestCommons
     public final static boolean REQ_ADD_ALL_FIELDS = true;
 
     public final static boolean REQ_NOT_ADD_ALL_FIELDS = false;
+
+    private final static int NUM_EXPIRY_DAYS = -7;
 
     public static Request getRequestFrom(String uid, RequestRepository requestRepository) throws RequestNotFoundException
     {
@@ -147,5 +150,25 @@ public class RequestCommons
             LOG.error(e.getMessage(), e);
             throw new LinkInternalException(e.getMessage());
         }
+    }
+
+    public static void deleteExpiredRequests(RequestRepository requestRepository)
+    {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_YEAR, NUM_EXPIRY_DAYS);
+        Date expirationDate = calendar.getTime();
+
+        List<Request> requests = requestRepository.getAllByLastUpdateBefore(expirationDate);
+        for (Request request : requests)
+        {
+            requestRepository.delete(request);
+        }
+    }
+
+    public static void updateRequestLastUpdate(Request request, RequestRepository requestRepository)
+    {
+        request.setLastUpdate(new Date());
+        requestRepository.save(request);
     }
 }

@@ -65,6 +65,8 @@ public class LinkService
 
     public String getRequestStatus(String uid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(uid, requestRepository);
         RequestCommons.checkRequesterFrom(request, user.getId());
 
@@ -73,6 +75,8 @@ public class LinkService
 
     public void cancelRequest(String uid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(uid, requestRepository);
         RequestCommons.checkRequesterFrom(request, user.getId());
         requestRepository.delete(request);
@@ -80,6 +84,8 @@ public class LinkService
 
     public LinkRequest getRequestResult(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         RequestCommons.checkRequesterFrom(request, user.getId());
 

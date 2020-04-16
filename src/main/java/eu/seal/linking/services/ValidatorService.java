@@ -45,6 +45,8 @@ public class ValidatorService
 
     public List<LinkRequest> getRequestsByDomain(List<String> domains) throws RequestException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(domains);
 
         List<Request> requests = requestRepository.findByDomainsIn(requestDomains);
@@ -61,6 +63,8 @@ public class ValidatorService
     @Transactional
     public void lockRequest(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (!request.getStatus().equals(RequestStatus.PENDING.toString()))
@@ -80,6 +84,8 @@ public class ValidatorService
     @Transactional
     public void unlockRequest(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
@@ -101,6 +107,8 @@ public class ValidatorService
 
     public LinkRequest getRequest(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
         checkUserPermissionDomains(request.getDomains(), user.getEntitlements());
 
@@ -110,6 +118,8 @@ public class ValidatorService
     @Transactional
     public void approveRequest(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
@@ -147,6 +157,8 @@ public class ValidatorService
     @Transactional
     public void rejectRequest(String requestUid, User user) throws LinkApplicationException
     {
+        RequestCommons.deleteExpiredRequests(requestRepository);
+
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
         if (request.getAgentId() == null || !request.getAgentId().equals(user.getId()))
