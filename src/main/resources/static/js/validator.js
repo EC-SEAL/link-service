@@ -80,11 +80,7 @@ function clearRequestData() {
 
     $('#lock-request').show();
     $('#unlock-request').show();
-    $('#validate-request').attr('disabled', false);
-    $('#validate-request').removeClass("button-disabled");
-    $('#reject-request').attr('disabled', false);
-    $('#reject-request').removeClass("button-disabled");
-    $('#send-message').attr('disabled', false);
+    enableRequestWindowOptions();
     $('#text-message').val('');
 
     messages = [];
@@ -165,6 +161,8 @@ function getRequestCurrentStatus(requestId) {
         async: false
     }).done(function (data, textStatus, jqXHR) {
         status = data.status;
+    }).fail(function (data, textStatus, jqXHR) {
+        status = 'ERROR';
     });
 
     return status;
@@ -181,11 +179,7 @@ function showStatusOptions(status) {
     }
 
     if (status != 'LOCKED') {
-        $('#validate-request').attr('disabled', true);
-        $('#validate-request').addClass("button-disabled");
-        $('#reject-request').attr('disabled', true);
-        $('#reject-request').addClass("button-disabled");
-        $('#send-message').attr('disabled', true);
+        disableRequestWindowOptions();
     }
 }
 
@@ -203,8 +197,11 @@ function setInfoStatus(status) {
         case "ACCEPTED":
             infoStatus = "Request accepted";
             break;
-        default:
+        case "REJECTED":
             infoStatus = "Request rejected";
+            break;
+        default:
+            infoStatus = "Error getting current status"
     }
 
     $('#request-status').text(infoStatus);
@@ -280,13 +277,7 @@ function lockRequest(requestId) {
     }).done(function (data, textStatus, jqXHR) {
         $('#unlock-request').show();
         $('#lock-request').hide();
-
-        $('#validate-request').attr('disabled', false);
-        $('#validate-request').removeClass("button-disabled");
-        $('#reject-request').attr('disabled', false);
-        $('#reject-request').removeClass("button-disabled");
-        $('#send-message').attr('disabled', false);
-
+        enableRequestWindowOptions();
         setInfoStatus("LOCKED");
 
     }).fail(function (data, textStatus, jqXHR) {
@@ -306,13 +297,7 @@ function unlockRequest(requestId) {
     }).done(function (data, textStatus, jqXHR) {
         $('#unlock-request').hide();
         $('#lock-request').show();
-
-        $('#validate-request').attr('disabled', true);
-        $('#validate-request').addClass("button-disabled");
-        $('#reject-request').attr('disabled', true);
-        $('#reject-request').addClass("button-disabled");
-        $('#send-message').attr('disabled', true);
-
+        disableRequestWindowOptions();
         setInfoStatus("PENDING");
 
     }).fail(function (data, textStatus, jqXHR) {
@@ -333,13 +318,7 @@ function approveRequest(requestId) {
     }).done(function (data, textStatus, jqXHR) {
         $('#unlock-request').hide();
         $('#lock-request').hide();
-
-        $('#validate-request').attr('disabled', true);
-        $('#validate-request').addClass("button-disabled");
-        $('#reject-request').attr('disabled', true);
-        $('#reject-request').addClass("button-disabled");
-        $('#send-message').attr('disabled', true);
-
+        disableRequestWindowOptions();
         setInfoStatus("ACCEPTED");
 
     }).fail(function (data, textStatus, jqXHR) {
@@ -360,13 +339,7 @@ function rejectRequest(requestId) {
     }).done(function (data, textStatus, jqXHR) {
         $('#unlock-request').hide();
         $('#lock-request').hide();
-
-        $('#validate-request').attr('disabled', true);
-        $('#validate-request').addClass("button-disabled");
-        $('#reject-request').attr('disabled', true);
-        $('#reject-request').addClass("button-disabled");
-        $('#send-message').attr('disabled', true);
-
+        disableRequestWindowOptions();
         setInfoStatus("REJECTED");
 
     }).fail(function (data, textStatus, jqXHR) {
@@ -444,5 +417,24 @@ function sendMessage(requestId, message)
             alert(data.responseJSON.message);
         });
     }
+}
 
+function disableRequestWindowOptions()
+{
+    $('#validate-request').attr('disabled', true);
+    $('#validate-request').addClass("button-disabled");
+    $('#reject-request').attr('disabled', true);
+    $('#reject-request').addClass("button-disabled");
+    $('#send-message').attr('disabled', true);
+    $('#text-message').attr('disabled', true);
+}
+
+function enableRequestWindowOptions()
+{
+    $('#validate-request').attr('disabled', false);
+    $('#validate-request').removeClass("button-disabled");
+    $('#reject-request').attr('disabled', false);
+    $('#reject-request').removeClass("button-disabled");
+    $('#send-message').attr('disabled', false);
+    $('#text-message').attr('disabled', false);
 }

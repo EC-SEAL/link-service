@@ -340,6 +340,10 @@ td.attr-id {
     color: darkred;
 }
 
+#request-status.error {
+    color: red;
+}
+
 #lock-buttons {
     float: right;
 }
