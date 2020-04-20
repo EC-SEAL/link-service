@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,7 @@ public class RequestCommons
 
     public final static boolean REQ_NOT_ADD_ALL_FIELDS = false;
 
-    private final static int NUM_EXPIRY_DAYS = -7;
+    private final static int NUM_EXPIRE_HOURS = -24;
 
     public static Request getRequestFrom(String uid, RequestRepository requestRepository) throws RequestNotFoundException
     {
@@ -156,7 +155,7 @@ public class RequestCommons
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.DAY_OF_YEAR, NUM_EXPIRY_DAYS);
+        calendar.add(Calendar.HOUR_OF_DAY, NUM_EXPIRE_HOURS);
         Date expirationDate = calendar.getTime();
 
         List<Request> requests = requestRepository.getAllByLastUpdateBefore(expirationDate);
