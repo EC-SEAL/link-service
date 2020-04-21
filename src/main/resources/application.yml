@@ -19,3 +19,18 @@ spring:
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
     initialize: true
+
+
+##
+## SEAL configuration manager. To be read from environment variables (dockerization)
+##
+linking.cm:
+  getAttributeProfilesPath: /cm/metadata/attributes/
+  getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
+  getExternalEntitiesPath: /cm/metadata/externalEntities/
+  getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
+  getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId
+  getAllMicroservicesPath: /cm/metadata/microservices/
+  getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
+  getInternalsPath: /cm/metadata/internal/
+  getConfigurationPath: /cm/metadata/internal/, confId
