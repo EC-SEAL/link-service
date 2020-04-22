@@ -10,6 +10,17 @@ spring:
     hibernate:
       ddlAuto: create
     show-sql: true
+linking:
+  cm:
+    getAttributeProfilesPath: /cm/metadata/attributes/
+    getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
+    getExternalEntitiesPath: /cm/metadata/externalEntities/
+    getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
+    getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId
+    getAllMicroservicesPath: /cm/metadata/microservices/
+    getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
+    getInternalsPath: /cm/metadata/internal/
+    getConfigurationPath: /cm/metadata/internal/, confId
 
 ---
 spring:
@@ -24,13 +35,14 @@ spring:
 ##
 ## SEAL configuration manager. To be read from environment variables (dockerization)
 ##
-linking.cm:
-  getAttributeProfilesPath: /cm/metadata/attributes/
-  getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
-  getExternalEntitiesPath: /cm/metadata/externalEntities/
-  getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
-  getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId
-  getAllMicroservicesPath: /cm/metadata/microservices/
-  getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
-  getInternalsPath: /cm/metadata/internal/
-  getConfigurationPath: /cm/metadata/internal/, confId
+linking:
+  cm:
+    getAttributeProfilesPath: /cm/metadata/attributes/
+    getAttributeSetByProfilePath: /cm/metadata/attributes/, attrProfileId
+    getExternalEntitiesPath: /cm/metadata/externalEntities/
+    getEntityMetadataSetPath: /cm/metadata/externalEntities/, collectionId
+    getEntityMetadataPath: /cm/metadata/externalEntities/, collectionId, entityId
+    getAllMicroservicesPath: /cm/metadata/microservices/
+    getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
+    getInternalsPath: /cm/metadata/internal/
+    getConfigurationPath: /cm/metadata/internal/, confId
