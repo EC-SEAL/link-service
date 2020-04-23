@@ -23,10 +23,13 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 
+@Component
 public class RequestCommons
 {
     private final static Logger LOG = LoggerFactory.getLogger(RequestCommons.class);
@@ -35,7 +38,12 @@ public class RequestCommons
 
     public final static boolean REQ_NOT_ADD_ALL_FIELDS = false;
 
-    private final static int NUM_EXPIRE_HOURS = -24;
+    private static int REQUEST_EXPIRE;
+
+    @Value("${linking.request.expire}")
+    public void setRequestExpire(int requestExpire) {
+        REQUEST_EXPIRE = requestExpire;
+    }
 
     public static Request getRequestFrom(String uid, RequestRepository requestRepository) throws RequestNotFoundException
     {
@@ -155,7 +163,7 @@ public class RequestCommons
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
-        calendar.add(Calendar.HOUR_OF_DAY, NUM_EXPIRE_HOURS);
+        calendar.add(Calendar.SECOND, -REQUEST_EXPIRE);
         Date expirationDate = calendar.getTime();
 
         List<Request> requests = requestRepository.getAllByLastUpdateBefore(expirationDate);

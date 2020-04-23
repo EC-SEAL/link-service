@@ -10,6 +10,8 @@ spring:
     hibernate:
       ddlAuto: create
     show-sql: true
+server:
+  port: 8090
 linking:
   cm:
     getAttributeProfilesPath: /cm/metadata/attributes/
@@ -21,6 +23,10 @@ linking:
     getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
     getInternalsPath: /cm/metadata/internal/
     getConfigurationPath: /cm/metadata/internal/, confId
+    cache:
+      lifetime: 3600
+  request:
+    expire: 86400
 
 ---
 spring:
