@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>SEAL Validator Page</title>
+    <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="application/javascript" th:src="@{/js/validator.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/client.css}"/>
+</head>
+<body>
+
+<div class="container">
+
+    <div id="main">
+        <div class="header">
+            <img th:src="@{/images/SEAL_logo.jpg}" class="logo"/>
+        </div>
+
+        <div class="content">
+
+            <div id="auth">
+
+                <h4>Access identity management APP</h4>
+
+                <div id="authsources">
+
+                </div>
+
+                <p class="error">Login error. Try again</p>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+
+            <div class="info">
+                <p><a href="#">About SEAL</a></p>
+                <p><a href="#">Data Protection Notice</a></p>
+            </div>
+            <div class="ue-logo">
+            </div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</body>
+</html>

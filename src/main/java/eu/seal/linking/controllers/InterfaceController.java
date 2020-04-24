@@ -13,4 +13,10 @@ public class InterfaceController
     {
         return "main";
     }
+
+    @GetMapping("auth")
+    public String getAuthPage()
+    {
+        return "auth";
+    }
 }
