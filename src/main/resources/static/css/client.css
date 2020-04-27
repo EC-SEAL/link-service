@@ -377,3 +377,58 @@ img.loading {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
+#auth {
+    color: #696969;
+    width: 80%;
+    margin: auto;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+}
+
+#authsources {
+    border: 3px solid #A9A9A9;
+    border-radius: 10px;
+    padding: 7.5px;
+}
+
+#authsources .img-content {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #C8C8C8;
+    border-radius: 10px;
+    background-color: #F0F0F0;
+    position: relative;
+    margin: auto;
+}
+
+#authsources .img-content:hover {
+    border-color: deepskyblue;
+}
+
+#authsources .img-content img {
+    max-width: 70px;
+    max-height: 70px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#authsources .source {
+    text-align: center;
+    font-weight:bold;
+    display: inline-block;
+    margin: 7.5px;
+}
+
+#authsources .source p {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-size: large;
+}
