@@ -502,6 +502,9 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
                 result = mapper.readValue(jsonResult, AttributeTypeList.class);
                 log.info("Result: "+ result);
             }
+            else {
+                result = new AttributeTypeList();
+            }
 
         }
 

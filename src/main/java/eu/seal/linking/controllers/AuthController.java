@@ -1,6 +1,7 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkAuthException;
+import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
 import eu.seal.linking.model.domain.PublishedApiType;
 import eu.seal.linking.services.AuthService;
@@ -29,11 +30,11 @@ public class AuthController
     }
 
     @RequestMapping(value = "/service/{sourceId}")
-    public PublishedApiType getAuthService(@PathVariable("sourceId") String sourceId, HttpSession session)
+    public AuthRequestData getAuthService(@PathVariable("sourceId") String sourceId, HttpSession session)
             throws LinkAuthException
     {
-        PublishedApiType publishedApi =  authService.getAuthApiBySource(sourceId);
+        AuthRequestData authRequestData = authService.generateAuthRequest(sourceId, session.getId());
 
-        return publishedApi;
+        return authRequestData;
     }
 }
