@@ -5,6 +5,7 @@ import eu.seal.linking.exceptions.AuthGenerateSessionException;
 import eu.seal.linking.exceptions.AuthIdPNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceServicesNotFoundException;
+import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
@@ -68,6 +69,17 @@ public class AuthService
         return  authSource;
     }
 
+    public String startSession() throws AuthStartSessionException
+    {
+        try
+        {
+            return sessionManagerConnService.startSession();
+        } catch (Exception e)
+        {
+            throw new AuthStartSessionException();
+        }
+    }
+
     public AuthRequestData generateAuthRequest(String sourceId, String sessionId) throws LinkAuthException
     {
         EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", sourceId);
@@ -87,7 +99,8 @@ public class AuthService
 
         AuthRequestData authRequestData = new AuthRequestData();
         authRequestData.setMsToken(msToken);
-        authRequestData.setPublishedApi(api);
+        authRequestData.setEndpoint(api.getApiEndpoint());
+        authRequestData.setConnectionType(api.getApiConnectionType().toString());
 
         return authRequestData;
     }

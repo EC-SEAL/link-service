@@ -6,7 +6,9 @@ public class AuthRequestData
 {
     private String msToken;
 
-    private PublishedApiType publishedApi;
+    private String endpoint;
+
+    private String connectionType;
 
     public String getMsToken()
     {
@@ -18,13 +20,23 @@ public class AuthRequestData
         this.msToken = msToken;
     }
 
-    public PublishedApiType getPublishedApi()
+    public String getEndpoint()
     {
-        return publishedApi;
+        return endpoint;
     }
 
-    public void setPublishedApi(PublishedApiType publishedApi)
+    public void setEndpoint(String endpoint)
     {
-        this.publishedApi = publishedApi;
+        this.endpoint = endpoint;
+    }
+
+    public String getConnectionType()
+    {
+        return connectionType;
+    }
+
+    public void setConnectionType(String connectionType)
+    {
+        this.connectionType = connectionType;
     }
 }

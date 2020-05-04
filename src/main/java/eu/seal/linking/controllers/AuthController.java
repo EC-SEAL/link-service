@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
@@ -33,8 +34,21 @@ public class AuthController
     public AuthRequestData getAuthService(@PathVariable("sourceId") String sourceId, HttpSession session)
             throws LinkAuthException
     {
-        AuthRequestData authRequestData = authService.generateAuthRequest(sourceId, session.getId());
+        //String sessionId = getSessionId(session);
+        String sessionId = authService.startSession();
+
+        AuthRequestData authRequestData = authService.generateAuthRequest(sourceId, sessionId);
 
         return authRequestData;
+    }
+
+    private String getSessionId(HttpSession session) throws AuthStartSessionException
+    {
+        if (session.getAttribute("sessionID") == null)
+        {
+            session.setAttribute("sessionID", authService.startSession());
+        }
+
+        return (String) session.getAttribute("sessionID");
     }
 }

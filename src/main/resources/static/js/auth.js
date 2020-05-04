@@ -29,7 +29,23 @@ function getAuthSources() {
        }
 
        $('.img-content').click(function () {
-           console.log($(this).attr('source-id'));
+           //console.log($(this).attr('source-id'));
+           callAuthSource($(this).attr('source-id'));
        });
+    });
+}
+
+function callAuthSource(sourceId) {
+
+    $.ajax({
+        type: "GET",
+        url: "/link/auth/service/"+sourceId,
+        asybc: true
+    }).done(function(data, textStatus, jqXHR) {
+        var form = $('<form action="' + data.endpoint + '" method="'+ data.connectionType +'">' +
+            '<input type="hidden" name="msToken" value="' + data.msToken + '" />' +
+            '</form>');
+        $('body').append(form);
+        $(form).submit();
     });
 }
