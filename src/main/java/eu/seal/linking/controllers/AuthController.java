@@ -6,6 +6,7 @@ import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
 import eu.seal.linking.model.domain.PublishedApiType;
 import eu.seal.linking.services.AuthService;
+import eu.seal.linking.services.commons.SessionCommons;
 
 import java.util.List;
 
@@ -34,21 +35,13 @@ public class AuthController
     public AuthRequestData getAuthService(@PathVariable("sourceId") String sourceId, HttpSession session)
             throws LinkAuthException
     {
-        //String sessionId = getSessionId(session);
-        String sessionId = authService.startSession();
+        String sessionId = SessionCommons.getSessionId(session, authService);
 
         AuthRequestData authRequestData = authService.generateAuthRequest(sourceId, sessionId);
 
+        //mockup
+        authRequestData.setEndpoint("http://localhost:8090/cmtest/auth");
+
         return authRequestData;
-    }
-
-    private String getSessionId(HttpSession session) throws AuthStartSessionException
-    {
-        if (session.getAttribute("sessionID") == null)
-        {
-            session.setAttribute("sessionID", authService.startSession());
-        }
-
-        return (String) session.getAttribute("sessionID");
     }
 }

@@ -17,9 +17,9 @@ public class LinkRequest
 
     private String expiration;
 
-    private Dataset datasetA;
+    private DataSet datasetA;
 
-    private Dataset datasetB;
+    private DataSet datasetB;
 
     private List<FileObject> evidence;
 
@@ -85,22 +85,22 @@ public class LinkRequest
         this.expiration = expiration;
     }
 
-    public Dataset getDatasetA()
+    public DataSet getDatasetA()
     {
         return datasetA;
     }
 
-    public void setDatasetA(Dataset datasetA)
+    public void setDatasetA(DataSet datasetA)
     {
         this.datasetA = datasetA;
     }
 
-    public Dataset getDatasetB()
+    public DataSet getDatasetB()
     {
         return datasetB;
     }
 
-    public void setDatasetB(Dataset datasetB)
+    public void setDatasetB(DataSet datasetB)
     {
         this.datasetB = datasetB;
     }

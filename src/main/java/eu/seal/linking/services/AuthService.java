@@ -7,8 +7,10 @@ import eu.seal.linking.exceptions.AuthSourceNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceServicesNotFoundException;
 import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.LinkAuthException;
+import eu.seal.linking.exceptions.UserNotAuthenticatedException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
+import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.domain.ApiClassEnum;
 import eu.seal.linking.model.domain.AttributeSet;
 import eu.seal.linking.model.domain.AttributeType;
@@ -29,6 +31,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -274,4 +277,18 @@ public class AuthService
 
        return msToken;
    }
+
+   public DataSet getAuthenticationDataSet(String sessionId) throws UserNotAuthenticatedException
+   {
+       try
+       {
+           Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authenticationSet");
+           return (new ObjectMapper()).readValue(objDataSet.toString(), DataSet.class);
+       } catch (Exception e)
+       {
+           e.printStackTrace();
+            throw new UserNotAuthenticatedException();
+       }
+   }
+
 }
