@@ -30,10 +30,21 @@ body {
 
 #user-data-access {
     color: #E9B724;
+    margin-block-start: 0;
 }
 
 #user-data-name {
     color: #FFFFFF;
+}
+
+#logout {
+    margin-block-end: 0;
+}
+
+#logout a, #logout a:visited, #logout a:active {
+    color: #00F0FC;
+    text-decoration: none;
+    margin-block-end: 0;
 }
 
 #user-img {
@@ -393,6 +404,7 @@ img.loading {
     border: 3px solid #A9A9A9;
     border-radius: 10px;
     padding: 7.5px;
+    min-height: 120px;
 }
 
 #authsources .img-content {

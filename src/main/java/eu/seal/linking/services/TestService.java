@@ -35,15 +35,12 @@ public class TestService
 
     public void setMockAuthDataSet(String sessionId) throws Exception
     {
-        DataSet authenticationSet = new DataSet();
-
         ClassPathResource resource = new ClassPathResource("admin.json");
         ObjectMapper objectMapper = new ObjectMapper();
 
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        ObjectMapper objIdpMetadata = new ObjectMapper();
-        sessionManagerConnService.updateVariable(sessionId, "authenticationSet", objIdpMetadata.writeValueAsString(authenticationSet));
+        sessionManagerConnService.updateVariable(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
     }
 }

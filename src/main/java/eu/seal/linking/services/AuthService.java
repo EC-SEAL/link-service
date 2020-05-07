@@ -1,6 +1,7 @@
 package eu.seal.linking.services;
 
 import eu.seal.linking.exceptions.AuthApiNotFoundException;
+import eu.seal.linking.exceptions.AuthDeleteSessionException;
 import eu.seal.linking.exceptions.AuthGenerateSessionException;
 import eu.seal.linking.exceptions.AuthIdPNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceNotFoundException;
@@ -291,4 +292,14 @@ public class AuthService
        }
    }
 
+    public void logoutLinkService(String sessionId) throws AuthDeleteSessionException
+    {
+        try
+        {
+            sessionManagerConnService.deleteSession(sessionId);
+        } catch (Exception e)
+        {
+            throw new AuthDeleteSessionException();
+        }
+    }
 }

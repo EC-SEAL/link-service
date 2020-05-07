@@ -1,16 +1,15 @@
 package eu.seal.linking.controllers;
 
-import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
-import eu.seal.linking.model.domain.PublishedApiType;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.commons.SessionCommons;
 
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,5 +42,17 @@ public class AuthController
         authRequestData.setEndpoint("http://localhost:8090/cmtest/auth");
 
         return authRequestData;
+    }
+
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public Response logout(HttpSession session) throws LinkAuthException
+    {
+        String sessionId = SessionCommons.getSessionId(session, authService);
+
+        authService.logoutLinkService(sessionId);
+        session.removeAttribute("sessionID");
+        session.removeAttribute("user");
+
+        return Response.ok().build();
     }
 }

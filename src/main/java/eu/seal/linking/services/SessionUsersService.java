@@ -24,7 +24,7 @@ public class SessionUsersService
     @Autowired
     private UsersCMService usersCMService;
 
-    // For tests purposes
+    // For tests purposesse
     public User getTestUser(String userType) throws LinkApplicationException
     {
         try
@@ -79,7 +79,7 @@ public class SessionUsersService
         return id;
     }
 
-    private User getUser(DataSet dataSet) throws LinkApplicationException
+    public User getUser(DataSet dataSet) throws LinkApplicationException
     {
         String userId = getUserIdFrom(dataSet);
         UserCM userCM = usersCMService.getUserFromId(userId);

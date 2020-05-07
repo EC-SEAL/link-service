@@ -12,6 +12,7 @@ $(document).ready(function () {
     getRequestList();
     initMainLogic();
     initRequestDivLogic();
+    initLogoutLogic();
 });
 
 function getUserData() {
@@ -437,4 +438,23 @@ function enableRequestWindowOptions()
     $('#reject-request').removeClass("button-disabled");
     $('#send-message').attr('disabled', false);
     $('#text-message').attr('disabled', false);
+}
+
+function initLogoutLogic() {
+    $('#logout a').click(function (event) {
+
+        event.preventDefault();
+        $('#hide-div').show();
+
+       $.ajax({
+           type: 'GET',
+           url: '/link/auth/logout'
+        }).done(function() {
+           location.reload();
+        }).fail(function() {
+            alert('Not able to logout your session');
+           $('#hide-div').hide();
+       });
+
+    });
 }

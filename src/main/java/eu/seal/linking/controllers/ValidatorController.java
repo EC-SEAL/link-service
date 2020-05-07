@@ -2,6 +2,7 @@ package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.RequestException;
+import eu.seal.linking.exceptions.UserNotAuthenticatedException;
 import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
@@ -92,11 +93,18 @@ public class ValidatorController
     // Test function
     private User getSessionUser(HttpSession session) throws LinkApplicationException
     {
-        User user = (User) session.getAttribute("user2");
+        /*User user = (User) session.getAttribute("user2");
         if (user == null)
         {
             user = sessionUsersService.getTestUser("ADMIN");
             session.setAttribute("user2", user);
+        }*/
+
+        User user = (User) session.getAttribute("user");
+
+        if (user == null)
+        {
+            throw new UserNotAuthenticatedException();
         }
 
         return user;

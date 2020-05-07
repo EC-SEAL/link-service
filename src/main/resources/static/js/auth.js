@@ -7,7 +7,10 @@ function getAuthSources() {
     $.ajax( {
         type: "GET",
         url: "/link/auth/sources",
-        async: true
+        async: true,
+        beforeSend: function () {
+            $('#hide-div').show();
+        }
     }).done(function (data, textStatus, jqXHR) {
        for (i=0; i < data.length; i++)
        {
@@ -29,9 +32,13 @@ function getAuthSources() {
        }
 
        $('.img-content').click(function () {
-           //console.log($(this).attr('source-id'));
            callAuthSource($(this).attr('source-id'));
        });
+
+        $('#hide-div').hide();
+    }).fail(function (data, textStatus, jqXHR) {
+        $('#hide-div').hide();
+        alert(data.responseJSON.message);
     });
 }
 
@@ -40,12 +47,18 @@ function callAuthSource(sourceId) {
     $.ajax({
         type: "GET",
         url: "/link/auth/service/"+sourceId,
-        asybc: true
+        asybc: true,
+        beforeSend: function () {
+            $('#hide-div').show();
+        }
     }).done(function(data, textStatus, jqXHR) {
         var form = $('<form action="' + data.endpoint + '" method="'+ data.connectionType +'">' +
             '<input type="hidden" name="msToken" value="' + data.msToken + '" />' +
             '</form>');
         $('body').append(form);
         $(form).submit();
+    }).fail(function (data, textStatus, jqXHR) {
+        $('#hide-div').hide();
+        alert(data.responseJSON.message);
     });
 }
