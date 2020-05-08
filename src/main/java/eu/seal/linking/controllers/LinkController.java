@@ -1,7 +1,13 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.LinkApplicationException;
+import eu.seal.linking.exceptions.LinkAuthException;
+import eu.seal.linking.model.DataSet;
+import eu.seal.linking.model.LinkRequest;
+import eu.seal.linking.model.User;
+import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.LinkService;
-import eu.seal.linking.services.UsersCMService;
+import eu.seal.linking.services.SessionUsersService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
@@ -25,12 +31,23 @@ public class LinkController
     private LinkService linkService;
 
     @Autowired
-    private UsersCMService usersCMService;
+    private AuthService authService;
+
+    @Autowired
+    private SessionUsersService sessionUsersService;
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public Response startLinkRequest(@RequestParam(required = true) String msToken, HttpServletRequest request)
+    public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken, HttpServletRequest request)
+            throws LinkAuthException, LinkApplicationException
     {
-        return Response.ok().build();
+        String sessionId = authService.validateToken(msToken);
+        String strLinkRequest = authService.getLinkRequestFromSession(sessionId);
+        DataSet authentication = authService.getAuthenticationDataSet(sessionId);
+        User user = sessionUsersService.getUser(authentication);
+
+        LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, user);
+
+        return linkRequest;
     }
 
     @RequestMapping(value = "/{requestId}/status", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")

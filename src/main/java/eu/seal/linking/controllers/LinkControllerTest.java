@@ -1,18 +1,35 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
+import eu.seal.linking.exceptions.LinkAuthException;
+import eu.seal.linking.model.AuthRequestData;
+import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
+import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.LinkService;
 import eu.seal.linking.services.SessionUsersService;
+import eu.seal.linking.services.sm.SessionManagerConnService;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.httpclient.HttpHost;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +41,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.deploy.net.HttpResponse;
+
 @RestController
 @RequestMapping("test/link")
 public class LinkControllerTest
@@ -32,6 +52,9 @@ public class LinkControllerTest
 
     @Autowired
     private LinkService linkService;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private SessionUsersService sessionUsersService;
@@ -92,5 +115,58 @@ public class LinkControllerTest
         }
 
         return user;
+    }
+
+    // Testing real services
+
+    @RequestMapping(value = "/request/submit/test", method = RequestMethod.GET, produces = "application/json")
+    public Response startLinkRequestTest(HttpResponse response)
+            throws LinkApplicationException, IOException, LinkAuthException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        // Test with local file
+        resource = new ClassPathResource("request2.json");
+        String strRequest = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+
+        authService.setVariableInSession(sessionId, "linkRequest", strRequest);
+
+        // POST
+
+        URL url = new URL("http://localhost:8090/link/request/submit");
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("msToken", authRequestData.getMsToken());
+        StringJoiner sj = new StringJoiner("&");
+        for(Map.Entry<String,String> entry : arguments.entrySet())
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try(OutputStream os = http.getOutputStream()) {
+            os.write(out);
+        }
+
+        // Do something with http.getInputStream()
+
+        return Response.ok().build();
     }
 }

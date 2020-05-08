@@ -4,9 +4,13 @@ import eu.seal.linking.exceptions.AuthApiNotFoundException;
 import eu.seal.linking.exceptions.AuthDeleteSessionException;
 import eu.seal.linking.exceptions.AuthGenerateSessionException;
 import eu.seal.linking.exceptions.AuthIdPNotFoundException;
+import eu.seal.linking.exceptions.AuthLinkRequestException;
+import eu.seal.linking.exceptions.AuthNotAuthenticatedException;
+import eu.seal.linking.exceptions.AuthSetSessionVariableException;
 import eu.seal.linking.exceptions.AuthSourceNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceServicesNotFoundException;
 import eu.seal.linking.exceptions.AuthStartSessionException;
+import eu.seal.linking.exceptions.AuthTokenNotValidatedException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.exceptions.UserNotAuthenticatedException;
 import eu.seal.linking.model.AuthRequestData;
@@ -32,7 +36,6 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -66,11 +69,11 @@ public class AuthService
     {
         AuthSource authSource = new AuthSource();
         authSource.setId(entityMetadata.getEntityId());
-        authSource.setDefaultDisplayName((entityMetadata.getDefaultDisplayName() != null)?
-                entityMetadata.getDefaultDisplayName():entityMetadata.getEntityId());
+        authSource.setDefaultDisplayName((entityMetadata.getDefaultDisplayName() != null) ?
+                entityMetadata.getDefaultDisplayName() : entityMetadata.getEntityId());
         authSource.setLogo(entityMetadata.getLogo());
 
-        return  authSource;
+        return authSource;
     }
 
     public String startSession() throws AuthStartSessionException
@@ -78,7 +81,8 @@ public class AuthService
         try
         {
             return sessionManagerConnService.startSession();
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             throw new AuthStartSessionException();
         }
@@ -124,7 +128,10 @@ public class AuthService
                     break;
                 }
             }
-            if (service != null) break;
+            if (service != null)
+            {
+                break;
+            }
         }
 
         if (service == null)
@@ -133,7 +140,7 @@ public class AuthService
             throw new AuthSourceServicesNotFoundException("Services for source " + source.getEntityId() + " not found");
         }
 
-        return  service;
+        return service;
     }
 
     private PublishedApiType getAuthApi(String sourceId, MsMetadata service) throws AuthApiNotFoundException
@@ -164,7 +171,8 @@ public class AuthService
             EntityMetadataList metadataList = confMngrConnService.getEntityMetadataSet(sourceId.toUpperCase());
             EntityMetadataList msMetadataList = metadataList.getMsEntities(service);
             idpMetadata = msMetadataList.get(0);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             LOG.error(e.getMessage());
             throw new AuthIdPNotFoundException("IdP for source " + service + " not found");
@@ -183,59 +191,59 @@ public class AuthService
         {
             case "eIDAS":
                 AttributeTypeList aux = confMngrConnService.getAttributeSetByProfile(sourceId);
-                for ( String claim : claims)
+                for (String claim : claims)
                 {
-                    Optional<AttributeType> foundAtt=null;
+                    Optional<AttributeType> foundAtt = null;
                     //foundAtt = aux.stream().filter(a ->a.getFriendlyName().equals(claim) ).findAny();
                     foundAtt = aux.stream().filter(a -> a.getName().contains(claim)).findAny();
 
-                    if (foundAtt !=null && foundAtt.isPresent())
+                    if (foundAtt != null && foundAtt.isPresent())
                     {
-                        attributes.add( foundAtt.get());
-                        LOG.info ("FoundAtt:" + foundAtt.get());
+                        attributes.add(foundAtt.get());
+                        LOG.info("FoundAtt:" + foundAtt.get());
 
                     }
                     else
                     {
-                        LOG.info ("### NOT found: " + claim);
+                        LOG.info("### NOT found: " + claim);
                     }
                 }
                 break;
             case "eduGAIN":
                 AttributeTypeList aux1 = confMngrConnService.getAttributeSetByProfile("eduGain");
                 AttributeTypeList aux2 = confMngrConnService.getAttributeSetByProfile("schac");
-                for ( String claim : claims)
+                for (String claim : claims)
                 {
-                    Optional<AttributeType> foundAtt=null;
-                    foundAtt = aux1.stream().filter(a ->a.getFriendlyName().equals(claim) ).findAny();
+                    Optional<AttributeType> foundAtt = null;
+                    foundAtt = aux1.stream().filter(a -> a.getFriendlyName().equals(claim)).findAny();
 
-                    if (foundAtt !=null && foundAtt.isPresent())
+                    if (foundAtt != null && foundAtt.isPresent())
                     {
-                        attributes.add( foundAtt.get());
-                        LOG.info ("FoundAtt in EDUPERSON:" + foundAtt.get());
+                        attributes.add(foundAtt.get());
+                        LOG.info("FoundAtt in EDUPERSON:" + foundAtt.get());
 
                     }
                     else
                     { // Searching in SCHAC
-                        Optional<AttributeType> foundAtt2=null;
-                        foundAtt2 = aux2.stream().filter(a ->a.getFriendlyName().equals(claim) ).findAny();
+                        Optional<AttributeType> foundAtt2 = null;
+                        foundAtt2 = aux2.stream().filter(a -> a.getFriendlyName().equals(claim)).findAny();
 
-                        if (foundAtt2 !=null && foundAtt2.isPresent())
+                        if (foundAtt2 != null && foundAtt2.isPresent())
                         {
-                            attributes.add( foundAtt2.get());
-                            LOG.info ("FoundAtt in SHAC:" + foundAtt2.get());
+                            attributes.add(foundAtt2.get());
+                            LOG.info("FoundAtt in SHAC:" + foundAtt2.get());
 
                         }
                         else
                         {
-                            LOG.info ("### NOT found: " + claim);
+                            LOG.info("### NOT found: " + claim);
                         }
                     }
                 }
                 break;
         }
 
-        return  attributes;
+        return attributes;
     }
 
     private AttributeSet generateIdPRequest(EntityMetadata idpMetadata, AttributeTypeList attributes)
@@ -244,10 +252,10 @@ public class AuthService
         idpRequest.setId(UUID.randomUUID().toString());
         idpRequest.setType(AttributeSet.TypeEnum.REQUEST);
         idpRequest.setInResponseTo("inResponseTo"); //?
-        idpRequest.setIssuer( "spRequest.getIssuer()");//?
-        idpRequest.setRecipient( idpMetadata.getEntityId());
+        idpRequest.setIssuer("spRequest.getIssuer()");//?
+        idpRequest.setRecipient(idpMetadata.getEntityId());
         //idpRequest.setProperties( "spRequest.getProperties()"); //?
-        idpRequest.setLoa( "spRequest.getLoa()"); //?
+        idpRequest.setLoa("spRequest.getLoa()"); //?
         idpRequest.setAttributes(attributes);
         //idpRequest.setStatus("status"); //?
         idpRequest.setNotAfter("notAfter"); //?
@@ -255,51 +263,112 @@ public class AuthService
         return idpRequest;
     }
 
-   private String generateSession(String sessionId, EntityMetadata idpMetadata, AttributeSet idpRequest, String service)
-           throws AuthGenerateSessionException
-   {
-       String msToken = null;
+    private String generateSession(String sessionId, EntityMetadata idpMetadata, AttributeSet idpRequest, String service)
+            throws AuthGenerateSessionException
+    {
+        String msToken = null;
 
-       try
-       {
-           // idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
-           ObjectMapper objIdpMetadata = new ObjectMapper();
-           sessionManagerConnService.updateVariable(sessionId, "idpMetadata", objIdpMetadata.writeValueAsString(idpMetadata));
-           // idpRequest is creating. Saving in the session too.
-           ObjectMapper objIdpRequest = new ObjectMapper();
-           sessionManagerConnService.updateVariable(sessionId, "idpRequest", objIdpRequest.writeValueAsString(idpRequest));
-           // Generate token for returning the session.
-           msToken = sessionManagerConnService.generateToken(sessionId, service);
-       } catch (Exception e)
-       {
-           LOG.error(e.getMessage());
-           throw new AuthGenerateSessionException();
-       }
+        try
+        {
+            // idpMetadata is creating with the eIDAS/eduGain info from the ConfMngr. Saving in the session.
+            ObjectMapper objIdpMetadata = new ObjectMapper();
+            sessionManagerConnService.updateVariable(sessionId, "idpMetadata", objIdpMetadata.writeValueAsString(idpMetadata));
+            // idpRequest is creating. Saving in the session too.
+            ObjectMapper objIdpRequest = new ObjectMapper();
+            sessionManagerConnService.updateVariable(sessionId, "idpRequest", objIdpRequest.writeValueAsString(idpRequest));
+            // Generate token for returning the session.
+            msToken = sessionManagerConnService.generateToken(sessionId, service);
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage());
+            throw new AuthGenerateSessionException();
+        }
 
-       return msToken;
-   }
+        return msToken;
+    }
 
-   public DataSet getAuthenticationDataSet(String sessionId) throws UserNotAuthenticatedException
-   {
-       try
-       {
-           Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authenticationSet");
-           return (new ObjectMapper()).readValue(objDataSet.toString(), DataSet.class);
-       } catch (Exception e)
-       {
-           e.printStackTrace();
+    public DataSet getAuthenticationDataSet(String sessionId) throws UserNotAuthenticatedException
+    {
+        try
+        {
+            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authenticationSet");
+            return (new ObjectMapper()).readValue(objDataSet.toString(), DataSet.class);
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
             throw new UserNotAuthenticatedException();
-       }
-   }
+        }
+    }
 
     public void logoutLinkService(String sessionId) throws AuthDeleteSessionException
     {
         try
         {
             sessionManagerConnService.deleteSession(sessionId);
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
+            LOG.error(e.getMessage(), e);
             throw new AuthDeleteSessionException();
+        }
+    }
+
+    public String validateToken(String msToken) throws LinkAuthException
+    {
+        String sessionId = null;
+        try
+        {
+            sessionId = sessionManagerConnService.validateToken(msToken);
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new AuthTokenNotValidatedException(e.getLocalizedMessage());
+        }
+
+        if (sessionId.isEmpty())
+        {
+            throw new AuthNotAuthenticatedException();
+        }
+
+        return sessionId;
+    }
+
+    public String getLinkRequestFromSession(String sessionId) throws AuthLinkRequestException
+    {
+        String linkRequest = null;
+
+        try
+        {
+            linkRequest = (String) sessionManagerConnService.readVariable(sessionId, "linkRequest");
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new AuthLinkRequestException("Not able to read link request from session");
+        }
+
+        if (linkRequest.isEmpty())
+        {
+            throw new AuthLinkRequestException("Link request not found in session");
+        }
+
+        return linkRequest;
+    }
+
+    public void setVariableInSession(String sessionId, String variableName, String variable)
+            throws AuthSetSessionVariableException
+    {
+        try
+        {
+            sessionManagerConnService.updateVariable(sessionId, variableName, variable);
+        }
+        catch (Exception e)
+        {
+            LOG.error(e.getMessage(), e);
+            throw new AuthSetSessionVariableException("Variable " + variableName + "could not be set");
         }
     }
 }
