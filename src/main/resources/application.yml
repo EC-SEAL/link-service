@@ -27,6 +27,9 @@ linking:
       lifetime: 3600
   request:
     expire: 86400
+    lloa: low
+    # Validity of an issued link. 0 means permanent
+    validityDays: 5
 
 ---
 spring:
@@ -52,3 +55,10 @@ linking:
     getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
     getInternalsPath: /cm/metadata/internal/
     getConfigurationPath: /cm/metadata/internal/, confId
+    cache:
+      lifetime: 3600
+  request:
+    expire: 86400
+    lloa: low
+    # Validity of an issued link. 0 means permanent
+    validityDays: 0

@@ -20,6 +20,7 @@ import eu.seal.linking.services.commons.RequestCommons;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,6 +44,21 @@ public class ValidatorService
     private RequestDomainRepository requestDomainRepository;
 
     private final static Logger LOG = LoggerFactory.getLogger(ValidatorService.class);
+
+    private static String REQUEST_LLOA;
+
+    private static int REQUEST_VALIDITY_DAYS;
+
+    @Value("${linking.request.lloa}")
+    public void setRequestLloa(String requestLloa) {
+        REQUEST_LLOA = requestLloa;
+    }
+
+    @Value("${linking.request.validityDays}")
+    public void setRequestValidityDays(int requestValidityDays)
+    {
+        REQUEST_VALIDITY_DAYS = requestValidityDays;
+    }
 
     public List<LinkRequest> getRequestsByDomain(List<String> domains) throws RequestException
     {
@@ -136,9 +153,20 @@ public class ValidatorService
         request.setLastUpdate(new Date());
 
         LinkRequest linkRequest = RequestCommons.getLinkRequestFrom(request, RequestCommons.REQ_NOT_ADD_ALL_FIELDS);
-        linkRequest.setLloa("MEDIUM"); //TODO: Define lloa level
+        linkRequest.setLloa(REQUEST_LLOA);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         linkRequest.setIssued(sdf.format(new Date()));
+
+        String expiration = "None";
+        if (REQUEST_VALIDITY_DAYS > 0)
+        {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.add(Calendar.DAY_OF_YEAR, REQUEST_VALIDITY_DAYS);
+            Date expirationDate = calendar.getTime();
+            expiration = sdf.format(expirationDate);
+        }
+        linkRequest.setExpiration(expiration);
 
         try
         {
