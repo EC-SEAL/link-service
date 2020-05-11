@@ -10,26 +10,23 @@ import eu.seal.linking.model.User;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.LinkService;
 import eu.seal.linking.services.SessionUsersService;
-import eu.seal.linking.services.sm.SessionManagerConnService;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.httpclient.HttpHost;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,8 +117,8 @@ public class LinkControllerTest
     // Testing real services
 
     @RequestMapping(value = "/request/submit/test", method = RequestMethod.GET, produces = "application/json")
-    public Response startLinkRequestTest(HttpResponse response)
-            throws LinkApplicationException, IOException, LinkAuthException
+    public String startLinkRequestTest(HttpResponse response)
+            throws IOException, LinkAuthException
     {
         String sessionId = authService.startSession();
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
@@ -165,8 +162,157 @@ public class LinkControllerTest
             os.write(out);
         }
 
-        // Do something with http.getInputStream()
+        //Do something with http.getInputStream()
 
-        return Response.ok().build();
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        return sb.toString();
+
+        //return Response.ok(sb.toString()).build();
     }
+
+    @RequestMapping(value = "/{requestId}/cancel/test", method = RequestMethod.GET)
+    public String cancelRequestTest(@PathVariable("requestId") String requestId)
+            throws LinkAuthException, IOException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        // POST
+
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/cancel");
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("msToken", authRequestData.getMsToken());
+        StringJoiner sj = new StringJoiner("&");
+        for(Map.Entry<String,String> entry : arguments.entrySet())
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try(OutputStream os = http.getOutputStream()) {
+            os.write(out);
+        }
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        return sb.toString();
+
+        //return Response.ok().build();
+    }
+
+    @RequestMapping(value = "/{requestId}/status/test", method = RequestMethod.GET, produces = "application/json")
+    public StatusResponse getRequestStatusTest(@PathVariable("requestId") String requestId)
+            throws LinkAuthException, IOException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        // GET
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/status?sessionToken=" + sessionId);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("GET");
+        http.setDoOutput(true);
+        http.connect();
+
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        //return sb.toString();
+
+        return StatusResponse.build(sb.toString());
+    }
+
+    @RequestMapping(value = "/{requestId}/result/get/test", produces = "application/json")
+    public String getRequestResultTest(@PathVariable("requestId") String requestId)  throws LinkAuthException, IOException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        // POST
+
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/result/get");
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+
+        Map<String,String> arguments = new HashMap<>();
+        arguments.put("msToken", authRequestData.getMsToken());
+        StringJoiner sj = new StringJoiner("&");
+        for(Map.Entry<String,String> entry : arguments.entrySet())
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try(OutputStream os = http.getOutputStream()) {
+            os.write(out);
+        }
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null) {
+            sb.append(output);
+        }
+        return sb.toString();
+    }
+
 }
