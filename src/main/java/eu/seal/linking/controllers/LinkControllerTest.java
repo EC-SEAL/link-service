@@ -7,6 +7,7 @@ import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
+import eu.seal.linking.model.enums.UserMessageType;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.LinkService;
 import eu.seal.linking.services.SessionUsersService;
@@ -95,7 +96,7 @@ public class LinkControllerTest
 
     @RequestMapping(value = "/{requestId}/result/get", produces = "application/json")
     public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken,
-                                        HttpSession session)  throws LinkApplicationException
+                                        HttpSession session) throws LinkApplicationException
     {
         User user = getSessionUser(session);
 
@@ -145,20 +146,23 @@ public class LinkControllerTest
         http.setRequestMethod("POST");
         http.setDoOutput(true);
 
-        Map<String,String> arguments = new HashMap<>();
+        Map<String, String> arguments = new HashMap<>();
         arguments.put("msToken", authRequestData.getMsToken());
         StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : arguments.entrySet())
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
             sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
                     + URLEncoder.encode(entry.getValue(), "UTF-8"));
-            byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        }
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
         int length = out.length;
 
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         http.setFixedLengthStreamingMode(length);
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         http.connect();
-        try(OutputStream os = http.getOutputStream()) {
+        try (OutputStream os = http.getOutputStream())
+        {
             os.write(out);
         }
 
@@ -167,7 +171,8 @@ public class LinkControllerTest
         BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
-        while ((output = br.readLine()) != null) {
+        while ((output = br.readLine()) != null)
+        {
             sb.append(output);
         }
         return sb.toString();
@@ -198,12 +203,14 @@ public class LinkControllerTest
         http.setRequestMethod("POST");
         http.setDoOutput(true);
 
-        Map<String,String> arguments = new HashMap<>();
+        Map<String, String> arguments = new HashMap<>();
         arguments.put("msToken", authRequestData.getMsToken());
         StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : arguments.entrySet())
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
             sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
                     + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
         byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
         int length = out.length;
 
@@ -211,7 +218,8 @@ public class LinkControllerTest
         http.setFixedLengthStreamingMode(length);
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         http.connect();
-        try(OutputStream os = http.getOutputStream()) {
+        try (OutputStream os = http.getOutputStream())
+        {
             os.write(out);
         }
 
@@ -220,7 +228,8 @@ public class LinkControllerTest
         BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
-        while ((output = br.readLine()) != null) {
+        while ((output = br.readLine()) != null)
+        {
             sb.append(output);
         }
         return sb.toString();
@@ -257,7 +266,8 @@ public class LinkControllerTest
         BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
-        while ((output = br.readLine()) != null) {
+        while ((output = br.readLine()) != null)
+        {
             sb.append(output);
         }
         //return sb.toString();
@@ -266,7 +276,8 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/result/get/test", produces = "application/json")
-    public String getRequestResultTest(@PathVariable("requestId") String requestId)  throws LinkAuthException, IOException
+    public String getRequestResultTest(@PathVariable("requestId") String requestId)
+            throws LinkAuthException, IOException
     {
         String sessionId = authService.startSession();
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
@@ -287,12 +298,14 @@ public class LinkControllerTest
         http.setRequestMethod("POST");
         http.setDoOutput(true);
 
-        Map<String,String> arguments = new HashMap<>();
+        Map<String, String> arguments = new HashMap<>();
         arguments.put("msToken", authRequestData.getMsToken());
         StringJoiner sj = new StringJoiner("&");
-        for(Map.Entry<String,String> entry : arguments.entrySet())
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
             sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
                     + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
         byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
         int length = out.length;
 
@@ -300,7 +313,8 @@ public class LinkControllerTest
         http.setFixedLengthStreamingMode(length);
         http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
         http.connect();
-        try(OutputStream os = http.getOutputStream()) {
+        try (OutputStream os = http.getOutputStream())
+        {
             os.write(out);
         }
 
@@ -309,10 +323,183 @@ public class LinkControllerTest
         BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
         StringBuilder sb = new StringBuilder();
         String output;
-        while ((output = br.readLine()) != null) {
+        while ((output = br.readLine()) != null)
+        {
             sb.append(output);
         }
         return sb.toString();
     }
 
+    @RequestMapping(value = "/{requestId}/files/upload", produces = "application/json")
+    public String uploadFileTest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String update)
+            throws LinkAuthException, IOException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        String file = (update == null) ? "file.json" : "file2.json";
+        resource = new ClassPathResource(file);
+        String strFile = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+
+
+        // POST
+
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/files/upload?sessionToken=" + sessionId);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+
+        Map<String, String> arguments = new HashMap<>();
+        arguments.put("file", strFile);
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try (OutputStream os = http.getOutputStream())
+        {
+            os.write(out);
+        }
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null)
+        {
+            sb.append(output);
+        }
+        return sb.toString();
+    }
+
+    @RequestMapping(value = "/{requestId}/messages/send/{recipient:requester|officer}", method = RequestMethod.GET)
+    public String sendMessageTest(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
+                                    HttpSession session)
+            throws LinkApplicationException, LinkAuthException, IOException
+    {
+        String strMessage = null;
+        String sessionId = null;
+
+        if (recipient.equals(UserMessageType.OFFICER.toString()))
+        {
+            sessionId = authService.startSession();
+            AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+            ClassPathResource resource = new ClassPathResource("user.json");
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                    objectMapper.getTypeFactory().constructType(DataSet.class));
+
+            authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+            // Test with local files
+            resource = new ClassPathResource("message-requester.json");
+            strMessage = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        }
+        else if (recipient.equals(UserMessageType.REQUESTER.toString()))
+        {
+            // NOT WORKING: when connects, generates another session
+            session.setAttribute("user", sessionUsersService.getTestUser("ADMIN"));
+
+            // Test with local files
+            ClassPathResource resource = new ClassPathResource("message-officer.json");
+            strMessage = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        }
+
+        // POST
+
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/messages/send/" + recipient +
+                "?sessionToken=" + sessionId);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("POST");
+        http.setDoOutput(true);
+
+        Map<String, String> arguments = new HashMap<>();
+        arguments.put("message", strMessage);
+        StringJoiner sj = new StringJoiner("&");
+        for (Map.Entry<String, String> entry : arguments.entrySet())
+        {
+            sj.add(URLEncoder.encode(entry.getKey(), "UTF-8") + "="
+                    + URLEncoder.encode(entry.getValue(), "UTF-8"));
+        }
+        byte[] out = sj.toString().getBytes(StandardCharsets.UTF_8);
+        int length = out.length;
+
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.setFixedLengthStreamingMode(length);
+        http.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+        http.connect();
+        try (OutputStream os = http.getOutputStream())
+        {
+            os.write(out);
+        }
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null)
+        {
+            sb.append(output);
+        }
+        return sb.toString();
+    }
+
+    @RequestMapping(value = "/{requestId}/messages/receive", method = RequestMethod.GET, produces = "application/json")
+    public String getConversationTest(@PathVariable("requestId") String requestId)
+            throws LinkAuthException, IOException
+    {
+        String sessionId = authService.startSession();
+        AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
+
+        ClassPathResource resource = new ClassPathResource("user.json");
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
+                objectMapper.getTypeFactory().constructType(DataSet.class));
+
+        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        // GET
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/messages/receive?sessionToken=" + sessionId);
+        URLConnection con = url.openConnection();
+        HttpURLConnection http = (HttpURLConnection) con;
+        http.setRequestMethod("GET");
+        http.setDoOutput(true);
+        http.connect();
+
+
+        //Do something with http.getInputStream()
+
+        BufferedReader br = new BufferedReader(new InputStreamReader((http.getInputStream())));
+        StringBuilder sb = new StringBuilder();
+        String output;
+        while ((output = br.readLine()) != null)
+        {
+            sb.append(output);
+        }
+
+        return sb.toString();
+    }
 }

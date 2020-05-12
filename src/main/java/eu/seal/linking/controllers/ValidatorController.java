@@ -1,16 +1,10 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
-import eu.seal.linking.exceptions.RequestException;
-import eu.seal.linking.exceptions.UserNotAuthenticatedException;
-import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
-import eu.seal.linking.services.LinkService;
-import eu.seal.linking.services.SessionUsersService;
 import eu.seal.linking.services.ValidatorService;
 
-import java.io.File;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -27,15 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("link")
-public class ValidatorController
+public class ValidatorController extends BaseController
 {
     private final static Logger LOG = LoggerFactory.getLogger(ValidatorController.class);
 
     @Autowired
     private ValidatorService validatorService;
-
-    @Autowired
-    private SessionUsersService sessionUsersService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public List<LinkRequest> getRequestList(@RequestParam(required = false) String sessionToken, HttpSession session)
@@ -90,23 +81,4 @@ public class ValidatorController
         return Response.ok().build();
     }
 
-    // Test function
-    private User getSessionUser(HttpSession session) throws LinkApplicationException
-    {
-        /*User user = (User) session.getAttribute("user2");
-        if (user == null)
-        {
-            user = sessionUsersService.getTestUser("ADMIN");
-            session.setAttribute("user2", user);
-        }*/
-
-        User user = (User) session.getAttribute("user");
-
-        if (user == null)
-        {
-            throw new UserNotAuthenticatedException();
-        }
-
-        return user;
-    }
 }

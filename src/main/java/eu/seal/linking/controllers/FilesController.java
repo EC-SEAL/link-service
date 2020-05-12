@@ -1,8 +1,10 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
+import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.User;
+import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.FilesService;
 import eu.seal.linking.services.SessionUsersService;
 
@@ -21,31 +23,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("link")
-public class FilesController
+public class FilesController extends BaseController
 {
     @Autowired
     private FilesService filesService;
 
-    @Autowired
-    private SessionUsersService sessionUsersService;
-
-    @RequestMapping(value = "/{requestId}/files/upload", method = RequestMethod.GET)
-    // TODO: file param
+    @RequestMapping(value = "/{requestId}/files/upload", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public Response uploadFile(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
-                               @RequestParam(required = false) String update, HttpSession session)
-            throws LinkApplicationException, IOException
+                               @RequestParam(required = true) String file)
+            throws LinkApplicationException
     {
-        User user = getSessionUser(session, "USER");
+        User user = getUserFromSessionToken(sessionToken);
 
-        // Test with local files
-        String file = (update == null) ? "file.json" : "file2.json";
-        ClassPathResource resource = new ClassPathResource(file);
-        String strFile = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-
-       filesService.storeFileRequest(requestId, strFile, user);
+        filesService.storeFileRequest(requestId, file, user);
 
         return Response.ok().build();
     }
@@ -54,7 +48,7 @@ public class FilesController
     public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
                                                 HttpSession session) throws LinkApplicationException
     {
-        User user = getSessionUser(session, "ADMIN");
+        User user = getSessionUser(session);
         return filesService.getFilesFromRequest(requestId, user);
     }
 
@@ -63,36 +57,8 @@ public class FilesController
                                          @RequestParam(required = false) String sessionToken, HttpSession session)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session, "ADMIN");
+        User user = getSessionUser(session);
         return filesService.getFileFromRequest(requestId, fileId, user);
     }
 
-    private User getSessionUser(HttpSession session, String userType) throws LinkApplicationException
-    {
-        User user = null;
-
-        if (userType.equals("USER"))
-        {
-            user = (User) session.getAttribute("user");
-        }
-        else
-        {
-            user = (User) session.getAttribute("user2");
-        }
-
-        if (user == null)
-        {
-            user = sessionUsersService.getTestUser(userType);
-            if (userType.equals("USER"))
-            {
-                session.setAttribute("user", user);
-            }
-            else
-            {
-                session.setAttribute("user2", user);
-            }
-        }
-
-        return user;
-    }
 }
