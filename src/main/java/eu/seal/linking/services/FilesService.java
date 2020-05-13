@@ -39,12 +39,13 @@ public class FilesService
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
 
-    public void storeFileRequest(String requestUid, String strFile, User user) throws LinkApplicationException
+    public void storeFileRequest(String requestUid, String strFile/*, User user*/) throws LinkApplicationException
     {
         RequestCommons.deleteExpiredRequests(requestRepository);
 
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-        RequestCommons.checkRequesterFrom(request, user.getId());
+
+        //RequestCommons.checkRequesterFrom(request, user.getId());
 
         FileObject fileObject = null;
         try

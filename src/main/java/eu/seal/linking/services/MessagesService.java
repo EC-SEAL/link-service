@@ -60,7 +60,7 @@ public class MessagesService
 
         if (recipient.equals(UserMessageType.OFFICER.toString()))
         {
-            checkRequesterFrom(request, user.getId());
+            //checkRequesterFrom(request, user.getId());
             message.setSenderType(UserMessageType.REQUESTER.toString());
         }
         else
@@ -78,19 +78,19 @@ public class MessagesService
         RequestCommons.updateRequestLastUpdate(request, requestRepository);
     }
 
-    public List<Message> getConversation(String requestUid, User user) throws LinkApplicationException
+    public List<Message> getConversation(String requestUid) throws LinkApplicationException
     {
         RequestCommons.deleteExpiredRequests(requestRepository);
 
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
 
-        try
+        /*try
         {
             checkRequesterFrom(request, user.getId());
         } catch (UserNotAuthorizedException e)
         {
             checkOfficerFrom(request, user.getId());
-        }
+        }*/
 
         List<RequestMessage> requestMessages = request.getMessages();
         List<Message> messages = new ArrayList<Message>();

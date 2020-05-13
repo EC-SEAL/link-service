@@ -37,9 +37,9 @@ public class FilesController extends BaseController
                                @RequestParam(required = true) String file)
             throws LinkApplicationException
     {
-        User user = getUserFromSessionToken(sessionToken);
+        //User user = getUserFromSessionToken(sessionToken);
 
-        filesService.storeFileRequest(requestId, file, user);
+        filesService.storeFileRequest(requestId, file);
 
         return Response.ok().build();
     }

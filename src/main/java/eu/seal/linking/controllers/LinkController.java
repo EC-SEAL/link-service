@@ -44,9 +44,7 @@ public class LinkController extends BaseController
     public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getUserFromSessionToken(sessionToken);
-
-        String requestStatus = linkService.getRequestStatus(requestId, user);
+        String requestStatus = linkService.getRequestStatus(requestId);
 
         return StatusResponse.build(requestStatus);
     }
@@ -63,6 +61,7 @@ public class LinkController extends BaseController
         return Response.ok().build();
     }
 
+    // TODO: Get result, store in dataset and delete from database
     @RequestMapping(value = "/{requestId}/result/get", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
             throws LinkApplicationException, LinkAuthException
@@ -70,6 +69,14 @@ public class LinkController extends BaseController
         String sessionId = authService.validateToken(msToken);
         User user = getUserFromSessionToken(sessionId);
 
-        return linkService.getRequestResult(requestId, user);
+        LinkRequest linkRequest = linkService.getRequestResult(requestId, user);
+
+        //TODO: store object in dataset, and delete if all OK
+
+        linkService.deleteRequest(requestId);
+
+        return linkRequest;
     }
+
+    //TODO: client just send id request (also files and messages)
 }

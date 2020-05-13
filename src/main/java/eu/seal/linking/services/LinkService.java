@@ -63,12 +63,12 @@ public class LinkService
         }
     }
 
-    public String getRequestStatus(String uid, User user) throws LinkApplicationException
+    public String getRequestStatus(String uid) throws LinkApplicationException
     {
         RequestCommons.deleteExpiredRequests(requestRepository);
 
         Request request = RequestCommons.getRequestFrom(uid, requestRepository);
-        RequestCommons.checkRequesterFrom(request, user.getId());
+        //RequestCommons.checkRequesterFrom(request, user.getId());
 
         return request.getStatus();
     }
@@ -90,6 +90,12 @@ public class LinkService
         RequestCommons.checkRequesterFrom(request, user.getId());
 
         return RequestCommons.getLinkRequestFrom(request, RequestCommons.REQ_ADD_ALL_FIELDS);
+    }
+
+    public void deleteRequest(String requestId) throws RequestNotFoundException
+    {
+        Request request = RequestCommons.getRequestFrom(requestId, requestRepository);
+        requestRepository.delete(request);
     }
 
     private static Request initializeRequest(LinkRequest linkRequest, String strRequest, String requesterId)

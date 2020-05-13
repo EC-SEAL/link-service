@@ -81,4 +81,5 @@ public class ValidatorController extends BaseController
         return Response.ok().build();
     }
 
+    // TODO: get user by sessionToken
 }

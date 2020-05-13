@@ -69,4 +69,6 @@ public class UsersCMService
             throw new LinkInternalException();
         }
     }
+
+    //TODO: get users from CM and have a cache
 }

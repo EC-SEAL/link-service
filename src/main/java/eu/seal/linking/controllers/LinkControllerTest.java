@@ -78,7 +78,7 @@ public class LinkControllerTest
     {
         User user = getSessionUser(session);
 
-        String requestStatus = linkService.getRequestStatus(requestId, user);
+        String requestStatus = linkService.getRequestStatus(requestId);
 
         return StatusResponse.build(requestStatus);
     }
@@ -253,7 +253,7 @@ public class LinkControllerTest
         authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
 
         // GET
-        URL url = new URL("http://localhost:8090/link/" + requestId + "/status?sessionToken=" + sessionId);
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/status");    //?sessionToken=" + sessionId);
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection) con;
         http.setRequestMethod("GET");
@@ -352,7 +352,7 @@ public class LinkControllerTest
 
         // POST
 
-        URL url = new URL("http://localhost:8090/link/" + requestId + "/files/upload?sessionToken=" + sessionId);
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/files/upload"); //?sessionToken=" + sessionId);
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection) con;
         http.setRequestMethod("POST");
@@ -482,7 +482,7 @@ public class LinkControllerTest
         authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
 
         // GET
-        URL url = new URL("http://localhost:8090/link/" + requestId + "/messages/receive?sessionToken=" + sessionId);
+        URL url = new URL("http://localhost:8090/link/" + requestId + "/messages/receive"); //?sessionToken=" + sessionId);
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection) con;
         http.setRequestMethod("GET");

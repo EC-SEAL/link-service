@@ -33,11 +33,12 @@ public class MessagesController extends BaseController
     {
         User user = null;
 
-        if (recipient.equals(UserMessageType.OFFICER.toString()))
+        /*if (recipient.equals(UserMessageType.OFFICER.toString()))
         {
             user = getUserFromSessionToken(sessionToken);
         }
-        else if (recipient.equals(UserMessageType.REQUESTER.toString()))
+        else*/
+        if (recipient.equals(UserMessageType.REQUESTER.toString()))
         {
             user = getSessionUser(session);
         }
@@ -51,17 +52,6 @@ public class MessagesController extends BaseController
     public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
                                          HttpSession session) throws LinkApplicationException
     {
-        User user;
-
-        if (sessionToken != null)
-        {
-            user = getUserFromSessionToken(sessionToken);
-        }
-        else
-        {
-            user = getSessionUser(session);
-        }
-
-        return messagesService.getConversation(requestId, user);
+        return messagesService.getConversation(requestId);
     }
 }
