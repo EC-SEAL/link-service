@@ -1,8 +1,8 @@
 package eu.seal.linking.services;
 
-import eu.seal.linking.model.DataSet;
-import eu.seal.linking.model.domain.EntityMetadataList;
-import eu.seal.linking.model.domain.MsMetadataList;
+import eu.seal.linking.model.common.DataSet;
+import eu.seal.linking.model.common.EntityMetadataList;
+import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.services.cm.ConfMngrConnService;
 import eu.seal.linking.services.sm.SessionManagerConnService;
 

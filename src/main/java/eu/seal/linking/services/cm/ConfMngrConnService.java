@@ -1,9 +1,9 @@
 package eu.seal.linking.services.cm;
 
-import eu.seal.linking.model.domain.AttributeTypeList;
-import eu.seal.linking.model.domain.EntityMetadata;
-import eu.seal.linking.model.domain.EntityMetadataList;
-import eu.seal.linking.model.domain.MsMetadataList;
+import eu.seal.linking.model.common.AttributeTypeList;
+import eu.seal.linking.model.common.EntityMetadata;
+import eu.seal.linking.model.common.EntityMetadataList;
+import eu.seal.linking.model.common.MsMetadataList;
 
 import java.util.List;
 

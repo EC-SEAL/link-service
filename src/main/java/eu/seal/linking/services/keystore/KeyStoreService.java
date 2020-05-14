@@ -1,4 +1,4 @@
-package eu.seal.linking.services.params;
+package eu.seal.linking.services.keystore;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Key;

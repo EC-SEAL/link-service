@@ -178,6 +178,15 @@
             <version>7.9</version>
         </dependency>
 
+        <!-- For Http POST testing -->
+        <dependency>
+            <groupId>com.user.deploy</groupId>
+            <artifactId>deploy-jar</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>/opt/devel/tools/deploy.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
 </project>

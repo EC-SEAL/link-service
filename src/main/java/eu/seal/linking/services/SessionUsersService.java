@@ -3,11 +3,11 @@ package eu.seal.linking.services;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.UserNotAuthenticatedException;
-import eu.seal.linking.model.AttributeType;
 import eu.seal.linking.model.AuthSource;
-import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.User;
 import eu.seal.linking.model.UserCM;
+import eu.seal.linking.model.common.AttributeType;
+import eu.seal.linking.model.common.DataSet;
 
 import java.io.IOException;
 import java.util.ArrayList;

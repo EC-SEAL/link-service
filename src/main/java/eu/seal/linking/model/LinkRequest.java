@@ -1,5 +1,7 @@
 package eu.seal.linking.model;
 
+import eu.seal.linking.model.common.DataSet;
+
 import java.util.HashMap;
 import java.util.List;
 

@@ -1,8 +1,7 @@
 package eu.seal.linking.controllers;
 
-import eu.seal.linking.model.domain.EntityMetadataList;
-import eu.seal.linking.model.domain.MsMetadataList;
-import eu.seal.linking.services.AuthService;
+import eu.seal.linking.model.common.EntityMetadataList;
+import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.services.TestService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.sun.deploy.net.HttpResponse;
 
 @RestController
 @RequestMapping("cmtest")

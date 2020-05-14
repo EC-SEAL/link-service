@@ -1,4 +1,4 @@
-package eu.seal.linking.model.domain;
+package eu.seal.linking.model.common;
 
 public enum HttpResponseEnum
 {

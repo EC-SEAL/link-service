@@ -2,8 +2,8 @@ package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.UserNotAuthenticatedException;
-import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.User;
+import eu.seal.linking.model.common.DataSet;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.SessionUsersService;
 

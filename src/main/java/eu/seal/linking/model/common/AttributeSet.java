@@ -1,4 +1,4 @@
-package eu.seal.linking.model.domain;
+package eu.seal.linking.model.common;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
-import javax.validation.constraints.*;
 
 /**
  * Object representing a generic request/response. Used for in-application transference of the security assertions or claims containing trusted user information (attribute values); also to set the list of attributes to be requested.

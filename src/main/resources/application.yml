@@ -25,6 +25,17 @@ linking:
     getConfigurationPath: /cm/metadata/internal/, confId
     cache:
       lifetime: 3600
+    url: https://vm.project-seal.eu:9083
+  sm:
+    url: http://5.79.83.118:9090
+  keystore:
+    path: /etc/seal/testKeys/keystore.jks
+    pass: keystorepass
+    key.pass: selfsignedpass
+    httpsig.cert.alias: 1
+    httpsig.attempts:
+    async.signature: true
+    signing.secret: QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
   request:
     expire: 86400
     lloa: low
@@ -57,6 +68,8 @@ linking:
     getConfigurationPath: /cm/metadata/internal/, confId
     cache:
       lifetime: 3600
+    url: https://vm.project-seal.eu:9083
+
   request:
     expire: 86400
     lloa: low

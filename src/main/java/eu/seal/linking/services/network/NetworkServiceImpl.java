@@ -1,7 +1,7 @@
 package eu.seal.linking.services.network;
 
-import eu.seal.linking.model.domain.SessionMngrResponse;
-import eu.seal.linking.services.params.KeyStoreService;
+import eu.seal.linking.model.common.SessionMngrResponse;
+import eu.seal.linking.services.keystore.KeyStoreService;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

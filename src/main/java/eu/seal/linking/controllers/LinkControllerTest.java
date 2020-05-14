@@ -3,10 +3,10 @@ package eu.seal.linking.controllers;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
-import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.User;
+import eu.seal.linking.model.common.DataSet;
 import eu.seal.linking.model.enums.UserMessageType;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.LinkService;
@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.deploy.net.HttpResponse;
+//import com.sun.deploy.net.HttpResponse;
 
 @RestController
 @RequestMapping("test/link")

@@ -2,14 +2,12 @@ package eu.seal.linking.controllers;
 
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
-import eu.seal.linking.exceptions.UserNotAuthenticatedException;
-import eu.seal.linking.model.DataSet;
 import eu.seal.linking.model.User;
+import eu.seal.linking.model.common.DataSet;
 import eu.seal.linking.services.AuthService;
 import eu.seal.linking.services.SessionUsersService;
 import eu.seal.linking.services.commons.SessionCommons;
 
-import javax.jws.soap.SOAPBinding;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,12 @@
 package eu.seal.linking.services.sm;
 
-import eu.seal.linking.model.domain.EntityMetadata;
-import eu.seal.linking.model.domain.SessionMngrResponse;
-import eu.seal.linking.model.domain.SessionMngrResponse.CodeEnum;
-import eu.seal.linking.model.domain.UpdateDataRequest;
+import eu.seal.linking.model.common.EntityMetadata;
+import eu.seal.linking.model.common.SessionMngrResponse;
+import eu.seal.linking.model.common.SessionMngrResponse.CodeEnum;
+import eu.seal.linking.model.common.UpdateDataRequest;
 import eu.seal.linking.services.cm.ConfMngrConnService;
 import eu.seal.linking.services.network.NetworkServiceImpl;
-import eu.seal.linking.services.params.KeyStoreService;
-import eu.seal.linking.services.params.ParameterService;
+import eu.seal.linking.services.keystore.KeyStoreService;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,12 +23,14 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SessionManagerConnServiceImp implements SessionManagerConnService
 {
-    private final String hostURL;
+    @Value("${linking.sm.url}")
+    private String hostURL;
 
     //TODO
     private String sender = null;
@@ -43,16 +44,12 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 
     private ConfMngrConnService confMngrService;
 
-    private ParameterService paramServ;
-
     @Autowired
-    public SessionManagerConnServiceImp (ConfMngrConnService confMngrConnService, KeyStoreService keyStoreServ, ParameterService paramServ) {
+    public SessionManagerConnServiceImp (ConfMngrConnService confMngrConnService, KeyStoreService keyStoreServ) {
 
         this.keyStoreService = keyStoreServ;
 
         this.confMngrService = confMngrConnService;
-
-        this.paramServ = paramServ;
 
 //		MsMetadataList mySMs = this.confMngrService.getMicroservicesByApiClass("SM");
 //		if (mySMs != null) {
@@ -64,7 +61,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
 //			log.info("HARDCODED SessionMngr hostURL! "+ hostURL);
 //		}
 
-        hostURL = this.paramServ.getParam("SESSION_MANAGER_URL");
+        //hostURL = this.paramServ.getParam("SESSION_MANAGER_URL");
 
         // The receiver will be different: Persistence, Identity, IDderivation, ...
         // ******************************

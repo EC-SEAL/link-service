@@ -1,15 +1,14 @@
 package eu.seal.linking.services.cm;
 
 import eu.seal.linking.dao.ServiceCacheRepository;
+import eu.seal.linking.model.common.AttributeTypeList;
+import eu.seal.linking.model.common.EntityMetadata;
+import eu.seal.linking.model.common.EntityMetadataList;
+import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.model.db.ServicesCache;
-import eu.seal.linking.model.domain.AttributeTypeList;
-import eu.seal.linking.model.domain.EntityMetadata;
-import eu.seal.linking.model.domain.EntityMetadataList;
-import eu.seal.linking.model.domain.MsMetadataList;
 import eu.seal.linking.model.enums.ServicesId;
 import eu.seal.linking.services.network.NetworkServiceImpl;
-import eu.seal.linking.services.params.KeyStoreService;
-import eu.seal.linking.services.params.ParameterService;
+import eu.seal.linking.services.keystore.KeyStoreService;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,12 +32,12 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 {
     private static final Logger log = LoggerFactory.getLogger(ConfMngrConnServiceImp.class);
 
-    private ParameterService paramServ;
     private KeyStoreService keyStoreService;
 
     private NetworkServiceImpl network = null;
 
-    private final String cmUrl;
+    @Value("${linking.cm.url}")
+    private String cmUrl;
 
     @Value("${linking.cm.getExternalEntitiesPath}")
     private String getExternalEntitiesPath;
@@ -75,10 +74,7 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 
 
     @Autowired
-    public ConfMngrConnServiceImp (ParameterService paramServ, KeyStoreService keyStoreServ) {
-        this.paramServ = paramServ;
-        cmUrl = this.paramServ.getParam("CONFIGURATION_MANAGER_URL");
-
+    public ConfMngrConnServiceImp (KeyStoreService keyStoreServ) {
         this.keyStoreService = keyStoreServ;
     }
 

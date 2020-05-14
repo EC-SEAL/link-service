@@ -1,7 +1,5 @@
 package eu.seal.linking.model;
 
-import eu.seal.linking.model.domain.PublishedApiType;
-
 public class AuthRequestData
 {
     private String msToken;

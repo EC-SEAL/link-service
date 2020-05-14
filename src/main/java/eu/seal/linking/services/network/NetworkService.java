@@ -1,6 +1,6 @@
 package eu.seal.linking.services.network;
 
-import eu.seal.linking.model.domain.SessionMngrResponse;
+import eu.seal.linking.model.common.SessionMngrResponse;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
