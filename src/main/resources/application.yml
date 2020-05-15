@@ -41,6 +41,10 @@ linking:
     lloa: low
     # Validity of an issued link. 0 means permanent
     validityDays: 5
+  resources:
+    users:
+      path: /etc/seal/resources/users-cm.json
+      cache: 30000
 
 ---
 spring:
