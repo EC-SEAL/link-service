@@ -46,7 +46,7 @@ linking:
     ms:
       path: /etc/seal/resources/microservices.json
       cache: 3600000
-
+  auth.callback: http://localhost:8090/link/auth/callback
 ---
 spring:
   profiles: container

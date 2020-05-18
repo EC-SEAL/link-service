@@ -25,7 +25,7 @@ public class InterfaceController
     @Autowired
     SessionUsersService sessionUsersService;
 
-    @GetMapping("main")
+    @RequestMapping("main")
     public String getMainPage(HttpSession session) throws LinkAuthException
     {
         String redirectPage = "main";

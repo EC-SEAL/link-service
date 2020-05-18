@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
@@ -8,6 +9,7 @@ import eu.seal.linking.services.commons.SessionCommons;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
@@ -39,7 +41,7 @@ public class AuthController
         AuthRequestData authRequestData = authService.generateAuthRequest(sourceId, sessionId);
 
         //mockup
-        authRequestData.setEndpoint("http://localhost:8090/cmtest/auth");
+        //authRequestData.setEndpoint("http://localhost:8090/cmtest/auth");
 
         return authRequestData;
     }
@@ -54,5 +56,13 @@ public class AuthController
         session.removeAttribute("user");
 
         return Response.ok().build();
+    }
+
+    @RequestMapping(value="callback")
+    public void authCallBack(HttpSession session, HttpServletResponse response) throws AuthStartSessionException, Exception
+    {
+        authService.authenticationCallBack(SessionCommons.getSessionId(session, authService));
+
+        response.sendRedirect("/validator/main");
     }
 }

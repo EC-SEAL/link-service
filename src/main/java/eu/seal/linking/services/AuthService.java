@@ -20,6 +20,7 @@ import eu.seal.linking.model.common.AttributeSet;
 import eu.seal.linking.model.common.AttributeType;
 import eu.seal.linking.model.common.AttributeTypeList;
 import eu.seal.linking.model.common.DataSet;
+import eu.seal.linking.model.common.DataStore;
 import eu.seal.linking.model.common.EntityMetadata;
 import eu.seal.linking.model.common.EntityMetadataList;
 import eu.seal.linking.model.common.MsMetadata;
@@ -60,6 +61,9 @@ public class AuthService
 
     @Value("${linking.resources.ms.cache}")
     private long msResourceCache;
+
+    @Value("${linking.auth.callback}")
+    private String authCallback;
 
     private final static Logger LOG = LoggerFactory.getLogger(AuthService.class);
 
@@ -291,6 +295,8 @@ public class AuthService
             sessionManagerConnService.updateVariable(sessionId, "idpRequest", objIdpRequest.writeValueAsString(idpRequest));
             // Generate token for returning the session.
             msToken = sessionManagerConnService.generateToken(sessionId, service);
+
+            sessionManagerConnService.updateVariable(sessionId, "ClientCallbackAddr", authCallback);
         }
         catch (Exception e)
         {
@@ -301,6 +307,7 @@ public class AuthService
         return msToken;
     }
 
+    //TODO: change dataset for attributeset
     public DataSet getAuthenticationDataSet(String sessionId) throws UserNotAuthenticatedException
     {
         try
@@ -420,5 +427,31 @@ public class AuthService
         }
 
         return msMetadataList;
+    }
+
+    public void authenticationCallBack(String sessionId) throws Exception
+    {
+        Object objDataStore = sessionManagerConnService.readVariable(sessionId, "dataStore");
+        DataStore dataStore = (new ObjectMapper()).readValue(objDataStore.toString(),DataStore.class);
+
+        DataSet dataSet = dataStore.getClearData() != null ? dataStore.getClearData().get(0) : null;
+
+        if (dataSet != null)
+        {
+            ObjectMapper objMapper = new ObjectMapper();
+            AttributeSet authenticationSet = new AttributeSet ();
+            authenticationSet.setId(UUID.randomUUID().toString());
+            //authenticationSet.setType(AttributeSet.TypeEnum(myDataset.getType()));
+            authenticationSet.setType(AttributeSet.TypeEnum.AUTHRESPONSE);
+            authenticationSet.setIssuer(dataSet.getIssuerId());
+            authenticationSet.setRecipient(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
+            authenticationSet.setLoa(dataSet.getLoa());
+            authenticationSet.setNotAfter(dataSet.getExpiration());
+            authenticationSet.setNotBefore(null);
+            authenticationSet.setAttributes(dataSet.getAttributes());
+
+            sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
+                    objMapper.writeValueAsString(authenticationSet));
+        }
     }
 }
