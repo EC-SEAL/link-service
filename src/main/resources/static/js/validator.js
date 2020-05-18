@@ -158,10 +158,10 @@ function getRequestCurrentStatus(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/module/request/' + requestId + '/info',
+        url: '/link/' + requestId + '/status',
         async: false
     }).done(function (data, textStatus, jqXHR) {
-        status = data.status;
+        status = data.primaryCode;
     }).fail(function (data, textStatus, jqXHR) {
         status = 'ERROR';
     });
