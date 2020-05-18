@@ -23,8 +23,6 @@ linking:
     getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
     getInternalsPath: /cm/metadata/internal/
     getConfigurationPath: /cm/metadata/internal/, confId
-    cache:
-      lifetime: 3600
     url: https://vm.project-seal.eu:9083
   sm:
     url: http://5.79.83.118:9090
@@ -44,7 +42,10 @@ linking:
   resources:
     users:
       path: /etc/seal/resources/users-cm.json
-      cache: 30000
+      cache: 300000
+    ms:
+      path: /etc/seal/resources/microservices.json
+      cache: 3600000
 
 ---
 spring:
@@ -70,8 +71,6 @@ linking:
     getMicroservicesByApiClassPath: /cm/metadata/microservices/, apiClass
     getInternalsPath: /cm/metadata/internal/
     getConfigurationPath: /cm/metadata/internal/, confId
-    cache:
-      lifetime: 3600
     url: https://vm.project-seal.eu:9083
 
   request:

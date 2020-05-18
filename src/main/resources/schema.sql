@@ -46,11 +46,3 @@ create table if not exists link_req_messages
     primary key (id),
     foreign key (request_id) references link_requests (id) on delete cascade on update cascade
 );
-
-create table if not exists link_services_cache
-(
-    id varchar(20) not null,
-    last_update timestamp not null,
-    services blob not null,
-    primary key (id)
-);

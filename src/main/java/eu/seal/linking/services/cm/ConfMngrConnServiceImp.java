@@ -1,20 +1,14 @@
 package eu.seal.linking.services.cm;
 
-import eu.seal.linking.dao.ServiceCacheRepository;
 import eu.seal.linking.model.common.AttributeTypeList;
 import eu.seal.linking.model.common.EntityMetadata;
 import eu.seal.linking.model.common.EntityMetadataList;
 import eu.seal.linking.model.common.MsMetadataList;
-import eu.seal.linking.model.db.ServicesCache;
-import eu.seal.linking.model.enums.ServicesId;
-import eu.seal.linking.services.network.NetworkServiceImpl;
 import eu.seal.linking.services.keystore.KeyStoreService;
+import eu.seal.linking.services.network.NetworkServiceImpl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -65,13 +59,6 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
 
     @Value("${linking.cm.getAttributeProfilesPath}")
     private String getAttributeProfilesPath;
-
-    @Value("${linking.cm.cache.lifetime}")
-    private int cacheLifetime;
-
-    @Autowired
-    private ServiceCacheRepository serviceCacheRepository;
-
 
     @Autowired
     public ConfMngrConnServiceImp (KeyStoreService keyStoreServ) {
@@ -223,68 +210,43 @@ public class ConfMngrConnServiceImp implements ConfMngrConnService
     }
 
 
-
-
     // /metadata/microservices
     @Override
-    public MsMetadataList getAllMicroservices ()
-    {
-        ServicesCache servicesCache = null;
-        boolean loadServices = true;
-        Optional<ServicesCache> servicesCacheOptional = serviceCacheRepository.findById(ServicesId.ALL.toString());
-        if (servicesCacheOptional.isPresent())
-        {
-            servicesCache = servicesCacheOptional.get();
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(new Date());
-            calendar.add(Calendar.SECOND, -cacheLifetime);
-
-            if (servicesCache.getLastUpddate().after(calendar.getTime()))
-            {
-                loadServices = false;
-            }
-        }
-
+    public MsMetadataList getAllMicroservices (){
 
         MsMetadataList result = null;
 
-        if (loadServices)
-        {
-            try
+        try {
+            if (network == null)
             {
-                if (network == null)
-                {
-                    network = new NetworkServiceImpl(keyStoreService);
-                }
-                List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+                network = new NetworkServiceImpl(keyStoreService);
+            }
+            List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 
-                String jsonResult = network.sendGet(cmUrl,
-                        getAllMicroservicesPath,
-                        urlParameters, 1);
+            String jsonResult = network.sendGet (cmUrl,
+                    getAllMicroservicesPath,
+                    urlParameters, 1);
 
-                if (jsonResult != null)
-                {
-                    servicesCache = new ServicesCache(ServicesId.ALL.toString(), jsonResult);
-                    serviceCacheRepository.save(servicesCache);
-                }
+            if (jsonResult != null) {
+                //log.info("jsonResult: "+ jsonResult);
+                ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                result = mapper.readValue(jsonResult, MsMetadataList.class);
+                //log.info("Result: "+ result);
             }
 
-            catch (Exception e)
-            {
-                log.error("CM exception", e);
-            }
         }
 
-        if (servicesCache != null)
-        {
-            try
-            {
-                ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                result = mapper.readValue(servicesCache.getServices(), MsMetadataList.class);
-            } catch (Exception e)
-            {
-                log.error("CM exception", e);
-            }
+//		RestTemplate restTemplate = new RestTemplate();
+//
+//		MsMetadataList result;
+//
+//		try {
+//			result = restTemplate.getForObject( cmUrl + 	//"http://localhost:8080/cm/metadata/microservices/"
+//												getAllMicroservicesPath, MsMetadataList.class);
+//		}
+        catch (Exception e) {
+            log.error("CM exception", e);
+            return null;
         }
 
         return result;

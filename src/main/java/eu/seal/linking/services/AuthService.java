@@ -26,9 +26,13 @@ import eu.seal.linking.model.common.MsMetadata;
 import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.model.common.PublishedApiType;
 import eu.seal.linking.services.cm.ConfMngrConnService;
+import eu.seal.linking.services.commons.ResourceCommons;
 import eu.seal.linking.services.sm.SessionManagerConnService;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,8 +40,10 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -48,6 +54,12 @@ public class AuthService
 
     @Autowired
     SessionManagerConnService sessionManagerConnService;
+
+    @Value("${linking.resources.ms.path}")
+    private String msResourcePath;
+
+    @Value("${linking.resources.ms.cache}")
+    private long msResourceCache;
 
     private final static Logger LOG = LoggerFactory.getLogger(AuthService.class);
 
@@ -97,7 +109,8 @@ public class AuthService
             throw new AuthSourceNotFoundException("Auth source " + sourceId + " not found");
         }
 
-        MsMetadataList msMetadataList = confMngrConnService.getAllMicroservices();
+        //MsMetadataList msMetadataList = confMngrConnService.getAllMicroservices();
+        MsMetadataList msMetadataList = getAllMicroservices();
         MsMetadata service = selectService(entityMetadata, msMetadataList);
         PublishedApiType api = getAuthApi(sourceId, service);
         EntityMetadata idpMetadata = getIdP(sourceId, service.getMsId());
@@ -370,5 +383,42 @@ public class AuthService
             LOG.error(e.getMessage(), e);
             throw new AuthSetSessionVariableException("Variable " + variableName + "could not be set");
         }
+    }
+
+    private MsMetadataList getAllMicroservices()
+    {
+        MsMetadataList msMetadataList = null;
+
+        long lastModified = ResourceCommons.getFileLastUpdate(msResourcePath);
+        if (new Date().getTime() > lastModified + msResourceCache)
+        {
+            msMetadataList = confMngrConnService.getAllMicroservices();
+
+            try
+            {
+                ObjectMapper objectMapper = new ObjectMapper();
+                ResourceCommons.writeFileContent(msResourcePath, objectMapper.writeValueAsString(msMetadataList));
+            } catch (IOException e)
+            {
+                LOG.warn("Error writing micorservices resource", e);
+            }
+        }
+
+        if (msMetadataList == null)
+        {
+            try
+            {
+                FileInputStream resource = new FileInputStream(msResourcePath);
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                msMetadataList = mapper.readValue(resource, MsMetadataList.class);
+            } catch (Exception e)
+            {
+                LOG.error("Error reading microservices from cache", e);
+            }
+        }
+
+        return msMetadataList;
     }
 }
