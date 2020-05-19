@@ -307,7 +307,6 @@ public class AuthService
         return msToken;
     }
 
-    //TODO: change dataset for attributeset
     public DataSet getAuthenticationDataSet(String sessionId) throws UserNotAuthenticatedException
     {
         try
@@ -319,6 +318,20 @@ public class AuthService
         {
             LOG.error(e.getMessage(), e);
             throw new UserNotAuthenticatedException();
+        }
+    }
+
+    public AuthSource getAuthSource(String sessionId) throws UserNotAuthenticatedException
+    {
+        try
+        {
+            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authSource");
+            return (new ObjectMapper()).readValue(objDataSet.toString(), AuthSource.class);
+        }
+        catch (Exception e)
+        {
+            LOG.warn(e.getMessage(), e);
+            return new AuthSource();
         }
     }
 
@@ -438,7 +451,7 @@ public class AuthService
 
         if (dataSet != null)
         {
-            ObjectMapper objMapper = new ObjectMapper();
+            /*ObjectMapper objMapper = new ObjectMapper();
             AttributeSet authenticationSet = new AttributeSet ();
             authenticationSet.setId(UUID.randomUUID().toString());
             //authenticationSet.setType(AttributeSet.TypeEnum(myDataset.getType()));
@@ -451,7 +464,22 @@ public class AuthService
             authenticationSet.setAttributes(dataSet.getAttributes());
 
             sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
-                    objMapper.writeValueAsString(authenticationSet));
+                    objMapper.writeValueAsString(authenticationSet));*/
+
+            //TODO: subjectId is null from auth node???
+            if (dataSet.getType().equals("eIDAS"))
+            {
+                dataSet.setSubjectId("PersonIdentifier");
+            }
+
+            ObjectMapper objMapper = new ObjectMapper();
+            sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
+                    objMapper.writeValueAsString(dataSet));
+
+            // Getting auth source
+            EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", dataSet.getType());
+            AuthSource authSource = getAuthSourceFrom(entityMetadata);
+            sessionManagerConnService.updateVariable(sessionId, "authSource", objMapper.writeValueAsString(authSource));
         }
     }
 }

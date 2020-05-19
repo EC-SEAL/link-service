@@ -1,5 +1,6 @@
 package eu.seal.linking.services;
 
+import eu.seal.linking.model.AuthSource;
 import eu.seal.linking.model.common.DataSet;
 import eu.seal.linking.model.common.EntityMetadataList;
 import eu.seal.linking.model.common.MsMetadataList;
@@ -21,6 +22,9 @@ public class TestService
     @Autowired
     private SessionManagerConnService sessionManagerConnService;
 
+    @Autowired
+    private  SessionUsersService sessionUsersService;
+
     public MsMetadataList pruebaServiciosCM()
     {
         MsMetadataList msMetadataList = confMngrConnService.getAllMicroservices();
@@ -33,7 +37,7 @@ public class TestService
         return confMngrConnService.getEntityMetadataSet("AUTHSOURCE");
     }
 
-    public void setMockAuthDataSet(String sessionId) throws Exception
+    public void setMockAuthData(String sessionId) throws Exception
     {
         ClassPathResource resource = new ClassPathResource("admin.json");
         ObjectMapper objectMapper = new ObjectMapper();
@@ -42,5 +46,8 @@ public class TestService
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
         sessionManagerConnService.updateVariable(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+
+        AuthSource authSource = sessionUsersService.getTestAuthSource();
+        sessionManagerConnService.updateVariable(sessionId, "authSource", objectMapper.writeValueAsString(authSource));
     }
 }

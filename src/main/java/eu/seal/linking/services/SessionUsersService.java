@@ -70,7 +70,7 @@ public class SessionUsersService
 
         for (AttributeType attributeType : dataSet.getAttributes())
         {
-            if (attributeType.getName().equals(idAttribute))
+            if (attributeType.getName().equals(idAttribute) || attributeType.getFriendlyName().equals(idAttribute))
             {
                 id = attributeType.getValues().get(0);
             }

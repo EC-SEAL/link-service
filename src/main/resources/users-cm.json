@@ -27,5 +27,16 @@
     "entitlements": [],
     "photoID": "",
     "email": "fredflinstone@uji.es"
+  },
+  {
+    "hashID": "d55c9ae2e1fef7ec6d2de46147998b98",
+    "nameAttr": "http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName",
+    "surnameAttr": "http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName",
+    "entitlements": [
+      "UJI",
+      "UV"
+    ],
+    "photoID": "",
+    "email": "test1@uji.es"
   }
 ]

@@ -35,9 +35,11 @@ public class InterfaceController
         {
             try
             {
-                DataSet authentication = authService.getAuthenticationDataSet(SessionCommons.getSessionId(session, authService));
+                String sessionID = SessionCommons.getSessionId(session, authService);
+                DataSet authentication = authService.getAuthenticationDataSet(sessionID);
                 user = sessionUsersService.getUser(authentication);
                 session.setAttribute("user", user);
+                session.setAttribute("authSource", authService.getAuthSource(sessionID));
             } catch (LinkApplicationException |LinkAuthException e)
             {
                 redirectPage = "auth";

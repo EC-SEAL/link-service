@@ -1,7 +1,6 @@
 package eu.seal.linking.controllers;
 
 import eu.seal.linking.model.UserCM;
-import eu.seal.linking.model.UsersCM;
 import eu.seal.linking.model.common.EntityMetadataList;
 import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.services.TestService;
@@ -12,7 +11,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -47,7 +45,7 @@ public class TestController
     public void authTestService(@RequestParam String msToken, HttpServletRequest request,
                                 HttpServletResponse response, HttpSession session) throws Exception
     {
-        testService.setMockAuthDataSet((String) session.getAttribute("sessionID")); // have to be defined
+        testService.setMockAuthData((String) session.getAttribute("sessionID")); // have to be defined
 
         String forward = request.getHeader("referer");
 

@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("link/module")
-public class ModuleController
+public class ModuleController extends BaseController
 {
     @Autowired
     private SessionUsersService sessionUsersService;
@@ -34,7 +34,7 @@ public class ModuleController
             throws LinkApplicationException
     {
         User user = getSessionUser(session);
-        AuthSource authSource = getAuthSource(session);
+        AuthSource authSource = (AuthSource) session.getAttribute("authSource");
 
         UserAuthData userAuthData = new UserAuthData(user, authSource);
 
@@ -42,7 +42,7 @@ public class ModuleController
     }
 
     // Test function
-    private User getSessionUser(HttpSession session) throws LinkApplicationException
+    private User getTestSessionUser(HttpSession session) throws LinkApplicationException
     {
         User user = (User) session.getAttribute("user2");
         if (user == null)
@@ -55,7 +55,7 @@ public class ModuleController
     }
 
     // Test function
-    private AuthSource getAuthSource(HttpSession session) throws LinkApplicationException
+    private AuthSource getTestAuthSource(HttpSession session) throws LinkApplicationException
     {
         AuthSource authSource = (AuthSource) session.getAttribute("authSource2");
         if (authSource == null)
