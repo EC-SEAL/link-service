@@ -37,19 +37,19 @@ public class FilesController extends BaseController
     }
 
     @RequestMapping(value = "/{requestId}/files/download/list", method = RequestMethod.GET)
-    public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
-                                                HttpSession session) throws LinkApplicationException
+    public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
+            throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         return filesService.getFilesFromRequest(requestId, user);
     }
 
     @RequestMapping(value = "/{requestId}/files/download/{fileId}", method = RequestMethod.GET)
     public FileObject getFileFromRequest(@PathVariable("requestId") String requestId, @PathVariable("fileId") Long fileId,
-                                         @RequestParam(required = false) String sessionToken, HttpSession session)
+                                         @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         return filesService.getFileFromRequest(requestId, fileId, user);
     }
 

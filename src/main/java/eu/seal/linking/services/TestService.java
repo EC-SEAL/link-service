@@ -48,6 +48,6 @@ public class TestService
         sessionManagerConnService.updateVariable(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
 
         AuthSource authSource = sessionUsersService.getTestAuthSource();
-        sessionManagerConnService.updateVariable(sessionId, "authSource", objectMapper.writeValueAsString(authSource));
+        sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objectMapper.writeValueAsString(authSource));
     }
 }

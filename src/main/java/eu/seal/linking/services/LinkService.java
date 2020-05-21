@@ -1,26 +1,16 @@
 package eu.seal.linking.services;
 
-import eu.seal.linking.dao.RequestDomainRepository;
-import eu.seal.linking.dao.RequestFileRepository;
-import eu.seal.linking.dao.RequestMessageRepository;
 import eu.seal.linking.dao.RequestRepository;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.exceptions.RequestException;
-import eu.seal.linking.exceptions.RequestFileNotFoundException;
 import eu.seal.linking.exceptions.RequestNotFoundException;
-import eu.seal.linking.exceptions.UserNotAuthorizedException;
-import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.LinkRequest;
-import eu.seal.linking.model.Message;
-import eu.seal.linking.model.User;
 import eu.seal.linking.model.db.Request;
 import eu.seal.linking.model.db.RequestDomain;
-import eu.seal.linking.model.db.RequestFile;
-import eu.seal.linking.model.db.RequestMessage;
 import eu.seal.linking.model.enums.RequestStatus;
-import eu.seal.linking.utils.CryptoUtils;
 import eu.seal.linking.services.commons.RequestCommons;
+import eu.seal.linking.utils.CryptoUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -35,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 
 @Service
 public class LinkService
@@ -45,13 +34,13 @@ public class LinkService
 
     private final static Logger LOG = LoggerFactory.getLogger(LinkService.class);
 
-    public LinkRequest storeNewRequest(String strRequest, User user) throws LinkApplicationException
+    public LinkRequest storeNewRequest(String strRequest, String userId) throws LinkApplicationException
     {
         try
         {
             ObjectMapper objectMapper = new ObjectMapper();
             LinkRequest linkRequest = objectMapper.readValue(strRequest, LinkRequest.class);
-            Request request = initializeRequest(linkRequest, strRequest, user.getId());
+            Request request = initializeRequest(linkRequest, strRequest, userId);
             request = requestRepository.save(request);
             linkRequest.setId(request.getUid());
             return linkRequest;
@@ -73,21 +62,21 @@ public class LinkService
         return request.getStatus();
     }
 
-    public void cancelRequest(String uid, User user) throws LinkApplicationException
+    public void cancelRequest(String uid, String userId) throws LinkApplicationException
     {
         RequestCommons.deleteExpiredRequests(requestRepository);
 
         Request request = RequestCommons.getRequestFrom(uid, requestRepository);
-        RequestCommons.checkRequesterFrom(request, user.getId());
+        RequestCommons.checkRequesterFrom(request, userId);
         requestRepository.delete(request);
     }
 
-    public LinkRequest getRequestResult(String requestUid, User user) throws LinkApplicationException
+    public LinkRequest getRequestResult(String requestUid, String userId) throws LinkApplicationException
     {
         RequestCommons.deleteExpiredRequests(requestRepository);
 
         Request request = RequestCommons.getRequestFrom(requestUid, requestRepository);
-        RequestCommons.checkRequesterFrom(request, user.getId());
+        RequestCommons.checkRequesterFrom(request, userId);
 
         return RequestCommons.getLinkRequestFrom(request, RequestCommons.REQ_ADD_ALL_FIELDS);
     }

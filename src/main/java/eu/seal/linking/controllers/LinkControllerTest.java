@@ -68,7 +68,7 @@ public class LinkControllerTest
         ClassPathResource resource = new ClassPathResource("request2.json");
         String strRequest = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
-        LinkRequest linkRequest = linkService.storeNewRequest(strRequest, user);
+        LinkRequest linkRequest = linkService.storeNewRequest(strRequest, user.getId());
 
         return linkRequest;
     }
@@ -90,7 +90,7 @@ public class LinkControllerTest
     {
         User user = getSessionUser(session);
 
-        linkService.cancelRequest(requestId, user);
+        linkService.cancelRequest(requestId, user.getId());
 
         return Response.ok().build();
     }
@@ -101,7 +101,7 @@ public class LinkControllerTest
     {
         User user = getSessionUser(session);
 
-        return linkService.getRequestResult(requestId, user);
+        return linkService.getRequestResult(requestId, user.getId());
     }
 
     private User getSessionUser(HttpSession session) throws LinkApplicationException

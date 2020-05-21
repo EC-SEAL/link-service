@@ -7,7 +7,6 @@ import eu.seal.linking.services.ValidatorService;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -29,57 +28,56 @@ public class ValidatorController extends BaseController
     private ValidatorService validatorService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
-    public List<LinkRequest> getRequestList(@RequestParam(required = false) String sessionToken, HttpSession session)
+    public List<LinkRequest> getRequestList(@RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
 
         return validatorService.getRequestsByDomain(user.getEntitlements());
     }
 
     @RequestMapping(value = "/{requestId}/lock", method = RequestMethod.GET)
-    public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+    public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         validatorService.lockRequest(requestId, user);
         return Response.ok().build();
     }
 
     @RequestMapping(value = "/{requestId}/unlock", method = RequestMethod.GET)
-    public Response unlockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+    public Response unlockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         validatorService.unlockRequest(requestId, user);
         return Response.ok().build();
     }
 
     @RequestMapping(value = "/{requestId}/get", method = RequestMethod.GET)
-    public LinkRequest getRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+    public LinkRequest getRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         return validatorService.getRequest(requestId, user);
     }
 
     @RequestMapping(value = "/{requestId}/approve", method = RequestMethod.GET)
-    public Response approveRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+    public Response approveRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         validatorService.approveRequest(requestId, user);
         return Response.ok().build();
     }
 
     @RequestMapping(value = "/{requestId}/reject", method = RequestMethod.GET)
-    public Response rejectRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken, HttpSession session)
+    public Response rejectRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
-        User user = getSessionUser(session);
+        User user = getUserFrom(sessionToken);
         validatorService.rejectRequest(requestId, user);
         return Response.ok().build();
     }
 
-    // TODO: get user by sessionToken
 }

@@ -6,6 +6,7 @@ var level2Class;
 
 var messages = [];
 var updateMessagesInterval;
+var sessionToken;
 
 $(document).ready(function () {
     getUserData();
@@ -13,6 +14,8 @@ $(document).ready(function () {
     initMainLogic();
     initRequestDivLogic();
     initLogoutLogic();
+
+    sessionToken = getCookie("SEALSessionID");
 });
 
 function getUserData() {
@@ -158,7 +161,7 @@ function getRequestCurrentStatus(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/status',
+        url: '/link/' + requestId + '/status?sessionToken=' + sessionToken,
         async: false
     }).done(function (data, textStatus, jqXHR) {
         status = data.primaryCode;
@@ -214,7 +217,7 @@ function setInfoStatus(status) {
 function getRequestInfo(requestId) {
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/get',
+        url: '/link/' + requestId + '/get?sessionToken=' + sessionToken,
         async: true,
         beforeSend: function () {
 
@@ -270,7 +273,7 @@ function lockRequest(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/lock',
+        url: '/link/' + requestId + '/lock?sessionToken=' + sessionToken,
         async: true,
         beforeSend: function () {
 
@@ -311,7 +314,7 @@ function approveRequest(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/approve',
+        url: '/link/' + requestId + '/approve?sessionToken=' + sessionToken,
         async: true,
         beforeSend: function () {
 
@@ -332,7 +335,7 @@ function rejectRequest(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/reject',
+        url: '/link/' + requestId + '/reject?sessionToken=' + sessionToken,
         async: true,
         beforeSend: function () {
 
@@ -357,7 +360,7 @@ function getNewMessages()
     {
         $.ajax( {
             type: 'GET',
-            url: '/link/' + requestId + '/messages/receive',
+            url: '/link/' + requestId + '/messages/receive?sessionToken=' + sessionToken,
             async: true
         }).done(function (data, textStatus, jqXHR) {
 
@@ -408,7 +411,7 @@ function sendMessage(requestId, message)
 
         $.ajax({
             type: 'POST',
-            url: '/link/' + requestId + '/messages/send/requester',
+            url: '/link/' + requestId + '/messages/send/requester?sessionToken=' + sessionToken,
             data: 'message=' + JSON.stringify(messageObject),
             dataType: 'json'
         }).done(function (data, textStatus, jqXHR) {
@@ -457,4 +460,20 @@ function initLogoutLogic() {
        });
 
     });
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }

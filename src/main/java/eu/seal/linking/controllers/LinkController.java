@@ -4,7 +4,6 @@ import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.StatusResponse;
-import eu.seal.linking.model.User;
 import eu.seal.linking.services.LinkService;
 
 import javax.ws.rs.core.Response;
@@ -33,9 +32,9 @@ public class LinkController extends BaseController
     {
         String sessionId = authService.validateToken(msToken);
         String strLinkRequest = authService.getLinkRequestFromSession(sessionId);
-        User user = getUserFromSessionToken(sessionId);
+        String userId = getUserIdFrom(sessionId);
 
-        LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, user);
+        LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
 
         return linkRequest;
     }
@@ -54,9 +53,9 @@ public class LinkController extends BaseController
             throws LinkApplicationException, LinkAuthException
     {
         String sessionId = authService.validateToken(msToken);
-        User user = getUserFromSessionToken(sessionId);
+        String userId = getUserIdFrom(sessionId);
 
-        linkService.cancelRequest(requestId, user);
+        linkService.cancelRequest(requestId, userId);
 
         return Response.ok().build();
     }
@@ -67,9 +66,9 @@ public class LinkController extends BaseController
             throws LinkApplicationException, LinkAuthException
     {
         String sessionId = authService.validateToken(msToken);
-        User user = getUserFromSessionToken(sessionId);
+        String userId = getUserIdFrom(sessionId);
 
-        LinkRequest linkRequest = linkService.getRequestResult(requestId, user);
+        LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
 
         //TODO: store object in dataset, and delete if all OK
 

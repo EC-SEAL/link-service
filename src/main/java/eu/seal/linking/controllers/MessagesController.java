@@ -8,7 +8,6 @@ import eu.seal.linking.services.MessagesService;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class MessagesController extends BaseController
     @RequestMapping(value = "/{requestId}/messages/send/{recipient:requester|officer}", method = RequestMethod.POST,
             consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
-                                @RequestParam String message, @RequestParam(required = false) String sessionToken, HttpSession session)
+                                @RequestParam String message, @RequestParam(required = false) String sessionToken)
             throws LinkApplicationException
     {
         User user = null;
@@ -40,7 +39,7 @@ public class MessagesController extends BaseController
         else*/
         if (recipient.equals(UserMessageType.REQUESTER.toString()))
         {
-            user = getSessionUser(session);
+            user = getUserFrom(sessionToken);
         }
 
         messagesService.storeMessage(requestId, message, user, recipient);
@@ -49,8 +48,8 @@ public class MessagesController extends BaseController
     }
 
     @RequestMapping(value = "/{requestId}/messages/receive", produces = "application/json")
-    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
-                                         HttpSession session) throws LinkApplicationException
+    public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
+            throws LinkApplicationException
     {
         return messagesService.getConversation(requestId);
     }

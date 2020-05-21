@@ -321,11 +321,11 @@ public class AuthService
         }
     }
 
-    public AuthSource getAuthSource(String sessionId) throws UserNotAuthenticatedException
+    public AuthSource getAuthSource(String sessionId)
     {
         try
         {
-            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authSource");
+            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "linkAuthSource");
             return (new ObjectMapper()).readValue(objDataSet.toString(), AuthSource.class);
         }
         catch (Exception e)
@@ -466,7 +466,7 @@ public class AuthService
             sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
                     objMapper.writeValueAsString(authenticationSet));*/
 
-            //TODO: subjectId is null from auth node???
+            //TODO: subjectId is null from auth node, open an incidence
             if (dataSet.getType().equals("eIDAS"))
             {
                 dataSet.setSubjectId("PersonIdentifier");
@@ -479,7 +479,7 @@ public class AuthService
             // Getting auth source
             EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", dataSet.getType());
             AuthSource authSource = getAuthSourceFrom(entityMetadata);
-            sessionManagerConnService.updateVariable(sessionId, "authSource", objMapper.writeValueAsString(authSource));
+            sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objMapper.writeValueAsString(authSource));
         }
     }
 }
