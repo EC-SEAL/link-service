@@ -4,13 +4,14 @@ import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.StatusResponse;
+import eu.seal.linking.model.enums.RequestStatus;
 import eu.seal.linking.services.LinkService;
-
-import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,55 +28,84 @@ public class LinkController extends BaseController
     private LinkService linkService;
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken)
-            throws LinkAuthException, LinkApplicationException
+    public ResponseEntity startLinkRequest(@RequestParam(required = true) String msToken)
     {
-        String sessionId = authService.validateToken(msToken);
-        String strLinkRequest = authService.getLinkRequestFromSession(sessionId);
-        String userId = getUserIdFrom(sessionId);
+        try
+        {
+            String sessionId = authService.validateToken(msToken);
+            String strLinkRequest = authService.getLinkRequestFromSession(sessionId);
+            String userId = getUserIdFrom(sessionId);
 
-        LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
+            LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
 
-        return linkRequest;
+            return ResponseEntity.ok(linkRequest);
+        }
+        catch (LinkAuthException | LinkApplicationException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RequestMapping(value = "/{requestId}/status", method = RequestMethod.GET, produces = "application/json")
-    public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+    public ResponseEntity getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
     {
-        String requestStatus = linkService.getRequestStatus(requestId);
+        try
+        {
+            String requestStatus = linkService.getRequestStatus(requestId);
 
-        return StatusResponse.build(requestStatus);
+            return ResponseEntity.ok(StatusResponse.build(requestStatus));
+        }
+        catch (LinkApplicationException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @RequestMapping(value = "/{requestId}/cancel", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public Response cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
-            throws LinkApplicationException, LinkAuthException
+    public ResponseEntity cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
     {
-        String sessionId = authService.validateToken(msToken);
-        String userId = getUserIdFrom(sessionId);
+        try
+        {
+            String sessionId = authService.validateToken(msToken);
+            String userId = getUserIdFrom(sessionId);
 
-        linkService.cancelRequest(requestId, userId);
-
-        return Response.ok().build();
+            linkService.cancelRequest(requestId, userId);
+            return ResponseEntity.ok().build();
+        }
+        catch (LinkAuthException | LinkApplicationException e)
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    // TODO: Get result, store in dataset and delete from database
     @RequestMapping(value = "/{requestId}/result/get", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
-            throws LinkApplicationException, LinkAuthException
+    public ResponseEntity getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
     {
-        String sessionId = authService.validateToken(msToken);
-        String userId = getUserIdFrom(sessionId);
+        try
+        {
+            String sessionId = authService.validateToken(msToken);
+            String userId = getUserIdFrom(sessionId);
 
-        LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
+            String requestStatus = linkService.getRequestStatus(requestId);
 
-        //TODO: store object in dataset, and delete if all OK
+            if (requestStatus.equals(RequestStatus.ACCEPTED.toString()))
+            {
+                LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
+                linkService.deleteRequest(requestId);
+                return ResponseEntity.ok(linkRequest);
+            }
+            else if (requestStatus.equals(RequestStatus.REJECTED.toString()))
+            {
+                linkService.deleteRequest(requestId);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
 
-        linkService.deleteRequest(requestId);
+        }
+        catch (LinkAuthException | LinkApplicationException e)
+        {
+        }
 
-        return linkRequest;
+        return ResponseEntity.notFound().build();
     }
 
-    //TODO: client just send id request (also files and messages)
 }
