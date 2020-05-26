@@ -100,7 +100,7 @@ public class AuthService
         }
         catch (Exception e)
         {
-            throw new AuthStartSessionException();
+            throw new AuthStartSessionException(e.getMessage());
         }
     }
 
@@ -301,7 +301,7 @@ public class AuthService
         catch (Exception e)
         {
             LOG.error(e.getMessage());
-            throw new AuthGenerateSessionException();
+            throw new AuthGenerateSessionException(e.getMessage());
         }
 
         return msToken;
@@ -317,7 +317,7 @@ public class AuthService
         catch (Exception e)
         {
             LOG.error(e.getMessage(), e);
-            throw new UserNotAuthenticatedException();
+            throw new UserNotAuthenticatedException("Not authentication data in session");
         }
     }
 
@@ -344,7 +344,7 @@ public class AuthService
         catch (Exception e)
         {
             LOG.error(e.getMessage(), e);
-            throw new AuthDeleteSessionException();
+            throw new AuthDeleteSessionException(e.getMessage());
         }
     }
 
@@ -363,7 +363,7 @@ public class AuthService
 
         if (sessionId.isEmpty())
         {
-            throw new AuthNotAuthenticatedException();
+            throw new AuthNotAuthenticatedException("Token " + msToken + " corresponds to none session");
         }
 
         return sessionId;

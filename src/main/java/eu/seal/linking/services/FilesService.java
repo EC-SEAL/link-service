@@ -66,11 +66,12 @@ public class FilesService
         }
         else
         {
-            requestFile = requestFileRepository.findById(new Long(fileObject.getFileID())).orElseThrow(() -> new RequestFileNotFoundException());
+            requestFile = requestFileRepository.findById(new Long(fileObject.getFileID())).orElseThrow(() ->
+                    new RequestFileNotFoundException("File for request " + requestUid + " not found"));
 
             if (!requestFile.getRequest().getUid().equals(request.getUid()))
             {
-                throw new RequestNotFoundException();
+                throw new RequestNotFoundException("Request " + requestUid + " not found");
             }
 
             updateRequestFileFrom(requestFile, fileObject);
@@ -136,7 +137,7 @@ public class FilesService
 
         if (fileObject == null)
         {
-            throw new RequestFileNotFoundException();
+            throw new RequestFileNotFoundException("File with id " + fileId + " not found");
         }
 
         return fileObject;

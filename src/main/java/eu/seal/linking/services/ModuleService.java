@@ -67,7 +67,7 @@ public class ModuleService
         } catch (Exception e)
         {
             e.printStackTrace();
-            throw new RequestNotFoundException();
+            throw new RequestNotFoundException("Request " + requestId + " not found");
         }
 
         return getRequestInfoFrom(request);

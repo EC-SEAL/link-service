@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.IDLinkingException;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.LinkRequest;
@@ -7,11 +8,11 @@ import eu.seal.linking.model.StatusResponse;
 import eu.seal.linking.model.enums.RequestStatus;
 import eu.seal.linking.services.LinkService;
 
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,8 @@ public class LinkController extends BaseController
     private LinkService linkService;
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public ResponseEntity startLinkRequest(@RequestParam(required = true) String msToken)
+    public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken)
+            throws IDLinkingException
     {
         try
         {
@@ -38,31 +40,33 @@ public class LinkController extends BaseController
 
             LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
 
-            return ResponseEntity.ok(linkRequest);
+            return linkRequest;
         }
-        catch (LinkAuthException | LinkApplicationException e)
+        catch (LinkApplicationException | LinkAuthException e)
         {
-            return ResponseEntity.notFound().build();
+            throw new IDLinkingException(e.getMessage());
         }
     }
 
     @RequestMapping(value = "/{requestId}/status", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
+    public StatusResponse getRequestStatus(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
+            throws IDLinkingException
     {
         try
         {
             String requestStatus = linkService.getRequestStatus(requestId);
 
-            return ResponseEntity.ok(StatusResponse.build(requestStatus));
+            return StatusResponse.build(requestStatus);
         }
         catch (LinkApplicationException e)
         {
-            return ResponseEntity.notFound().build();
+            throw new IDLinkingException(e.getMessage());
         }
     }
 
     @RequestMapping(value = "/{requestId}/cancel", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public ResponseEntity cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
+    public Response cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
+            throws IDLinkingException
     {
         try
         {
@@ -70,16 +74,18 @@ public class LinkController extends BaseController
             String userId = getUserIdFrom(sessionId);
 
             linkService.cancelRequest(requestId, userId);
-            return ResponseEntity.ok().build();
+
+            return Response.ok().build();
         }
-        catch (LinkAuthException | LinkApplicationException e)
+        catch (LinkApplicationException | LinkAuthException e)
         {
-            return ResponseEntity.notFound().build();
+            throw new IDLinkingException(e.getMessage());
         }
     }
 
     @RequestMapping(value = "/{requestId}/result/get", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
-    public ResponseEntity getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
+    public LinkRequest getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
+            throws IDLinkingException
     {
         try
         {
@@ -92,20 +98,21 @@ public class LinkController extends BaseController
             {
                 LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
                 linkService.deleteRequest(requestId);
-                return ResponseEntity.ok(linkRequest);
+                return linkRequest;
             }
             else if (requestStatus.equals(RequestStatus.REJECTED.toString()))
             {
                 linkService.deleteRequest(requestId);
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
 
+            throw new IDLinkingException("Request in " + requestStatus + " status");
         }
-        catch (LinkAuthException | LinkApplicationException e)
+        catch (LinkApplicationException | LinkAuthException e)
         {
+            throw new IDLinkingException(e.getMessage());
         }
 
-        return ResponseEntity.notFound().build();
+
     }
 
 }

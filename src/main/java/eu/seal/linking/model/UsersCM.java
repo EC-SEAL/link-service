@@ -19,7 +19,7 @@ public class UsersCM
 
         if (user == null)
         {
-            throw new UserNotFoundException();
+            throw new UserNotFoundException("User not found at officers list");
         }
 
         return user;

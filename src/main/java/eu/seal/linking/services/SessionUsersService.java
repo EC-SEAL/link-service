@@ -38,7 +38,7 @@ public class SessionUsersService
             User user = getUser(dataSet);
             return user;
         } catch (IOException e) {
-            throw new LinkInternalException();
+            throw new LinkInternalException(e.getMessage());
         }
     }
 
@@ -119,7 +119,7 @@ public class SessionUsersService
         }
         catch (IOException e)
         {
-            throw new LinkInternalException();
+            throw new LinkInternalException(e.getMessage());
         }
 
         return  authSource;

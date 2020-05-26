@@ -293,7 +293,7 @@ function unlockRequest(requestId) {
 
     $.ajax({
         type: 'GET',
-        url: '/link/' + requestId + '/unlock',
+        url: '/link/' + requestId + '/unlock?sessionToken=' + sessionToken,
         async: true,
         beforeSend: function () {
 

@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.IDLinkingException;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.model.Message;
 import eu.seal.linking.model.User;
@@ -28,29 +29,43 @@ public class MessagesController extends BaseController
             consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public Response sendMessage(@PathVariable("requestId") String requestId, @PathVariable("recipient") String recipient,
                                 @RequestParam String message, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = null;
-
-        /*if (recipient.equals(UserMessageType.OFFICER.toString()))
+        try
         {
-            user = getUserFromSessionToken(sessionToken);
+            User user = null;
+
+            /*if (recipient.equals(UserMessageType.OFFICER.toString()))
+            {
+                user = getUserFromSessionToken(sessionToken);
+            }
+            else*/
+            if (recipient.equals(UserMessageType.REQUESTER.toString()))
+            {
+                user = getUserFrom(sessionToken);
+            }
+
+            messagesService.storeMessage(requestId, message, user, recipient);
+
+            return Response.ok().build();
         }
-        else*/
-        if (recipient.equals(UserMessageType.REQUESTER.toString()))
+        catch (LinkApplicationException e)
         {
-            user = getUserFrom(sessionToken);
+            throw new IDLinkingException(e.getMessage());
         }
-
-        messagesService.storeMessage(requestId, message, user, recipient);
-
-        return Response.ok().build();
     }
 
     @RequestMapping(value = "/{requestId}/messages/receive", produces = "application/json")
     public List<Message> getConversation(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        return messagesService.getConversation(requestId);
+        try
+        {
+            return messagesService.getConversation(requestId);
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 }

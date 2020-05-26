@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.IDLinkingException;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.User;
@@ -29,55 +30,97 @@ public class ValidatorController extends BaseController
 
     @RequestMapping(value = "/list", method = RequestMethod.GET, produces = "application/json")
     public List<LinkRequest> getRequestList(@RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
+        try
+        {
+            User user = getUserFrom(sessionToken);
 
-        return validatorService.getRequestsByDomain(user.getEntitlements());
+            return validatorService.getRequestsByDomain(user.getEntitlements());
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/lock", method = RequestMethod.GET)
     public Response lockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        validatorService.lockRequest(requestId, user);
-        return Response.ok().build();
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            validatorService.lockRequest(requestId, user);
+            return Response.ok().build();
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/unlock", method = RequestMethod.GET)
     public Response unlockRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        validatorService.unlockRequest(requestId, user);
-        return Response.ok().build();
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            validatorService.unlockRequest(requestId, user);
+            return Response.ok().build();
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/get", method = RequestMethod.GET)
     public LinkRequest getRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        return validatorService.getRequest(requestId, user);
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            return validatorService.getRequest(requestId, user);
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/approve", method = RequestMethod.GET)
     public Response approveRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        validatorService.approveRequest(requestId, user);
-        return Response.ok().build();
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            validatorService.approveRequest(requestId, user);
+            return Response.ok().build();
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/reject", method = RequestMethod.GET)
     public Response rejectRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        validatorService.rejectRequest(requestId, user);
-        return Response.ok().build();
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            validatorService.rejectRequest(requestId, user);
+            return Response.ok().build();
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
 }

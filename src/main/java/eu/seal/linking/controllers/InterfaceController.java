@@ -26,7 +26,6 @@ public class InterfaceController extends BaseController
 
     @RequestMapping("main")
     public String getMainPage(@CookieValue(name = SEAL_COOKIE, defaultValue = "") String sessionId)
-            throws LinkAuthException
     {
         String redirectPage = "main";
 

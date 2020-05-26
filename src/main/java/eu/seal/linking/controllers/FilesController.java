@@ -1,5 +1,6 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.IDLinkingException;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.model.FileObject;
 import eu.seal.linking.model.User;
@@ -7,7 +8,6 @@ import eu.seal.linking.services.FilesService;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,30 +27,51 @@ public class FilesController extends BaseController
     @RequestMapping(value = "/{requestId}/files/upload", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public Response uploadFile(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken,
                                @RequestParam(required = true) String file)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
         //User user = getUserFromSessionToken(sessionToken);
 
-        filesService.storeFileRequest(requestId, file);
+        try
+        {
+            filesService.storeFileRequest(requestId, file);
 
-        return Response.ok().build();
+            return Response.ok().build();
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/files/download/list", method = RequestMethod.GET)
     public List<FileObject> getFilesFromRequest(@PathVariable("requestId") String requestId, @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        return filesService.getFilesFromRequest(requestId, user);
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            return filesService.getFilesFromRequest(requestId, user);
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{requestId}/files/download/{fileId}", method = RequestMethod.GET)
     public FileObject getFileFromRequest(@PathVariable("requestId") String requestId, @PathVariable("fileId") Long fileId,
                                          @RequestParam(required = false) String sessionToken)
-            throws LinkApplicationException
+            throws IDLinkingException
     {
-        User user = getUserFrom(sessionToken);
-        return filesService.getFileFromRequest(requestId, fileId, user);
+        try
+        {
+            User user = getUserFrom(sessionToken);
+            return filesService.getFileFromRequest(requestId, fileId, user);
+        }
+        catch (LinkApplicationException e)
+        {
+            throw new IDLinkingException(e.getMessage());
+        }
     }
 
 }
