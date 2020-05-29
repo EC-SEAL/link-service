@@ -35,6 +35,10 @@
                         </goals>
                     </execution>
                 </executions>
+                <!-- Delete with no tets class is iused -->
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
@@ -186,6 +190,7 @@
             <scope>system</scope>
             <systemPath>/opt/devel/tools/deploy.jar</systemPath>
         </dependency>
+
 
     </dependencies>
 
