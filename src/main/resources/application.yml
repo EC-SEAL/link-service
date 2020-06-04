@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/seal_linking?autoReconnect=true&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: seal_linking
-    password: 123clauer
+    username:
+    password:
     platform: mysql
     initialize: true
   jpa:
@@ -28,12 +28,12 @@ linking:
     url: http://5.79.83.118:9090
   keystore:
     path: /etc/seal/testKeys/keystore.jks
-    pass: keystorepass
-    key.pass: selfsignedpass
-    httpsig.cert.alias: 1
+    pass:
+    key.pass:
+    httpsig.cert.alias:
     httpsig.attempts:
     async.signature: true
-    signing.secret: QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+    signing.secret:
   request:
     expire: 86400
     lloa: low
@@ -52,9 +52,9 @@ spring:
   profiles: docker
   datasource:
     url: jdbc:mysql://mysql-service:3306/seal_linking?autoReconnect=true&serverTimezone=UTC&useLegacyDatetimeCode=false
-    username: seal_linking
-    password: 123clauer
-    platform: mysql
+    username:
+    password:
+    platform:
     initialize: true
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
@@ -78,13 +78,13 @@ linking:
   sm:
     url: http://5.79.83.118:9090
   keystore:
-    path: /etc/seal/testKeys/keystore.jks
-    pass: keystorepass
-    key.pass: selfsignedpass
-    httpsig.cert.alias: 1
+    path: /app/data/testKeys/keystore.jks
+    pass:
+    key.pass:
+    httpsig.cert.alias:
     httpsig.attempts:
     async.signature: true
-    signing.secret: QjG+wP1CbAH2z4PWlWIDkxP4oRlgK2vos5/jXFfeBw8=
+    signing.secret:
   request:
     expire: 86400
     lloa: low
@@ -92,12 +92,12 @@ linking:
     validityDays: 5
   resources:
     users:
-      path: /etc/seal/resources/users-cm.json
+      path: /app/data/resources/users-cm.json
       cache: 300000
     ms:
-      path: /etc/seal/resources/microservices.json
+      path: /app/data/resources/microservices.json
       cache: 3600000
-  auth.callback: http://localhost:8090/link/auth/callback
+  auth.callback: http://localhost:8070/link/auth/callback
 ---
 spring:
   profiles: container
