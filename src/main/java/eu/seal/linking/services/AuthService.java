@@ -11,10 +11,12 @@ import eu.seal.linking.exceptions.AuthSourceNotFoundException;
 import eu.seal.linking.exceptions.AuthSourceServicesNotFoundException;
 import eu.seal.linking.exceptions.AuthStartSessionException;
 import eu.seal.linking.exceptions.AuthTokenNotValidatedException;
+import eu.seal.linking.exceptions.DataStoreException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.exceptions.UserNotAuthenticatedException;
 import eu.seal.linking.model.AuthRequestData;
 import eu.seal.linking.model.AuthSource;
+import eu.seal.linking.model.LinkRequest;
 import eu.seal.linking.model.common.ApiClassEnum;
 import eu.seal.linking.model.common.AttributeSet;
 import eu.seal.linking.model.common.AttributeType;
@@ -28,10 +30,16 @@ import eu.seal.linking.model.common.MsMetadataList;
 import eu.seal.linking.model.common.PublishedApiType;
 import eu.seal.linking.services.cm.ConfMngrConnService;
 import eu.seal.linking.services.commons.ResourceCommons;
+import eu.seal.linking.services.sm.DataStoreService;
 import eu.seal.linking.services.sm.SessionManagerConnService;
+import eu.seal.linking.utils.CryptoUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -55,6 +64,9 @@ public class AuthService
 
     @Autowired
     SessionManagerConnService sessionManagerConnService;
+
+    @Autowired
+    DataStoreService dataStoreService;
 
     @Value("${linking.resources.ms.path}")
     private String msResourcePath;
@@ -481,5 +493,73 @@ public class AuthService
             AuthSource authSource = getAuthSourceFrom(entityMetadata);
             sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objMapper.writeValueAsString(authSource));
         }
+    }
+
+    public void addLinkRequestToDataStore(String sessionId, LinkRequest linkRequest)
+            throws DataStoreException
+    {
+        try
+        {
+            String objectId = generateLinkRequestId(linkRequest);
+
+            ObjectMapper objMapper = new ObjectMapper();
+            String strLinkRequest = objMapper.writeValueAsString(linkRequest);
+
+            dataStoreService.addEntry(sessionId, objectId, strLinkRequest);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new DataStoreException("Error storing link request into datastore");
+        }
+    }
+
+    public void deleteLinkRequestFromDataStore(String sessionId, LinkRequest linkRequest)
+            throws DataStoreException
+    {
+        try
+        {
+            String id = generateLinkRequestId(linkRequest);
+
+            dataStoreService.deleteEntry(sessionId, id);
+        } catch (Exception e)
+        {
+            throw new DataStoreException("Error removing link request from datastore");
+        }
+    }
+
+    public void startDataStoreSession(String sessionId) throws DataStoreException
+    {
+        try
+        {
+            dataStoreService.startSession(sessionId);
+        } catch (Exception e)
+        {
+            throw new DataStoreException("Error starting new session");
+        }
+    }
+
+    public LinkRequest getEntryFromDataStore(String sessionId, LinkRequest linkRequest) throws DataStoreException
+    {
+        try
+        {
+            String objectId = generateLinkRequestId(linkRequest);
+            String strLinkRequest = dataStoreService.getEntry(sessionId, objectId);
+
+            ObjectMapper objMapper = new ObjectMapper();
+
+            return objMapper.readValue(strLinkRequest, LinkRequest.class);
+        } catch (Exception e)
+        {
+            throw new DataStoreException("Error getting entry");
+        }
+    }
+
+    private String generateLinkRequestId(LinkRequest linkRequest) throws NoSuchAlgorithmException
+    {
+        String prefix = "eIDAS/ES/linking";
+
+        String hash = CryptoUtils.generateMd5(linkRequest.getDatasetA().getId() + linkRequest.getDatasetB().getId());
+
+        return prefix + hash;
     }
 }

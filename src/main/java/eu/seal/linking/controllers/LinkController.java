@@ -40,6 +40,10 @@ public class LinkController extends BaseController
 
             LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
 
+            //TODO id store entry static prefix + hash(ids subject each dataset)
+            //TODO save linkrequest in datastore
+            authService.addLinkRequestToDataStore(sessionId, linkRequest);
+
             return linkRequest;
         }
         catch (LinkApplicationException | LinkAuthException e)
@@ -73,7 +77,12 @@ public class LinkController extends BaseController
             String sessionId = authService.validateToken(msToken);
             String userId = getUserIdFrom(sessionId);
 
+            LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
+
             linkService.cancelRequest(requestId, userId);
+
+            //TODO: delete from datastore
+            authService.deleteLinkRequestFromDataStore(sessionId, linkRequest);
 
             return Response.ok().build();
         }
@@ -93,16 +102,24 @@ public class LinkController extends BaseController
             String userId = getUserIdFrom(sessionId);
 
             String requestStatus = linkService.getRequestStatus(requestId);
+            LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
 
             if (requestStatus.equals(RequestStatus.ACCEPTED.toString()))
             {
-                LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
+                //LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
                 linkService.deleteRequest(requestId);
+
+                //TODO: update linkrequest in datastore
+                authService.addLinkRequestToDataStore(sessionId, linkRequest);
+
                 return linkRequest;
             }
             else if (requestStatus.equals(RequestStatus.REJECTED.toString()))
             {
                 linkService.deleteRequest(requestId);
+
+                //TODO: delete linkrequest from datastore
+                authService.deleteLinkRequestFromDataStore(sessionId, linkRequest);
             }
 
             throw new IDLinkingException("Request in " + requestStatus + " status");

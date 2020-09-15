@@ -1,5 +1,7 @@
 package eu.seal.linking.controllers;
 
+import eu.seal.linking.exceptions.AuthStartSessionException;
+import eu.seal.linking.exceptions.DataStoreException;
 import eu.seal.linking.exceptions.LinkApplicationException;
 import eu.seal.linking.exceptions.LinkAuthException;
 import eu.seal.linking.model.AuthRequestData;
@@ -60,7 +62,7 @@ public class LinkControllerTest
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.GET, produces = "application/json")
     public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken, HttpSession session)
-            throws LinkApplicationException, IOException
+            throws LinkApplicationException, IOException, AuthStartSessionException, DataStoreException
     {
         User user = getSessionUser(session);
 
@@ -69,6 +71,27 @@ public class LinkControllerTest
         String strRequest = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
 
         LinkRequest linkRequest = linkService.storeNewRequest(strRequest, user.getId());
+
+        String sessionId = (String) session.getAttribute("authId");
+
+        if (sessionId == null)
+        {
+            sessionId = authService.startSession();
+            session.setAttribute("authId", sessionId);
+            authService.startDataStoreSession(sessionId);
+        }
+
+        authService.addLinkRequestToDataStore(sessionId, linkRequest);
+
+        //authService.deleteLinkRequestFromDataStore(sessionId, linkRequest);
+        //Checking the datestore
+        LinkRequest linkRequest2 = authService.getEntryFromDataStore(sessionId, linkRequest);
+
+        linkRequest2.setLloa("TEST");
+        authService.addLinkRequestToDataStore(sessionId, linkRequest2);
+
+        LinkRequest linkRequest3 = authService.getEntryFromDataStore(sessionId, linkRequest2);
+
 
         return linkRequest;
     }
