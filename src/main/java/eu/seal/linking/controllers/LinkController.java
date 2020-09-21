@@ -40,8 +40,6 @@ public class LinkController extends BaseController
 
             LinkRequest linkRequest = linkService.storeNewRequest(strLinkRequest, userId);
 
-            //TODO id store entry static prefix + hash(ids subject each dataset)
-            //TODO save linkrequest in datastore
             authService.addLinkRequestToDataStore(sessionId, linkRequest);
 
             return linkRequest;
@@ -81,7 +79,6 @@ public class LinkController extends BaseController
 
             linkService.cancelRequest(requestId, userId);
 
-            //TODO: delete from datastore
             authService.deleteLinkRequestFromDataStore(sessionId, linkRequest);
 
             return Response.ok().build();
@@ -106,10 +103,8 @@ public class LinkController extends BaseController
 
             if (requestStatus.equals(RequestStatus.ACCEPTED.toString()))
             {
-                //LinkRequest linkRequest = linkService.getRequestResult(requestId, userId);
                 linkService.deleteRequest(requestId);
 
-                //TODO: update linkrequest in datastore
                 authService.addLinkRequestToDataStore(sessionId, linkRequest);
 
                 return linkRequest;
@@ -118,7 +113,6 @@ public class LinkController extends BaseController
             {
                 linkService.deleteRequest(requestId);
 
-                //TODO: delete linkrequest from datastore
                 authService.deleteLinkRequestFromDataStore(sessionId, linkRequest);
             }
 

@@ -142,10 +142,15 @@ public class LinkControllerTest
     // Testing real services
 
     @RequestMapping(value = "/request/submit/test", method = RequestMethod.GET, produces = "application/json")
-    public String startLinkRequestTest(HttpResponse response)
+    public String startLinkRequestTest(HttpResponse response, HttpSession session)
             throws IOException, LinkAuthException
     {
-        String sessionId = authService.startSession();
+        String sessionId = (String) session.getAttribute("sessionId");
+        if (sessionId == null)
+        {
+            sessionId = authService.startSession();
+            session.setAttribute("sessionId", sessionId);
+        }
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
 
         ClassPathResource resource = new ClassPathResource("user.json");
@@ -205,10 +210,15 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/cancel/test", method = RequestMethod.GET)
-    public String cancelRequestTest(@PathVariable("requestId") String requestId)
+    public String cancelRequestTest(@PathVariable("requestId") String requestId, HttpSession session)
             throws LinkAuthException, IOException
     {
-        String sessionId = authService.startSession();
+        String sessionId = (String) session.getAttribute("sessionId");
+        if (sessionId == null)
+        {
+            sessionId = authService.startSession();
+            session.setAttribute("sessionId", sessionId);
+        }
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
 
         ClassPathResource resource = new ClassPathResource("user.json");
@@ -262,10 +272,15 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/status/test", method = RequestMethod.GET, produces = "application/json")
-    public StatusResponse getRequestStatusTest(@PathVariable("requestId") String requestId)
+    public StatusResponse getRequestStatusTest(@PathVariable("requestId") String requestId, HttpSession session)
             throws LinkAuthException, IOException
     {
-        String sessionId = authService.startSession();
+        String sessionId = (String) session.getAttribute("sessionId");
+        if (sessionId == null)
+        {
+            sessionId = authService.startSession();
+            session.setAttribute("sessionId", sessionId);
+        }
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
 
         ClassPathResource resource = new ClassPathResource("user.json");
@@ -300,10 +315,15 @@ public class LinkControllerTest
     }
 
     @RequestMapping(value = "/{requestId}/result/get/test", produces = "application/json")
-    public String getRequestResultTest(@PathVariable("requestId") String requestId)
+    public String getRequestResultTest(@PathVariable("requestId") String requestId, HttpSession session)
             throws LinkAuthException, IOException
     {
-        String sessionId = authService.startSession();
+        String sessionId = (String) session.getAttribute("sessionId");
+        if (sessionId == null)
+        {
+            sessionId = authService.startSession();
+            session.setAttribute("sessionId", sessionId);
+        }
         AuthRequestData authRequestData = authService.generateAuthRequest("eIDAS", sessionId);
 
         ClassPathResource resource = new ClassPathResource("user.json");

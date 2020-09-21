@@ -508,7 +508,7 @@ public class AuthService
             dataStoreService.addEntry(sessionId, objectId, strLinkRequest);
         } catch (Exception e)
         {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
             throw new DataStoreException("Error storing link request into datastore");
         }
     }
@@ -523,6 +523,7 @@ public class AuthService
             dataStoreService.deleteEntry(sessionId, id);
         } catch (Exception e)
         {
+            LOG.error(e.getMessage(), e);
             throw new DataStoreException("Error removing link request from datastore");
         }
     }
@@ -534,6 +535,7 @@ public class AuthService
             dataStoreService.startSession(sessionId);
         } catch (Exception e)
         {
+            LOG.error(e.getMessage(), e);
             throw new DataStoreException("Error starting new session");
         }
     }
@@ -550,6 +552,7 @@ public class AuthService
             return objMapper.readValue(strLinkRequest, LinkRequest.class);
         } catch (Exception e)
         {
+            LOG.error(e.getMessage(), e);
             throw new DataStoreException("Error getting entry");
         }
     }
