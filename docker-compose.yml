@@ -12,9 +12,10 @@ services:
       - MYSQL_USER=seal_linking
       - MYSQL_PASSWORD=123clauer
   web-service:
-    build:
-      context: ./
-      dockerfile: Dockerfile
+    #build:
+    #  context: ./
+    #  dockerfile: Dockerfile
+    image: msirvent/linking_web-service:v1.1
     ports:
       - "8070:8090"
     networks:
