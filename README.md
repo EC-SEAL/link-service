@@ -53,7 +53,7 @@ You will find a DockerFile and a docker-compose.yml to build the image and run t
 - MYSQL_USER: user of database, the same specified in application.yml
 - MYSQL_PASSWORD: password of the user, the same specified in application.yml 
 
-After that, define the volume when you wil include yor configuration files to be read by the conntainer, with the same structure (keystore and cm-users path). Also, put the application.yml file in this path because it is define to get read it from there.
+After that, define the volume when you will include your configuration files to be read by the conntainer, with the same structure (keystore and cm-users path). Also, put the application.yml file in this path because it is define to get read it from there.
 
 - web-service.volumes
 
