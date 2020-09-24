@@ -54,7 +54,7 @@ spring:
     url: jdbc:mysql://mysql-service:3306/seal_linking?autoReconnect=true&serverTimezone=UTC&useLegacyDatetimeCode=false
     username:
     password:
-    platform:
+    platform: mysql
     initialize: true
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
