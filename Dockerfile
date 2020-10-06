@@ -12,5 +12,5 @@ ADD ./target/linking-0.0.1-SNAPSHOT.jar seal-linking.jar
 ENV JAVA_OPTS=""
 ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -Dspring.config.location=file:/app/data/ -Dspring.profiles.active=docker -jar /seal-linking.jar" ]
 
-EXPOSE 8090
+EXPOSE 8093
 
