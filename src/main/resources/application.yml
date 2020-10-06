@@ -54,6 +54,10 @@ linking:
       path: /etc/seal/resources/microservices.json
       cache: 3600000
   auth.callback: https://localhost:8093/link/auth/callback
+  users:
+    path:
+      host: https://stork.uji.es
+      uri: seal/users-cm.json
 ---
 spring:
   profiles: docker
@@ -112,6 +116,10 @@ linking:
       path: /app/data/resources/microservices.json
       cache: 3600000
   auth.callback: http://localhost:8070/link/auth/callback
+  users:
+    path:
+      host: https://stork.uji.es
+      uri: seal/users-cm.json
 ---
 spring:
   profiles: container

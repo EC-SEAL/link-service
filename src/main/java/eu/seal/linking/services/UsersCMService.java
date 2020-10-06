@@ -28,6 +28,12 @@ public class UsersCMService
 
     private Long lastUpdate;
 
+    @Value("${linking.users.path.host}")
+    private String usersPathHost;
+
+    @Value("${linking.users.path.uri}")
+    private String usersPathUri;
+
     @Value("${linking.resources.users.path}")
     private String usersResourcePath;
 
@@ -39,7 +45,6 @@ public class UsersCMService
 
     private final static Logger LOG = LoggerFactory.getLogger(UsersCMService.class);
 
-    /*@PostConstruct*/
     private void setUsers()
     {
         usersCM = new UsersCM();
@@ -91,7 +96,6 @@ public class UsersCMService
         }
     }
 
-    //TODO: get users from CM and have a cache
     private boolean updateUsersFromCM()
     {
         long lastModified = ResourceCommons.getFileLastUpdate(usersResourcePath);
@@ -99,7 +103,7 @@ public class UsersCMService
         {
             try
             {
-                String result = networkService.sendGet("http://localhost:8090", "cmtest/users", null, 2);
+                String result = networkService.sendGet(usersPathHost, usersPathUri, null, 2);
 
                 if (result != null)
                 {

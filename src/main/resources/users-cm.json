@@ -38,5 +38,16 @@
     ],
     "photoID": "",
     "email": "test1@uji.es"
+  },
+  {
+    "hashID": "00f3cabf22d1030667aba429b6b778ff",
+    "nameAttr": "http://eidas.europa.eu/attributes/naturalperson/CurrentGivenName",
+    "surnameAttr": "http://eidas.europa.eu/attributes/naturalperson/CurrentFamilyName",
+    "entitlements": [
+      "UJI",
+      "UV"
+    ],
+    "photoID": "",
+    "email": "test2@uji.es"
   }
 ]
