@@ -159,7 +159,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         // Test with local file
         resource = new ClassPathResource("request2.json");
@@ -227,7 +227,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         // POST
 
@@ -289,7 +289,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         // GET
         URL url = new URL("http://localhost:8090/link/" + requestId + "/status");    //?sessionToken=" + sessionId);
@@ -332,7 +332,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         // POST
 
@@ -387,7 +387,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         String file = (update == null) ? "file.json" : "file2.json";
         resource = new ClassPathResource(file);
@@ -453,7 +453,7 @@ public class LinkControllerTest
             DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                     objectMapper.getTypeFactory().constructType(DataSet.class));
 
-            authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+            authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
             // Test with local files
             resource = new ClassPathResource("message-requester.json");
@@ -523,7 +523,7 @@ public class LinkControllerTest
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        authService.setVariableInSession(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        authService.setVariableInSession(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         // GET
         URL url = new URL("http://localhost:8090/link/" + requestId + "/messages/receive"); //?sessionToken=" + sessionId);

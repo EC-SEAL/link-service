@@ -323,7 +323,7 @@ public class AuthService
     {
         try
         {
-            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authenticationSet");
+            Object objDataSet = sessionManagerConnService.readVariable(sessionId, "authenticatedSubject");
             return (new ObjectMapper()).readValue(objDataSet.toString(), DataSet.class);
         }
         catch (Exception e)
@@ -456,41 +456,30 @@ public class AuthService
 
     public void authenticationCallBack(String sessionId) throws Exception
     {
-        Object objDataStore = sessionManagerConnService.readVariable(sessionId, "dataStore");
-        DataStore dataStore = (new ObjectMapper()).readValue(objDataStore.toString(),DataStore.class);
+        /*Object objDataStore = sessionManagerConnService.readVariable(sessionId, "dataStore");
+        DataStore dataStore = (new ObjectMapper()).readValue(objDataStore.toString(),DataStore.class);*/
 
-        DataSet dataSet = dataStore.getClearData() != null ? dataStore.getClearData().get(0) : null;
+        Object objAuthSet = sessionManagerConnService.readVariable(sessionId, "authenticatedSubject");
+        DataSet dataSet = (new ObjectMapper()).readValue(objAuthSet.toString(), DataSet.class);
+
+        //DataSet dataSet2 = dataStore.getClearData() != null ? dataStore.getClearData().get(0) : null;
 
         if (dataSet != null)
         {
-            /*ObjectMapper objMapper = new ObjectMapper();
-            AttributeSet authenticationSet = new AttributeSet ();
-            authenticationSet.setId(UUID.randomUUID().toString());
-            //authenticationSet.setType(AttributeSet.TypeEnum(myDataset.getType()));
-            authenticationSet.setType(AttributeSet.TypeEnum.AUTHRESPONSE);
-            authenticationSet.setIssuer(dataSet.getIssuerId());
-            authenticationSet.setRecipient(confMngrConnService.getMicroservicesByApiClass("CL").get(0).getMsId()); // The unique client
-            authenticationSet.setLoa(dataSet.getLoa());
-            authenticationSet.setNotAfter(dataSet.getExpiration());
-            authenticationSet.setNotBefore(null);
-            authenticationSet.setAttributes(dataSet.getAttributes());
-
-            sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
-                    objMapper.writeValueAsString(authenticationSet));*/
-
-            //TODO: subjectId is null from auth node, open an incidence
+            /*//TODO: subjectId is null from auth node, open an incidence
             if (dataSet.getType().equals("eIDAS"))
             {
                 dataSet.setSubjectId("PersonIdentifier");
             }
 
             ObjectMapper objMapper = new ObjectMapper();
-            sessionManagerConnService.updateVariable(sessionId, "authenticationSet",
-                    objMapper.writeValueAsString(dataSet));
+            sessionManagerConnService.updateVariable(sessionId, "authenticatedSubject",
+                    objMapper.writeValueAsString(dataSet));*/
 
             // Getting auth source
             EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", dataSet.getType());
             AuthSource authSource = getAuthSourceFrom(entityMetadata);
+            ObjectMapper objMapper = new ObjectMapper();
             sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objMapper.writeValueAsString(authSource));
         }
     }

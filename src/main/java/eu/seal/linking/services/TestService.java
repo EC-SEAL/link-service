@@ -45,7 +45,7 @@ public class TestService
         DataSet dataSet = objectMapper.readValue(resource.getInputStream(),
                 objectMapper.getTypeFactory().constructType(DataSet.class));
 
-        sessionManagerConnService.updateVariable(sessionId, "authenticationSet", objectMapper.writeValueAsString(dataSet));
+        sessionManagerConnService.updateVariable(sessionId, "authenticatedSubject", objectMapper.writeValueAsString(dataSet));
 
         AuthSource authSource = sessionUsersService.getTestAuthSource();
         sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objectMapper.writeValueAsString(authSource));
