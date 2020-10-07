@@ -31,7 +31,11 @@ Define the specific prooperties of your build:
     * `ms`
       * `path`: local path to the list of microservices file
       * `cache`: time when the microservices file will be requested to CM
-  * auth.callback`: URL to callback after authentication
+  * `auth.callback`: URL to callback after authentication
+  * `users`:
+      * `path`:
+          * `host`: host of the path where application users list is downloaded
+          * `uri`: uri of the path where application users list is downloaded
   
 #### users-cm.json
 
