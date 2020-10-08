@@ -5,6 +5,7 @@
   "issued" : "2020-01-27T15:00:23Z",
   "type": "Test type",
   "expiration" : "2020-01-28T15:00:23Z",
+  "uri" : "",
   "datasetA" : {
     "id": "",
     "type": "",

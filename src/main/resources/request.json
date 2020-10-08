@@ -8,6 +8,7 @@
   "lloa" : "NORMAL",
   "issued" : "2020-01-27T15:00:23Z",
   "expiration" : "2020-01-28T15:00:23Z",
+  "uri" : "",
   "aAttributes" :
    [ {
      "name":  "PersonalIdentifier",

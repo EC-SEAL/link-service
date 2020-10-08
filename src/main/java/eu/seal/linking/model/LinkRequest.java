@@ -1,7 +1,13 @@
 package eu.seal.linking.model;
 
+import eu.seal.linking.exceptions.BuildUriRepresentationException;
+import eu.seal.linking.exceptions.LinkApplicationException;
+import eu.seal.linking.exceptions.LinkInternalException;
 import eu.seal.linking.model.common.DataSet;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 
@@ -18,6 +24,8 @@ public class LinkRequest
     private String type;
 
     private String expiration;
+
+    private String uri;
 
     private DataSet datasetA;
 
@@ -87,6 +95,16 @@ public class LinkRequest
         this.expiration = expiration;
     }
 
+    public String getUri()
+    {
+        return uri;
+    }
+
+    public void setUri(String uri)
+    {
+        this.uri = uri;
+    }
+
     public DataSet getDatasetA()
     {
         return datasetA;
@@ -125,5 +143,61 @@ public class LinkRequest
     public void setConversation(List<Message> conversation)
     {
         this.conversation = conversation;
+    }
+
+    public void buildUriRepresentation(String linkIssuerId)
+            throws LinkApplicationException
+    {
+        if (lloa == null)
+        {
+           throw new BuildUriRepresentationException("No LLoA provided");
+        }
+        else if (linkIssuerId == null)
+        {
+            throw new BuildUriRepresentationException("No link issuer ID provided");
+        }
+        else if (datasetA == null || datasetA.getSubjectId() == null)
+        {
+            throw new BuildUriRepresentationException("No subject A id provided");
+        }
+        else if (datasetA.getIssuerId() == null)
+        {
+            throw new BuildUriRepresentationException("No issuer A id provided");
+        }
+        else if (datasetB == null || datasetB.getSubjectId() == null)
+        {
+            throw new BuildUriRepresentationException("No subject B id provided");
+        }
+        else if (datasetB.getIssuerId() == null)
+        {
+            throw new BuildUriRepresentationException("No issuer B id provided");
+        }
+
+        try
+        {
+            String identityA = datasetA.getSubjectId() + ":" + datasetA.getIssuerId();
+            String identityB = datasetB.getSubjectId() + ":" + datasetB.getIssuerId();
+
+            String firstIdentity = null;
+            String secondIdentity = null;
+
+            if (identityA.compareTo(identityB) <= 0)
+            {
+                firstIdentity = identityA;
+                secondIdentity = identityB;
+            }
+            else
+            {
+                firstIdentity = identityB;
+                secondIdentity = identityA;
+            }
+
+            uri = "urn:mace:project-seal.eu:link:" + URLEncoder.encode(linkIssuerId, StandardCharsets.UTF_8.toString()) +
+                    ":" + URLEncoder.encode(lloa, StandardCharsets.UTF_8.toString()) + ":" + firstIdentity + ":" +
+                    secondIdentity;
+        } catch (UnsupportedEncodingException e)
+        {
+            throw new LinkInternalException(e.getMessage());
+        }
     }
 }

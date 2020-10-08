@@ -58,6 +58,7 @@ linking:
     path:
       host: https://stork.uji.es
       uri: seal/users-cm.json
+  issuer: SEAL Manual Linker
 ---
 spring:
   profiles: docker
@@ -120,6 +121,7 @@ linking:
     path:
       host: https://stork.uji.es
       uri: seal/users-cm.json
+  issuer: SEAL Manual Linker
 ---
 spring:
   profiles: container

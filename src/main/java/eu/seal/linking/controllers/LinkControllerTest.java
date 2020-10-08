@@ -124,7 +124,11 @@ public class LinkControllerTest
     {
         User user = getSessionUser(session);
 
-        return linkService.getRequestResult(requestId, user.getId());
+        LinkRequest linkRequest =  linkService.getRequestResult(requestId, user.getId());
+        linkRequest.buildUriRepresentation("test Issuer");
+
+        //return linkService.getRequestResult(requestId, user.getId());
+        return linkRequest;
     }
 
     private User getSessionUser(HttpSession session) throws LinkApplicationException

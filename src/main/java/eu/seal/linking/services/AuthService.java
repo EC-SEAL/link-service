@@ -466,7 +466,7 @@ public class AuthService
 
         if (dataSet != null)
         {
-            /*//TODO: subjectId is null from auth node, open an incidence
+            //TODO: subjectId is null from auth node, open an incidence
             if (dataSet.getType().equals("eIDAS"))
             {
                 dataSet.setSubjectId("PersonIdentifier");
@@ -474,12 +474,12 @@ public class AuthService
 
             ObjectMapper objMapper = new ObjectMapper();
             sessionManagerConnService.updateVariable(sessionId, "authenticatedSubject",
-                    objMapper.writeValueAsString(dataSet));*/
+                    objMapper.writeValueAsString(dataSet));
 
             // Getting auth source
             EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", dataSet.getType());
             AuthSource authSource = getAuthSourceFrom(entityMetadata);
-            ObjectMapper objMapper = new ObjectMapper();
+            //ObjectMapper objMapper = new ObjectMapper();
             sessionManagerConnService.updateVariable(sessionId, "linkAuthSource", objMapper.writeValueAsString(authSource));
         }
     }

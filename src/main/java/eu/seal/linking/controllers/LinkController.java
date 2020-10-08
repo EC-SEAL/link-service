@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +28,9 @@ public class LinkController extends BaseController
 
     @Autowired
     private LinkService linkService;
+
+    @Value("${linking.issuer}")
+    String linkIssuerId;
 
     @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
     public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken)
@@ -103,6 +107,7 @@ public class LinkController extends BaseController
 
             if (requestStatus.equals(RequestStatus.ACCEPTED.toString()))
             {
+                linkRequest.buildUriRepresentation(linkIssuerId);
                 linkService.deleteRequest(requestId);
 
                 authService.addLinkRequestToDataStore(sessionId, linkRequest);
