@@ -59,6 +59,7 @@ linking:
       host: https://stork.uji.es
       uri: seal/users-cm.json
   issuer: SEAL Manual Linker
+  msID: ManualLinkms001
 ---
 spring:
   profiles: docker
@@ -122,6 +123,7 @@ linking:
       host: https://stork.uji.es
       uri: seal/users-cm.json
   issuer: SEAL Manual Linker
+  msID: ManualLinkms001
 ---
 spring:
   profiles: container

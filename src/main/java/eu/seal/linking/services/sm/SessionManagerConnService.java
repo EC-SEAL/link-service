@@ -15,7 +15,7 @@ public interface SessionManagerConnService
             FileNotFoundException, NoSuchAlgorithmException,
             CertificateException, InvalidKeySpecException, IOException;
 
-    public String generateToken(String sessionId, String receiver) throws UnrecoverableKeyException, KeyStoreException,
+    public String generateToken(String sessionId, String receiver, String data) throws UnrecoverableKeyException, KeyStoreException,
             FileNotFoundException, NoSuchAlgorithmException,
             CertificateException, InvalidKeySpecException, IOException;
 

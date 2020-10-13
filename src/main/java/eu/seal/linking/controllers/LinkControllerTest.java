@@ -173,7 +173,7 @@ public class LinkControllerTest
 
         // POST
 
-        URL url = new URL("http://localhost:8090/link/request/submit");
+        URL url = new URL("http://localhost:8093/link/request/submit");
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection) con;
         http.setRequestMethod("POST");
@@ -318,7 +318,7 @@ public class LinkControllerTest
         return StatusResponse.build(sb.toString());
     }
 
-    @RequestMapping(value = "/{requestId}/result/get/test", produces = "application/json")
+    @RequestMapping(value = "/{requestId}/result/get/test", produces = "text/html")
     public String getRequestResultTest(@PathVariable("requestId") String requestId, HttpSession session)
             throws LinkAuthException, IOException
     {
@@ -340,7 +340,7 @@ public class LinkControllerTest
 
         // POST
 
-        URL url = new URL("http://localhost:8090/link/" + requestId + "/result/get");
+        URL url = new URL("http://localhost:8093/link/" + requestId + "/result/get");
         URLConnection con = url.openConnection();
         HttpURLConnection http = (HttpURLConnection) con;
         http.setRequestMethod("POST");

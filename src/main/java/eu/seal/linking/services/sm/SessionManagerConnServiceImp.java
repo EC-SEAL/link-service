@@ -33,7 +33,8 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
     private String hostURL;
 
     //TODO
-    private String sender = null;
+    @Value("${linking.msID}")
+    private String sender;
 
     private static final Logger log = LoggerFactory.getLogger(SessionManagerConnServiceImp.class);
 
@@ -119,7 +120,7 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
     }
 
     @Override
-    public String generateToken(String sessionId, String receiver)
+    public String generateToken(String sessionId, String receiver, String data)
             throws UnrecoverableKeyException, KeyStoreException, FileNotFoundException, NoSuchAlgorithmException,
             CertificateException, InvalidKeySpecException, IOException
     {
@@ -141,9 +142,19 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new NameValuePair("sessionId",sessionId));
         urlParameters.add(new NameValuePair("sender", this.sender));
+
+        if (receiver == null)
+        {
+            receiver = this.sender;
+        }
         urlParameters.add(new NameValuePair("receiver", receiver));
 
-        urlParameters.add(new NameValuePair("data", "extraData"));
+        String extraData = "extraData";
+        if (data != null)
+        {
+            extraData = data;
+        }
+        urlParameters.add(new NameValuePair("data", extraData));
 
         SessionMngrResponse smResponse = network.sendGetSMResponse(hostURL, service, urlParameters, 1);
 

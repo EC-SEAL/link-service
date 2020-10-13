@@ -60,13 +60,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class AuthService
 {
     @Autowired
-    ConfMngrConnService confMngrConnService;
+    private ConfMngrConnService confMngrConnService;
 
     @Autowired
-    SessionManagerConnService sessionManagerConnService;
+    private SessionManagerConnService sessionManagerConnService;
 
     @Autowired
-    DataStoreService dataStoreService;
+    private DataStoreService dataStoreService;
 
     @Value("${linking.resources.ms.path}")
     private String msResourcePath;
@@ -306,7 +306,7 @@ public class AuthService
             ObjectMapper objIdpRequest = new ObjectMapper();
             sessionManagerConnService.updateVariable(sessionId, "idpRequest", objIdpRequest.writeValueAsString(idpRequest));
             // Generate token for returning the session.
-            msToken = sessionManagerConnService.generateToken(sessionId, service);
+            msToken = sessionManagerConnService.generateToken(sessionId, service, null);
 
             sessionManagerConnService.updateVariable(sessionId, "ClientCallbackAddr", authCallback);
         }
@@ -464,7 +464,7 @@ public class AuthService
 
         //DataSet dataSet2 = dataStore.getClearData() != null ? dataStore.getClearData().get(0) : null;
 
-        if (dataSet != null)
+            if (dataSet != null)
         {
             //TODO: subjectId is null from auth node, open an incidence
             if (dataSet.getType().equals("eIDAS"))
