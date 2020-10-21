@@ -36,6 +36,8 @@ Define the specific prooperties of your build:
       * `path`:
           * `host`: host of the path where application users list is downloaded
           * `uri`: uri of the path where application users list is downloaded
+  * `ìssuer`: name of the issuer for the link request uri representation
+  * `msId`: microservice identification
   
 #### users-cm.json
 
