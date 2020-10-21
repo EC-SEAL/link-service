@@ -6,6 +6,8 @@ import eu.seal.linking.services.keystore.KeyStoreService;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -384,7 +386,8 @@ public class NetworkServiceImpl implements NetworkService
         try {
             //LOG.info ("Before exchange: " + builder.toUriString()+ " *** " + entity);
             ResponseEntity<SessionMngrResponse> response = restTemplate.exchange(
-                    builder.toUriString(), HttpMethod.GET, entity, SessionMngrResponse.class);
+                    /*builder.toUriString()*/URLDecoder.decode(builder.toUriString(), StandardCharsets.UTF_8.toString()),
+                    HttpMethod.GET, entity, SessionMngrResponse.class);
             //LOG.info ("After exchange: "  + response);
             return response.getBody();
         } catch (RestClientException e) {

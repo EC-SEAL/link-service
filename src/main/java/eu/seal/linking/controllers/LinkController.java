@@ -166,7 +166,6 @@ public class LinkController extends BaseController
         try
         {
             StatusResponse statusResponse = StatusResponse.build(status);
-            //statusResponse.setSecondaryCode("nothing");
             statusResponse.setMessage(message);
 
             ObjectMapper objectMapper = new ObjectMapper();
