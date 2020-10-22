@@ -1,5 +1,6 @@
 package eu.seal.linking.services.sm;
 
+import eu.seal.linking.model.RequestParameters;
 import eu.seal.linking.model.common.EntityMetadata;
 import eu.seal.linking.model.common.NewUpdateDataRequest;
 import eu.seal.linking.model.common.SessionMngrResponse;
@@ -102,16 +103,18 @@ public class DataStoreServiceImpl implements DataStoreService
         {
             network = new NetworkServiceImpl(keyStoreService);
         }
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.add(new NameValuePair("sessionId",sessionId));
 
-        SessionMngrResponse smResponse = network.sendPostFormSMResponse(hostURL, service, urlParameters, 1);
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setSessionId(sessionId);
 
-        System.out.println("SMresponse(startSession):" +smResponse.toString());
-        System.out.println("sessionID:"+smResponse.getSessionData().getSessionId());
+        String contentType="application/json";
 
-        smResponse.getSessionData().getSessionId();
+        String response = network.sendPostBody(hostURL, service, requestParameters, contentType, 1);
+
+        /*System.out.println("SMresponse(startSession):" +smResponse.toString());
+        System.out.println("sessionID:"+smResponse.getSessionData().getSessionId());*/
+
+        System.out.println(response);
     }
 
     @Override
@@ -124,7 +127,12 @@ public class DataStoreServiceImpl implements DataStoreService
         {
             network = new NetworkServiceImpl(keyStoreService);
         }
-        List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setSessionId(sessionId);
+        requestParameters.setId(id);
+
+        /*List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters = new ArrayList<NameValuePair>();
         urlParameters.add(new NameValuePair("sessionId",sessionId));
         urlParameters.add(new NameValuePair("id",id));
@@ -135,6 +143,17 @@ public class DataStoreServiceImpl implements DataStoreService
 
         ObjectMapper objMapper = new ObjectMapper();
         NewUpdateDataRequest newUpdateDataRequest = objMapper.readValue(data, NewUpdateDataRequest.class);
+
+        return newUpdateDataRequest.getData();*/
+
+        String contentType="application/json";
+
+        String response = network.sendPostBody(hostURL, service, requestParameters, contentType, 1);
+
+        ObjectMapper objMapper = new ObjectMapper();
+        SessionMngrResponse sessionMngrResponse = objMapper.readValue(response, SessionMngrResponse.class);
+        NewUpdateDataRequest newUpdateDataRequest = objMapper.readValue(sessionMngrResponse.getAdditionalData(),
+                NewUpdateDataRequest.class);
 
         return newUpdateDataRequest.getData();
     }
