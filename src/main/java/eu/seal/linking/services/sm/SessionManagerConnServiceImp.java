@@ -1,6 +1,7 @@
 package eu.seal.linking.services.sm;
 
 import eu.seal.linking.model.common.EntityMetadata;
+import eu.seal.linking.model.common.MsMetadata;
 import eu.seal.linking.model.common.SessionMngrResponse;
 import eu.seal.linking.model.common.SessionMngrResponse.CodeEnum;
 import eu.seal.linking.model.common.UpdateDataRequest;
@@ -18,6 +19,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.apache.commons.httpclient.NameValuePair;
 import org.slf4j.Logger;
@@ -46,7 +49,13 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
     private ConfMngrConnService confMngrService;
 
     @Autowired
-    public SessionManagerConnServiceImp (ConfMngrConnService confMngrConnService, KeyStoreService keyStoreServ) {
+    @Inject
+    public SessionManagerConnServiceImp (ConfMngrConnService confMngrConnService, KeyStoreService keyStoreServ,
+                                         @Value("${linking.sm.url}") String hostURL,
+                                         @Value("${linking.msID}") String sender) {
+
+        this.hostURL = hostURL;
+        this.sender = sender;
 
         this.keyStoreService = keyStoreServ;
 
@@ -71,21 +80,32 @@ public class SessionManagerConnServiceImp implements SessionManagerConnService
         //TODO
         //EntityMetadata myLGW = this.confMngrService.getConfiguration("LGW"); // APIGWCL or reading from an environment variable. TOASK
         EntityMetadata myLGW = null;
-        String thisCL = confMngrService.getMicroservicesByApiClass("CL").get(0).getMsId(); // The unique client
-        if (thisCL != null)
+        List<MsMetadata> services = confMngrService.getMicroservicesByApiClass("LINK");
+        String thisCL = null;
+        for (MsMetadata service : services)
+        {
+            if (service.getMsId().equals(sender))
+            {
+                thisCL = sender;
+                break;
+            }
+        }
+        //String thisCL = confMngrService.getMicroservicesByApiClass("CL").get(0).getMsId(); // The unique client
+        /*if (thisCL != null)
             sender = thisCL;
         else {
             sender = "CLms001";
-            log.error("HARDCODED sender! "+ sender);
+
+        }*/
+        if (thisCL == null)
+        {
+            log.error("Sender " + sender + " not found in microservices!");
         }
 
         //TODO: to comment them after testing
         System.out.println("hostURL: " + hostURL);
         System.out.println("sender: "+ sender);
         System.out.println("receiver wont be constant");
-
-
-
     }
 
     @Override
