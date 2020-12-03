@@ -66,7 +66,7 @@ public class ValidatorService
 
         List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(domains);
 
-        List<Request> requests = requestRepository.findByDomainsIn(requestDomains);
+        List<Request> requests = requestRepository.findDistinctByDomainsIn(requestDomains);
 
         List<LinkRequest> linkRequests = new ArrayList<LinkRequest>();
         for (Request request : requests)

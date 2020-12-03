@@ -12,9 +12,9 @@ public interface RequestRepository extends CrudRepository<Request, Long>
 {
     public List<Request> findByUid(String uid);
 
-    public List<Request> findByDomainsIn(List<RequestDomain> requestDomains);
+    public List<Request> findDistinctByDomainsIn(List<RequestDomain> requestDomains);
 
-    public List<Request> findByUidAndDomainsIn(String uid, List<RequestDomain> requestDomains);
+    public List<Request> findDistinctByUidAndDomainsIn(String uid, List<RequestDomain> requestDomains);
 
     public List<Request> getAllByLastUpdateBefore(Date expirationDate);
 }

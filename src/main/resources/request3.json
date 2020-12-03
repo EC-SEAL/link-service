@@ -1,0 +1,86 @@
+{
+  "id" : "",
+  "issuer" : "11111111A",
+  "lloa" : "NORMAL",
+  "issued" : "2020-01-27T15:00:23Z",
+  "type": "Test type",
+  "expiration" : "2020-01-28T15:00:23Z",
+  "uri" : "",
+  "datasetA" : {
+    "id": "",
+    "type": "",
+    "categories" : [],
+    "issuerId" : "UJI",
+    "subjectId" : "PersonalIdentifier",
+    "loa" : null,
+    "issued" : "",
+    "expiration" : "",
+    "attributes" : [ {
+      "name":  "PersonalIdentifier",
+      "friendlyName" : "PersonalIdentifier",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "1111" ]
+    },{
+      "name":  "name",
+      "friendlyName" : "Common Name",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "Pepe" ]
+    },
+      {
+        "name":  "firstname",
+        "friendlyName" : "Family Name",
+        "encoding" : "UTF-8",
+        "language" : "ES_es",
+        "mandatory" : true,
+        "values": [ "Botella" ]
+      }
+    ],
+    "properties":  {
+      "name": "commonName",
+      "test": "Test 1"
+    }
+  },
+  "datasetB" : {
+    "id": "",
+    "type": "",
+    "categories" : [],
+    "issuerId" : "UV",
+    "subjectId" : "PersonalIdentifier",
+    "loa" : null,
+    "issued" : "",
+    "expiration" : "",
+    "attributes" : [ {
+      "name":  "PersonalIdentifier",
+      "friendlyName" : "PersonalIdentifier",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "1111" ]
+    },{
+      "name":  "name",
+      "friendlyName" : "Common Name",
+      "encoding" : "UTF-8",
+      "language" : "ES_es",
+      "mandatory" : true,
+      "values": [ "Pepe" ]
+    },
+      {
+        "name":  "firstname",
+        "friendlyName" : "Family Name",
+        "encoding" : "UTF-8",
+        "language" : "ES_es",
+        "mandatory" : true,
+        "values": [ "Botella" ]
+      }
+    ],
+    "properties":  {
+      "name": "commonName"
+    }
+  },
+  "evidence": [],
+  "conversation" : []
+}

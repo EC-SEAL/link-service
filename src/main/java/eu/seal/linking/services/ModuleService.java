@@ -38,7 +38,7 @@ public class ModuleService
 
         List<RequestDomain> requestDomains = requestDomainRepository.findByDomainIn(user.getEntitlements());
 
-        List<Request> requests = requestRepository.findByDomainsIn(requestDomains);
+        List<Request> requests = requestRepository.findDistinctByDomainsIn(requestDomains);
 
         List<RequestInfo> requestInfoList = new ArrayList<RequestInfo>();
         for (Request request : requests)
@@ -62,7 +62,7 @@ public class ModuleService
         Request request = null;
         try
         {
-            request = requestRepository.findByUidAndDomainsIn(requestId, requestDomains).get(0);
+            request = requestRepository.findDistinctByUidAndDomainsIn(requestId, requestDomains).get(0);
 
         } catch (Exception e)
         {

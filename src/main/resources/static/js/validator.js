@@ -231,15 +231,15 @@ function getRequestInfo(requestId) {
         // Attributes section A
         $('#request-attr-1 h3').text(data.datasetA.issuerId);
         $('#request-attr-1 .level').text(data.datasetA.loa);
-        level1Class = data.datasetA.loa.toLowerCase();
-        $('#request-attr-1 .level').addClass(level1Class);
+        //level1Class = data.datasetA.loa.toLowerCase();
+        //$('#request-attr-1 .level').addClass(level1Class);
         fillRequestAttributes(data.datasetA.attributes, data.datasetA.properties, data.datasetA.subjectId, $('#request-attr-1 div.attr-content table'));
 
         // Attributes section B
         $('#request-attr-2 h3').text(data.datasetB.issuerId);
         $('#request-attr-2 .level').text(data.datasetB.loa);
-        level2Class = data.datasetB.loa.toLowerCase();
-        $('#request-attr-2 .level').addClass(level2Class)
+        //level2Class = data.datasetB.loa.toLowerCase();
+        //$('#request-attr-2 .level').addClass(level2Class)
         fillRequestAttributes(data.datasetB.attributes, data.datasetB.properties, data.datasetB.subjectId, $('#request-attr-2 div.attr-content table'));
 
         //Files list

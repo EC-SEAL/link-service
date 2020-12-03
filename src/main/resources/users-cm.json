@@ -49,5 +49,16 @@
     ],
     "photoID": "",
     "email": "test2@uji.es"
+  },
+  {
+    "hashID": "e99ce1797cdb26f2cf342c483eaa1425",
+    "nameAttr": "urn:oid:2.5.4.42",
+    "surnameAttr": "urn:oid:2.5.4.4",
+    "entitlements": [
+      "UJI",
+      "UV"
+    ],
+    "photoID": "",
+    "email": "mitest@uji.es"
   }
 ]
