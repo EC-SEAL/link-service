@@ -44,7 +44,7 @@ public class LinkController extends BaseController
     @Value("${linking.issuer}")
     private String linkIssuerId;
 
-    @RequestMapping(value = "/request/submit", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
+    @RequestMapping(value = "/request/submit", method = {RequestMethod.POST, RequestMethod.GET}, produces = "application/json")
     public LinkRequest startLinkRequest(@RequestParam(required = true) String msToken)
             throws IDLinkingException
     {
@@ -82,7 +82,7 @@ public class LinkController extends BaseController
         }
     }
 
-    @RequestMapping(value = "/{requestId}/cancel", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"}, produces = "application/json")
+    @RequestMapping(value = "/{requestId}/cancel", method = {RequestMethod.POST, RequestMethod.GET}, produces = "application/json")
     public Response cancelRequest(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken)
             throws IDLinkingException
     {
@@ -105,7 +105,7 @@ public class LinkController extends BaseController
         }
     }
 
-    @RequestMapping(value = "/{requestId}/result/get", method = RequestMethod.POST, consumes = {"application/x-www-form-urlencoded"})
+    @RequestMapping(value = "/{requestId}/result/get", method = {RequestMethod.POST, RequestMethod.GET})
     public ModelAndView getRequestResult(@PathVariable("requestId") String requestId, @RequestParam(required = true) String msToken, Model model)
             throws LinkAuthException, UserNotAuthenticatedException, LinkInternalException, IDLinkingException
     {

@@ -15,7 +15,7 @@ services:
     #build:
     #  context: ./
     #  dockerfile: Dockerfile
-    image: msirvent/linking_web-service:v1.1
+    image: msirvent/linking_web-service:v1.2
     ports:
       - "8073:8093"
     networks:

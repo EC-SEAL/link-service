@@ -22,7 +22,6 @@ import eu.seal.linking.model.common.AttributeSet;
 import eu.seal.linking.model.common.AttributeType;
 import eu.seal.linking.model.common.AttributeTypeList;
 import eu.seal.linking.model.common.DataSet;
-import eu.seal.linking.model.common.DataStore;
 import eu.seal.linking.model.common.EntityMetadata;
 import eu.seal.linking.model.common.EntityMetadataList;
 import eu.seal.linking.model.common.MsMetadata;
@@ -36,10 +35,7 @@ import eu.seal.linking.utils.CryptoUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -462,9 +457,7 @@ public class AuthService
         Object objAuthSet = sessionManagerConnService.readVariable(sessionId, "authenticatedSubject");
         DataSet dataSet = (new ObjectMapper()).readValue(objAuthSet.toString(), DataSet.class);
 
-        //DataSet dataSet2 = dataStore.getClearData() != null ? dataStore.getClearData().get(0) : null;
-
-            if (dataSet != null)
+        if (dataSet != null)
         {
             // Getting auth source
             EntityMetadata entityMetadata = confMngrConnService.getEntityMetadata("AUTHSOURCE", dataSet.getType());
